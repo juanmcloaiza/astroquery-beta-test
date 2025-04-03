@@ -1,0 +1,19 @@
+RMSNodeClass
+============
+
+.. currentmodule:: astroquery.solarsystem.pds
+
+.. autoclass:: RMSNodeClass
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~RMSNodeClass.ephemeris
+      ~RMSNodeClass.ephemeris_async
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: ephemeris
+   .. automethod:: ephemeris_async

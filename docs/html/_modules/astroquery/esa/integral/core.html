@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astroquery.esa.integral.core &#8212; astroquery v0.4.8.dev10177</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    
+    <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../../../_static/documentation_options.js?v=51006566"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../../../../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../../../../_static/copybutton.js"></script>
+    <link rel="icon" href="../../../../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../../index.html">astroquery v0.4.8.dev10177</a>
+	 &#187;
+      </li>
+      <li><a href="../../../index.html" >Module code</a> &#187;</li>
+      <li><a href="../integral.html" accesskey="U">astroquery.esa.integral</a> &#187;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for astroquery.esa.integral.core</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">======================</span>
+<span class="sd">ISLA Astroquery Module</span>
+<span class="sd">======================</span>
+
+<span class="sd">European Space Astronomy Centre (ESAC)</span>
+<span class="sd">European Space Agency (ESA)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">astroquery.query</span> <span class="kn">import</span> <span class="n">BaseQuery</span><span class="p">,</span> <span class="n">BaseVOQuery</span>
+<span class="kn">from</span> <span class="nn">astroquery</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">astroquery.utils</span> <span class="kn">import</span> <span class="n">commons</span>
+<span class="kn">import</span> <span class="nn">pyvo</span>
+<span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">HTTPError</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">conf</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">astroquery.esa.utils.utils</span> <span class="k">as</span> <span class="nn">esautils</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Integral&#39;</span><span class="p">,</span> <span class="s1">&#39;IntegralClass&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="IntegralClass">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass">[docs]</a>
+<span class="k">class</span> <span class="nc">IntegralClass</span><span class="p">(</span><span class="n">BaseVOQuery</span><span class="p">,</span> <span class="n">BaseQuery</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to init ESA Integral Module and communicate with isla</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth_session</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># Checks if auth session has been defined. If not, create a new session</span>
+        <span class="k">if</span> <span class="n">auth_session</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_auth_session</span> <span class="o">=</span> <span class="n">auth_session</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_auth_session</span> <span class="o">=</span> <span class="n">esautils</span><span class="o">.</span><span class="n">ESAAuthSession</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_auth_session</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">TIMEOUT</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tap</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tap_url</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">ISLA_TAP_SERVER</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">instruments</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bands</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instrument_band_map</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tap</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pyvo</span><span class="o">.</span><span class="n">dal</span><span class="o">.</span><span class="n">TAPService</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tap</span> <span class="o">=</span> <span class="n">pyvo</span><span class="o">.</span><span class="n">dal</span><span class="o">.</span><span class="n">TAPService</span><span class="p">(</span>
+                <span class="n">conf</span><span class="o">.</span><span class="n">ISLA_TAP_SERVER</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_auth_session</span><span class="p">)</span>
+            <span class="c1"># Retrieve the instruments and bands available within ISLA Archive</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_instrument_band_map</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tap</span>
+
+<div class="viewcode-block" id="IntegralClass.get_tables">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.get_tables">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">only_names</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets all public tables within ISLA TAP</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        only_names : bool, optional, default False</span>
+<span class="sd">            True to load table names only</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        A list of table objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table_set</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="o">.</span><span class="n">tables</span>
+        <span class="k">if</span> <span class="n">only_names</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">table_set</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">table_set</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.get_table">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.get_table">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the specified table from ISLA TAP</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : str, mandatory</span>
+<span class="sd">            full qualified table name (i.e. schema name + table name)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        A table object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tables</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">table</span> <span class="o">==</span> <span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">t</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.get_job">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.get_job">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jobid</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the job corresponding to an ID. Note that the caller must be able to see</span>
+<span class="sd">        the job in the current security context.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        jobid : str, mandatory</span>
+<span class="sd">            ID of the job to view</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        JobSummary corresponding to the job ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="o">.</span><span class="n">get_job</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">jobid</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.get_job_list">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.get_job_list">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_job_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">last</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">short_description</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns all the asynchronous jobs</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        phases : list of str</span>
+<span class="sd">            Union of job phases to filter the results by.</span>
+<span class="sd">        after : datetime</span>
+<span class="sd">            Return only jobs created after this datetime</span>
+<span class="sd">        last : int</span>
+<span class="sd">            Return only the most recent number of jobs</span>
+<span class="sd">        short_description : flag - True or False</span>
+<span class="sd">            If True, the jobs in the list will contain only the information</span>
+<span class="sd">            corresponding to the TAP ShortJobDescription object (job ID, phase,</span>
+<span class="sd">            run ID, owner ID and creation ID) whereas if False, a separate GET</span>
+<span class="sd">            call to each job is performed for the complete job description</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        A list of Job objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="o">.</span><span class="n">get_job_list</span><span class="p">(</span><span class="n">phases</span><span class="o">=</span><span class="n">phases</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="n">after</span><span class="p">,</span> <span class="n">last</span><span class="o">=</span><span class="n">last</span><span class="p">,</span>
+                                     <span class="n">short_description</span><span class="o">=</span><span class="n">short_description</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.login">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.login">[docs]</a>
+    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs a login.</span>
+<span class="sd">        TAP+ only</span>
+<span class="sd">        User and password shall be used</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        user : str, mandatory, default None</span>
+<span class="sd">            Username. If no value is provided, a prompt to type it will appear</span>
+<span class="sd">        password : str, mandatory, default None</span>
+<span class="sd">            User password. If no value is provided, a prompt to type it will appear</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">login_url</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">ISLA_LOGIN_SERVER</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.logout">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.logout">[docs]</a>
+    <span class="k">def</span> <span class="nf">logout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs a logout.</span>
+<span class="sd">        TAP+ only</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">logout</span><span class="p">(</span><span class="n">logout_url</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">ISLA_LOGOUT_SERVER</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.query_tap">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.query_tap">[docs]</a>
+    <span class="k">def</span> <span class="nf">query_tap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">async_job</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;votable&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Launches a synchronous or asynchronous job to query the ISLA tap</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query : str, mandatory</span>
+<span class="sd">            query (adql) to be executed</span>
+<span class="sd">        async_job : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            executes the query (job) in asynchronous/synchronous mode (default</span>
+<span class="sd">            synchronous)</span>
+<span class="sd">        output_file : str, optional, default None</span>
+<span class="sd">            file name where the results are saved if dumpToFile is True.</span>
+<span class="sd">            If this parameter is not provided, the jobid is used instead</span>
+<span class="sd">        output_format : str, optional, default &#39;votable&#39;</span>
+<span class="sd">            results format</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        An astropy.table object containing the results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">async_job</span><span class="p">:</span>
+            <span class="n">job</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="o">.</span><span class="n">submit_job</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+            <span class="n">job</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+            <span class="k">while</span> <span class="n">job</span><span class="o">.</span><span class="n">phase</span> <span class="o">==</span> <span class="s1">&#39;EXECUTING&#39;</span><span class="p">:</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">fetch_result</span><span class="p">()</span><span class="o">.</span><span class="n">to_table</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">to_table</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">output_file</span><span class="p">:</span>
+            <span class="n">esautils</span><span class="o">.</span><span class="n">download_table</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">output_format</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.get_sources">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.get_sources">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">async_job</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the coordinates of an INTEGRAL source</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        target_name : str, mandatory</span>
+<span class="sd">            target name to be requested, mandatory</span>
+<span class="sd">        async_job : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            executes the query (job) in asynchronous/synchronous mode (default</span>
+<span class="sd">            synchronous)</span>
+<span class="sd">        output_file : str, optional, default None</span>
+<span class="sd">            file name where the results are saved if dumpToFile is True.</span>
+<span class="sd">            If this parameter is not provided, the jobid is used instead</span>
+<span class="sd">        output_format : str, optional, default &#39;votable&#39;</span>
+<span class="sd">            results format</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        An astropy.table object containing the results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># First attempt, resolve the name in the source catalogue</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">ISLA_TARGET_CONDITION</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target_name</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">async_job</span><span class="o">=</span><span class="n">async_job</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="n">output_format</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="c1"># Second attempt, resolve using a Resolver Service and cone search to the source catalogue</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">coordinates</span> <span class="o">=</span> <span class="n">esautils</span><span class="o">.</span><span class="n">resolve_target</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">ISLA_TARGET_RESOLVER</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="o">.</span><span class="n">_session</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="s1">&#39;ALL&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">coordinates</span><span class="p">:</span>
+                <span class="n">query</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">ISLA_CONE_TARGET_CONDITION</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">coordinates</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="mf">0.0833</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">async_job</span><span class="o">=</span><span class="n">async_job</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span>
+                                        <span class="n">output_format</span><span class="o">=</span><span class="n">output_format</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target </span><span class="si">{</span><span class="n">target_name</span><span class="si">}</span><span class="s2"> cannot be resolved for ISLA&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target </span><span class="si">{</span><span class="n">target_name</span><span class="si">}</span><span class="s2"> cannot be resolved for ISLA&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.get_observations">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.get_observations">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_observations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">target_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">coordinates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">14.0</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">start_revno</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end_revno</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">async_job</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the INTEGRAL observations associated to target name, time range and/or revolution</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        target_name: str, optional</span>
+<span class="sd">            target name to be requested</span>
+<span class="sd">        coordinates: str or SkyCoord, optional</span>
+<span class="sd">            coordinates of the center in the cone search</span>
+<span class="sd">        radius: float or quantity, optional, default value 14 degrees</span>
+<span class="sd">            radius in degrees (int, float) or quantity of the cone_search</span>
+<span class="sd">        start_time: str in UTC or datetime, optional</span>
+<span class="sd">            start time of the observation</span>
+<span class="sd">        end_time: str in UTC or datetime, optional</span>
+<span class="sd">            end time of the observation</span>
+<span class="sd">        start_revno: string, optional</span>
+<span class="sd">            start revolution number, as a four-digit string with leading zeros</span>
+<span class="sd">            e.g. 0352</span>
+<span class="sd">        end_revno: string, optional</span>
+<span class="sd">            end revolution number, as a four-digit string with leading zeros</span>
+<span class="sd">            e.g. 0353</span>
+<span class="sd">        async_job : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            executes the query (job) in asynchronous/synchronous mode (default</span>
+<span class="sd">            synchronous)</span>
+<span class="sd">        output_file : str, optional, default None</span>
+<span class="sd">            file name where the results are saved if dumpToFile is True.</span>
+<span class="sd">            If this parameter is not provided, the jobid is used instead</span>
+<span class="sd">        output_format : str, optional, default &#39;votable&#39;</span>
+<span class="sd">            results format</span>
+<span class="sd">        verbose : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        An astropy.table object containing the results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">base_query</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">ISLA_OBSERVATION_BASE_QUERY</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">base_query</span>
+        <span class="n">conditions</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Target name/Coordinates + radius condition</span>
+        <span class="k">if</span> <span class="n">target_name</span> <span class="ow">and</span> <span class="n">coordinates</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Please use only target or coordinates as &quot;</span>
+                            <span class="s2">&quot;parameter.&quot;</span><span class="p">)</span>
+        <span class="c1"># Radius in degrees</span>
+        <span class="k">if</span> <span class="n">radius</span><span class="p">:</span>
+            <span class="n">radius</span> <span class="o">=</span> <span class="n">esautils</span><span class="o">.</span><span class="n">get_degree_radius</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span>
+
+        <span class="c1"># Resolve target or coordinates to get coordinates</span>
+        <span class="k">if</span> <span class="n">target_name</span><span class="p">:</span>
+            <span class="n">coord</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_sources</span><span class="p">(</span><span class="n">target_name</span><span class="o">=</span><span class="n">target_name</span><span class="p">)</span>
+            <span class="n">ra</span> <span class="o">=</span> <span class="n">coord</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">dec</span> <span class="o">=</span> <span class="n">coord</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">conditions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">ISLA_COORDINATE_CONDITION</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">coordinates</span><span class="p">:</span>
+            <span class="n">coord</span> <span class="o">=</span> <span class="n">commons</span><span class="o">.</span><span class="n">parse_coordinates</span><span class="p">(</span><span class="n">coordinates</span><span class="o">=</span><span class="n">coordinates</span><span class="p">)</span>
+            <span class="n">ra</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">degree</span>
+            <span class="n">dec</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">degree</span>
+            <span class="n">conditions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">ISLA_COORDINATE_CONDITION</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="p">))</span>
+
+        <span class="c1"># Start/End time conditions</span>
+        <span class="k">if</span> <span class="n">start_time</span><span class="p">:</span>
+            <span class="n">parsed_start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">start_time</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;+00:00&#39;</span><span class="p">))</span>
+            <span class="n">conditions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;endtime &gt;= &#39;</span><span class="si">{</span><span class="n">parsed_start</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">end_time</span><span class="p">:</span>
+            <span class="n">parsed_end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromisoformat</span><span class="p">(</span><span class="n">end_time</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;+00:00&#39;</span><span class="p">))</span>
+            <span class="n">conditions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;starttime &lt;= &#39;</span><span class="si">{</span><span class="n">parsed_end</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Revolution Number conditions</span>
+        <span class="k">if</span> <span class="n">start_revno</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__validate_revno</span><span class="p">(</span><span class="n">start_revno</span><span class="p">):</span>
+            <span class="n">conditions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;end_revno &gt;= &#39;</span><span class="si">{</span><span class="n">start_revno</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">end_revno</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__validate_revno</span><span class="p">(</span><span class="n">end_revno</span><span class="p">):</span>
+            <span class="n">conditions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;start_revno &lt;= &#39;</span><span class="si">{</span><span class="n">end_revno</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Create final query</span>
+        <span class="k">if</span> <span class="n">conditions</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2"> where </span><span class="si">{</span><span class="s1">&#39; AND &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">conditions</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s2"> order by obsid&quot;</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">query</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">async_job</span><span class="o">=</span><span class="n">async_job</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span>
+                                  <span class="n">output_format</span><span class="o">=</span><span class="n">output_format</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.download_science_windows">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.download_science_windows">[docs]</a>
+    <span class="k">def</span> <span class="nf">download_science_windows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">science_windows</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">observation_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">revolution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">proposal</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                 <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_fits</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Method to download science windows associated to one of these parameters:</span>
+<span class="sd">        science_windows, observation_id, revolution or proposal</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        science_windows : list of str, optional</span>
+<span class="sd">            Science Windows to download</span>
+<span class="sd">        observation_id: str, optional</span>
+<span class="sd">            Observation ID associated to science windows</span>
+<span class="sd">        revolution: str, optional</span>
+<span class="sd">            Revolution associated to science windows</span>
+<span class="sd">        proposal: str, optional</span>
+<span class="sd">            Proposal ID associated to science windows</span>
+<span class="sd">        output_file: str, optional</span>
+<span class="sd">            File name and path for the downloaded file</span>
+<span class="sd">        cache: bool, optional, default False</span>
+<span class="sd">                Flag to determine if the file is stored in the cache or not</span>
+<span class="sd">        read_fits: bool, optional, default True</span>
+<span class="sd">            Open the downloaded file and parse the existing FITS files</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        If read_fits=True, a list with objects containing filename, path and FITS file opened with the</span>
+<span class="sd">        science windows. If read_fits=False, the path of the downloaded file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Validate and retrieve the correct value</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_science_window_parameter</span><span class="p">(</span><span class="n">science_windows</span><span class="p">,</span> <span class="n">observation_id</span><span class="p">,</span> <span class="n">revolution</span><span class="p">,</span> <span class="n">proposal</span><span class="p">)</span>
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;RETRIEVAL_TYPE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SCW&#39;</span>
+        <span class="k">try</span><span class="p">:</span>
+
+            <span class="n">downloaded_file</span> <span class="o">=</span> <span class="n">esautils</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">ISLA_DATA_SERVER</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="o">.</span><span class="n">_session</span><span class="p">,</span>
+                                                     <span class="n">filename</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                                                     <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">cache_folder</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_location</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">read_fits</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">esautils</span><span class="o">.</span><span class="n">read_downloaded_fits</span><span class="p">([</span><span class="n">downloaded_file</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">downloaded_file</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;No science windows have been found with these inputs. </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.get_timeline">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.get_timeline">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_timeline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">14</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the INTEGRAL timeline associated to coordinates and radius</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        coordinates: str or SkyCoord, mandatory</span>
+<span class="sd">            RA and Dec of the source</span>
+<span class="sd">        radius: float or quantity, optional, default value 14 degrees</span>
+<span class="sd">            radius in degrees (int, float) or quantity of the cone_search</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        An object containing:</span>
+<span class="sd">            totalItems: a counter for the number of items retrieved</span>
+<span class="sd">            fraFC:</span>
+<span class="sd">            totEffExpo:</span>
+<span class="sd">            timeline: An astropy.table object containing the results for scwExpo, scwRevs, scwTimes and scwOffAxis</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">radius</span><span class="p">:</span>
+            <span class="n">radius</span> <span class="o">=</span> <span class="n">esautils</span><span class="o">.</span><span class="n">get_degree_radius</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span>
+
+        <span class="n">c</span> <span class="o">=</span> <span class="n">commons</span><span class="o">.</span><span class="n">parse_coordinates</span><span class="p">(</span><span class="n">coordinates</span><span class="o">=</span><span class="n">coordinates</span><span class="p">)</span>
+
+        <span class="n">query_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;REQUEST&#39;</span><span class="p">:</span> <span class="s1">&#39;timelines&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;ra&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span>
+            <span class="s2">&quot;dec&quot;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span>
+            <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="n">radius</span>
+        <span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Execute the request to the servlet</span>
+            <span class="n">request_result</span> <span class="o">=</span> <span class="n">esautils</span><span class="o">.</span><span class="n">execute_servlet_request</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">ISLA_SERVLET</span><span class="p">,</span>
+                                                              <span class="n">tap</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="p">,</span>
+                                                              <span class="n">query_params</span><span class="o">=</span><span class="n">query_params</span><span class="p">)</span>
+            <span class="n">total_items</span> <span class="o">=</span> <span class="n">request_result</span><span class="p">[</span><span class="s1">&#39;totalItems&#39;</span><span class="p">]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">request_result</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+            <span class="n">fraFC</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;fraFC&#39;</span><span class="p">]</span>
+            <span class="n">totEffExpo</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;totEffExpo&#39;</span><span class="p">]</span>
+            <span class="n">timeline</span> <span class="o">=</span> <span class="n">Table</span><span class="p">({</span>
+                <span class="s2">&quot;scwExpo&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;scwExpo&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;scwRevs&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;scwRevs&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;scwTimes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">scwTime</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span> <span class="k">for</span> <span class="n">scwTime</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;scwTimes&quot;</span><span class="p">]],</span>
+                <span class="s2">&quot;scwOffAxis&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;scwOffAxis&quot;</span><span class="p">]</span>
+            <span class="p">})</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;total_items&#39;</span><span class="p">:</span> <span class="n">total_items</span><span class="p">,</span> <span class="s1">&#39;fraFC&#39;</span><span class="p">:</span> <span class="n">fraFC</span><span class="p">,</span> <span class="s1">&#39;totEffExpo&#39;</span><span class="p">:</span> <span class="n">totEffExpo</span><span class="p">,</span> <span class="s1">&#39;timeline&#39;</span><span class="p">:</span> <span class="n">timeline</span><span class="p">}</span>
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;None science windows have been selected&#39;</span> <span class="ow">in</span> <span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No timeline is available for the current coordinates and radius.&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">e</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.get_epochs">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.get_epochs">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_epochs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">target_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the INTEGRAL epochs associated to a target and an instrument or a band</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        target_name : str, optional</span>
+<span class="sd">            target name to be requested, mandatory</span>
+<span class="sd">        instrument : str, optional</span>
+<span class="sd">            Possible values are in isla.instruments object</span>
+<span class="sd">        band : str, optional</span>
+<span class="sd">            Possible values are in isla.bandsobject</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        An astropy.table object containing the available epochs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_instrument_or_band</span><span class="p">(</span><span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">)</span>
+        <span class="n">instrument_oid</span><span class="p">,</span> <span class="n">band_oid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_oids</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">target_name</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">ISLA_EPOCH_TARGET_QUERY</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target_name</span><span class="p">,</span> <span class="n">instrument_oid</span><span class="p">,</span> <span class="n">band_oid</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">ISLA_EPOCH_QUERY</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">instrument_oid</span><span class="p">,</span> <span class="n">band_oid</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="n">query</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.get_long_term_timeseries">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.get_long_term_timeseries">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_long_term_timeseries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                 <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_fits</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Method to download long term timeseries associated to an epoch and instrument or band</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        target_name : str, mandatory</span>
+<span class="sd">            target name to be requested, mandatory</span>
+<span class="sd">        instrument : str</span>
+<span class="sd">            Possible values are in isla.instruments object</span>
+<span class="sd">        band : str</span>
+<span class="sd">            Possible values are in isla.bandsobject</span>
+<span class="sd">        path: str, optional</span>
+<span class="sd">            Path for the downloaded file</span>
+<span class="sd">        filename: str, optional</span>
+<span class="sd">            Filename for the downloaded file</span>
+<span class="sd">        cache: bool, optional, default False</span>
+<span class="sd">                Flag to determine if the file is stored in the cache or not</span>
+<span class="sd">        read_fits: bool, optional, default True</span>
+<span class="sd">            Open the downloaded file and parse the existing FITS files</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        If read_fits=True, a list with objects containing filename, path and FITS file opened with long</span>
+<span class="sd">        term timeseries. If read_fits=False, the path of the downloaded file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_instrument_or_band</span><span class="p">(</span><span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">)</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;RETRIEVAL_TYPE&#39;</span><span class="p">:</span> <span class="s1">&#39;long_timeseries&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="n">target_name</span><span class="p">,</span>
+                  <span class="s1">&#39;instrument_oid&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">instrument_band_map</span><span class="p">[</span><span class="n">value</span><span class="p">][</span><span class="s1">&#39;instrument_oid&#39;</span><span class="p">]}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">downloaded_file</span> <span class="o">=</span> <span class="n">esautils</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">ISLA_DATA_SERVER</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="o">.</span><span class="n">_session</span><span class="p">,</span>
+                                                     <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+                                                     <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">cache_folder</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_location</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">read_fits</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">esautils</span><span class="o">.</span><span class="n">read_downloaded_fits</span><span class="p">([</span><span class="n">downloaded_file</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">downloaded_file</span>
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;No long term timeseries have been found with these inputs. </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Problem when retrieving long term timeseries. </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.get_short_term_timeseries">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.get_short_term_timeseries">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_short_term_timeseries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                  <span class="n">path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_fits</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Method to download short term timeseries associated to an epoch and instrument or band</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        target_name : str, mandatory</span>
+<span class="sd">            target name to be requested, mandatory</span>
+<span class="sd">        epoch : str, mandatory</span>
+<span class="sd">            reference epoch for the short term timeseries</span>
+<span class="sd">        instrument : str, optional</span>
+<span class="sd">            Possible values are in isla.instruments object</span>
+<span class="sd">        band : str, optional</span>
+<span class="sd">            Possible values are in isla.bandsobject</span>
+<span class="sd">        path: str, optional</span>
+<span class="sd">            Path for the downloaded file</span>
+<span class="sd">        filename: str, optional</span>
+<span class="sd">            Filename for the downloaded file</span>
+<span class="sd">        cache: bool, optional, default False</span>
+<span class="sd">                Flag to determine if the file is stored in the cache or not</span>
+<span class="sd">        read_fits: bool, optional, default True</span>
+<span class="sd">            Open the downloaded file and parse the existing FITS files</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        If read_fits=True, a list with objects containing filename, path and FITS file opened with short</span>
+<span class="sd">        term timeseries. If read_fits=False, the path of the downloaded file</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_instrument_or_band</span><span class="p">(</span><span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__validate_epoch</span><span class="p">(</span><span class="n">target_name</span><span class="o">=</span><span class="n">target_name</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">,</span>
+                              <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">)</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;RETRIEVAL_TYPE&#39;</span><span class="p">:</span> <span class="s1">&#39;short_timeseries&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="n">target_name</span><span class="p">,</span>
+                  <span class="s1">&#39;band_oid&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">instrument_band_map</span><span class="p">[</span><span class="n">value</span><span class="p">][</span><span class="s1">&#39;band_oid&#39;</span><span class="p">],</span>
+                  <span class="s1">&#39;epoch&#39;</span><span class="p">:</span> <span class="n">epoch</span><span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">downloaded_file</span> <span class="o">=</span> <span class="n">esautils</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">ISLA_DATA_SERVER</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="o">.</span><span class="n">_session</span><span class="p">,</span>
+                                                     <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+                                                     <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">cache_folder</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_location</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">read_fits</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">esautils</span><span class="o">.</span><span class="n">read_downloaded_fits</span><span class="p">([</span><span class="n">downloaded_file</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">downloaded_file</span>
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;No short term timeseries have been found with these inputs. </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Problem when retrieving short term timeseries. </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.get_spectra">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.get_spectra">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_spectra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_name</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_fits</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Method to download mosaics associated to an epoch and instrument or band</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        target_name : str, mandatory</span>
+<span class="sd">            target name to be requested, mandatory</span>
+<span class="sd">        epoch : str, mandatory</span>
+<span class="sd">            reference epoch for the short term timeseries</span>
+<span class="sd">        instrument : str</span>
+<span class="sd">            Possible values are in isla.instruments object</span>
+<span class="sd">        band : str</span>
+<span class="sd">            Possible values are in isla.bandsobject</span>
+<span class="sd">        path: str, optional</span>
+<span class="sd">            Path for the downloaded file</span>
+<span class="sd">        filename: str, optional</span>
+<span class="sd">            Filename for the downloaded file</span>
+<span class="sd">        cache: bool, optional, default False</span>
+<span class="sd">                Flag to determine if the file is stored in the cache or not</span>
+<span class="sd">        read_fits: bool, optional, default True</span>
+<span class="sd">            Open the downloaded file and parse the existing FITS files</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        If read_fits=True, a list with objects containing filename, path and FITS file opened with spectra.</span>
+<span class="sd">        If read_fits=False, a list of paths of the downloaded files</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_instrument_or_band</span><span class="p">(</span><span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__validate_epoch</span><span class="p">(</span><span class="n">target_name</span><span class="o">=</span><span class="n">target_name</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">,</span>
+                              <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">)</span>
+        <span class="n">query_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;REQUEST&#39;</span><span class="p">:</span> <span class="s1">&#39;spectra&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="n">target_name</span><span class="p">,</span>
+            <span class="s2">&quot;instrument_oid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">instrument_band_map</span><span class="p">[</span><span class="n">value</span><span class="p">][</span><span class="s1">&#39;instrument_oid&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="n">epoch</span>
+        <span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Execute the request to the servlet</span>
+            <span class="n">request_result</span> <span class="o">=</span> <span class="n">esautils</span><span class="o">.</span><span class="n">execute_servlet_request</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">ISLA_SERVLET</span><span class="p">,</span>
+                                                              <span class="n">tap</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="p">,</span>
+                                                              <span class="n">query_params</span><span class="o">=</span><span class="n">query_params</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">request_result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Please try with different input parameters.&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Parse the spectrum</span>
+            <span class="n">downloaded_files</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">request_result</span><span class="p">:</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;RETRIEVAL_TYPE&#39;</span><span class="p">:</span> <span class="s1">&#39;spectras&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;spectra_oid&#39;</span><span class="p">:</span> <span class="n">element</span><span class="p">[</span><span class="s1">&#39;spectraOid&#39;</span><span class="p">]}</span>
+                <span class="n">downloaded_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">esautils</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">ISLA_DATA_SERVER</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="o">.</span><span class="n">_session</span><span class="p">,</span>
+                                           <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+                                           <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">cache_folder</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_location</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">read_fits</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">esautils</span><span class="o">.</span><span class="n">read_downloaded_fits</span><span class="p">(</span><span class="n">downloaded_files</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">downloaded_files</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Spectra are not available with these inputs. </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Problem when retrieving spectra. </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.get_mosaic">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.get_mosaic">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_mosaic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">read_fits</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Method to download mosaics associated to an epoch and instrument or band</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        epoch : str, mandatory</span>
+<span class="sd">            reference epoch for the short term timeseries</span>
+<span class="sd">        instrument : str</span>
+<span class="sd">            Possible values are in isla.instruments object</span>
+<span class="sd">        band : str</span>
+<span class="sd">            Possible values are in isla.bandsobject</span>
+<span class="sd">        cache: bool, optional, default False</span>
+<span class="sd">                Flag to determine if the file is stored in the cache or not</span>
+<span class="sd">        path: str, optional</span>
+<span class="sd">            Path for the downloaded file</span>
+<span class="sd">        filename: str, optional</span>
+<span class="sd">            Filename for the downloaded file</span>
+<span class="sd">        read_fits: bool, optional, default True</span>
+<span class="sd">            Open the downloaded file and parse the existing FITS files</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        If read_fits=True, a list with objects containing filename, path and FITS file opened with mosaics.</span>
+<span class="sd">        If read_fits=False, a list of paths of the downloaded files</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__validate_epoch</span><span class="p">(</span><span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">,</span>
+                              <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">)</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_instrument_or_band</span><span class="p">(</span><span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">)</span>
+
+        <span class="n">query_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;REQUEST&#39;</span><span class="p">:</span> <span class="s1">&#39;mosaics&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;band_oid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">instrument_band_map</span><span class="p">[</span><span class="n">value</span><span class="p">][</span><span class="s1">&#39;band_oid&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;epoch&quot;</span><span class="p">:</span> <span class="n">epoch</span>
+        <span class="p">}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Execute the request to the servlet</span>
+            <span class="n">request_result</span> <span class="o">=</span> <span class="n">esautils</span><span class="o">.</span><span class="n">execute_servlet_request</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">ISLA_SERVLET</span><span class="p">,</span>
+                                                              <span class="n">tap</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="p">,</span>
+                                                              <span class="n">query_params</span><span class="o">=</span><span class="n">query_params</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">request_result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Please try with different input parameters.&#39;</span><span class="p">)</span>
+
+            <span class="n">downloaded_files</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">request_result</span><span class="p">:</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;RETRIEVAL_TYPE&#39;</span><span class="p">:</span> <span class="s1">&#39;mosaics&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;mosaic_oid&#39;</span><span class="p">:</span> <span class="n">element</span><span class="p">[</span><span class="s1">&#39;mosaicOid&#39;</span><span class="p">]}</span>
+                <span class="n">downloaded_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">esautils</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">ISLA_DATA_SERVER</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="o">.</span><span class="n">_session</span><span class="p">,</span>
+                                           <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+                                           <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">cache_folder</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_location</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">read_fits</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">esautils</span><span class="o">.</span><span class="n">read_downloaded_fits</span><span class="p">(</span><span class="n">downloaded_files</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">downloaded_files</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Mosaics are not available for these inputs. </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Problem when retrieving mosaics. </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.get_source_metadata">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.get_source_metadata">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_source_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the metadata associated to an INTEGRAL target</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        target_name : str, mandatory</span>
+<span class="sd">            target name to be requested, mandatory</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        An object containing te metadata from the target</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">query_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;REQUEST&#39;</span><span class="p">:</span> <span class="s1">&#39;sources&#39;</span><span class="p">,</span>
+            <span class="s2">&quot;SOURCE&quot;</span><span class="p">:</span> <span class="n">target_name</span>
+        <span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">esautils</span><span class="o">.</span><span class="n">execute_servlet_request</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">ISLA_SERVLET</span><span class="p">,</span>
+                                                    <span class="n">tap</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="p">,</span>
+                                                    <span class="n">query_params</span><span class="o">=</span><span class="n">query_params</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;Source not found in the database&#39;</span> <span class="ow">in</span> <span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Target </span><span class="si">{</span><span class="n">target_name</span><span class="si">}</span><span class="s2"> cannot be resolved for ISLA&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">e</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.get_instrument_band_map">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.get_instrument_band_map">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_instrument_band_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Maps the bands and instruments included in ISLA</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instrument_band_map</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">instrument_band_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">ISLA_INSTRUMENT_BAND_QUERY</span><span class="p">)</span>
+            <span class="n">instrument_band_map</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">instrument_band_table</span><span class="p">:</span>
+                <span class="n">instrument_band_map</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;instrument&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;band&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;band&#39;</span><span class="p">],</span>
+                                                          <span class="s1">&#39;instrument_oid&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;instrument_oid&#39;</span><span class="p">],</span>
+                                                          <span class="s1">&#39;band_oid&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;band_oid&#39;</span><span class="p">]}</span>
+                <span class="n">instrument_band_map</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;band&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;instrument&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;instrument&#39;</span><span class="p">],</span>
+                                                    <span class="s1">&#39;instrument_oid&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;instrument_oid&#39;</span><span class="p">],</span>
+                                                    <span class="s1">&#39;band_oid&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;band_oid&#39;</span><span class="p">]}</span>
+
+            <span class="n">instruments</span> <span class="o">=</span> <span class="n">instrument_band_table</span><span class="p">[</span><span class="s1">&#39;instrument&#39;</span><span class="p">]</span>
+            <span class="n">bands</span> <span class="o">=</span> <span class="n">instrument_band_table</span><span class="p">[</span><span class="s1">&#39;band&#39;</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">instruments</span> <span class="o">=</span> <span class="n">instruments</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bands</span> <span class="o">=</span> <span class="n">bands</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">instrument_band_map</span> <span class="o">=</span> <span class="n">instrument_band_map</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.get_instruments">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.get_instruments">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_instruments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the instruments available in ISLA</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_instrument_band_map</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">instruments</span></div>
+
+
+<div class="viewcode-block" id="IntegralClass.get_bands">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass.get_bands">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_bands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the bands available in ISLA</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_instrument_band_map</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bands</span></div>
+
+
+    <span class="k">def</span> <span class="nf">__get_instrument_or_band</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instrument</span><span class="p">,</span> <span class="n">band</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">instrument</span> <span class="ow">and</span> <span class="n">band</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Please use only instrument or band as &quot;</span>
+                            <span class="s2">&quot;parameter.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">instrument</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">band</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Please use at least one parameter, instrument or band.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">instrument</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">instrument</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">band</span>
+
+        <span class="c1"># Retrieve the available instruments or bands if not loaded yet</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_instrument_band_map</span><span class="p">()</span>
+
+        <span class="c1"># Validate the value is in the list of allowed ones</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">instrument_band_map</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;This is not a valid value for instrument or band. Valid values are:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;Instruments: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_instruments</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;Bands: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">get_bands</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_oids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the band_oid and instrument_oid associated to a band or instrument</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value: str</span>
+<span class="sd">            value to check</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">instrument_band_map</span><span class="p">[</span><span class="n">value</span><span class="p">][</span><span class="s1">&#39;instrument_oid&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">instrument_band_map</span><span class="p">[</span><span class="n">value</span><span class="p">][</span><span class="s1">&#39;band_oid&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__validate_revno</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rev_no</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verifies if the format for revolution number is correct</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rev_no: str</span>
+<span class="sd">            revolution number</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rev_no</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Revolution number </span><span class="si">{</span><span class="n">rev_no</span><span class="si">}</span><span class="s2"> is not correct. It must be a four-digit number as a string, &quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;with leading zeros to complete the four digits&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__validate_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">target_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate if the epoch is available for the target name and instrument or band</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        epoch : str, mandatory</span>
+<span class="sd">            reference epoch for the short term timeseries</span>
+<span class="sd">        target_name : str, optional</span>
+<span class="sd">            target name to be requested, mandatory</span>
+<span class="sd">        instrument : str, optional</span>
+<span class="sd">            Possible values are in isla.instruments object</span>
+<span class="sd">        band : str, optional</span>
+<span class="sd">            Possible values are in isla.bandsobject</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">available_epochs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_epochs</span><span class="p">(</span><span class="n">target_name</span><span class="o">=</span><span class="n">target_name</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">epoch</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">available_epochs</span><span class="p">[</span><span class="s1">&#39;epoch&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Epoch </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2"> is not available for this target and instrument/band.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get_science_window_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">science_windows</span><span class="p">,</span> <span class="n">observation_id</span><span class="p">,</span> <span class="n">revolution</span><span class="p">,</span> <span class="n">proposal</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verifies if only one parameter is not null and return its value</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        science_windows : list of str or str, mandatory</span>
+<span class="sd">            Science Windows to download</span>
+<span class="sd">        observation_id: str, optional</span>
+<span class="sd">            Observation ID associated to science windows</span>
+<span class="sd">        revolution: str, optional</span>
+<span class="sd">            Revolution associated to science windows</span>
+<span class="sd">        proposal: str, optional</span>
+<span class="sd">            Proposal ID associated to science windows</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The correct parameter for the science windows</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">science_windows</span><span class="p">,</span> <span class="n">observation_id</span><span class="p">,</span> <span class="n">revolution</span><span class="p">,</span> <span class="n">proposal</span><span class="p">]</span>
+
+        <span class="c1"># Count how many are not None</span>
+        <span class="n">non_none_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">params</span><span class="p">)</span>
+
+        <span class="c1"># Ensure only one parameter is provided</span>
+        <span class="k">if</span> <span class="n">non_none_count</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only one parameter can be provided at a time.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">science_windows</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">science_windows</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;scwid&#39;</span><span class="p">:</span> <span class="n">science_windows</span><span class="p">}</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">science_windows</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;scwid&#39;</span><span class="p">:</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">science_windows</span><span class="p">)}</span>
+
+        <span class="k">if</span> <span class="n">observation_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observation_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;obsid&#39;</span><span class="p">:</span> <span class="n">observation_id</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">revolution</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">revolution</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;REVID&#39;</span><span class="p">:</span> <span class="n">revolution</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">proposal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">proposal</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;PROPID&#39;</span><span class="p">:</span> <span class="n">proposal</span><span class="p">}</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input parameters are wrong&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="n">Integral</span> <span class="o">=</span> <span class="n">IntegralClass</span><span class="p">()</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 01 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>

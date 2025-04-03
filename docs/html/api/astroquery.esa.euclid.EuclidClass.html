@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>EuclidClass &#8212; astroquery v0.4.8.dev10179</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+    
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=1d6242bd"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Conf" href="astroquery.esa.euclid.Conf.html" />
+    <link rel="prev" title="ESA EUCLID Archive (astroquery.esa.euclid)" href="../esa/euclid/euclid.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astroquery.esa.euclid.Conf.html" title="Conf">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../esa/euclid/euclid.html" title="ESA EUCLID Archive (astroquery.esa.euclid)">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">astroquery v0.4.8.dev10179</a>
+	 &#187;
+      </li>
+      <li><a href="../esa/euclid/euclid.html" accesskey="U">ESA EUCLID Archive (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.esa.euclid</span></code>)</a> &#187;</li>
+      
+      <li>EuclidClass</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="euclidclass">
+<h1>EuclidClass<a class="headerlink" href="#euclidclass" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">astroquery.esa.euclid.</span></span><span class="sig-name descname"><span class="pre">EuclidClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">environment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'PDR'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tap_plus_conn_handler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datalink_handler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutout_handler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_server_messages</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/euclid/core.html#EuclidClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astroquery.utils.tap.TapPlus.html#astroquery.utils.tap.TapPlus" title="astroquery.utils.tap.core.TapPlus"><code class="xref py py-class docutils literal notranslate"><span class="pre">TapPlus</span></code></a></p>
+<p>Constructor for EuclidClass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>environment</strong><span class="classifier">str, mandatory if no tap, data or cutout hosts is specified, default ‘PDR’</span></dt><dd><p>The Euclid Science Archive environment: ‘PDR’, ‘IDR’, ‘OTF’ and ‘REG’</p>
+</dd>
+<dt><strong>tap_plus_conn_handler</strong><span class="classifier">tap connection handler object, optional, default None</span></dt><dd><p>HTTP(s) connection hander (creator). If no handler is provided, a new one is created.</p>
+</dd>
+<dt><strong>datalink_handler</strong><span class="classifier">dataliink connection handler object, optional, default None</span></dt><dd><p>HTTP(s) connection hander (creator). If no handler is provided, a new one is created.</p>
+</dd>
+<dt><strong>cutout_handler</strong><span class="classifier">cutout connection handler object, optional, default None</span></dt><dd><p>HTTP(s) connection hander (creator). If no handler is provided, a new one is created.</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional, default ‘True’</span></dt><dd><p>flag to display information about the process</p>
+</dd>
+<dt><strong>show_server_messages</strong><span class="classifier">bool, optional, default ‘True’</span></dt><dd><p>show the messages to inform users about the status of Euclid TAP</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Attributes Summary</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.EUCLID_MESSAGES" title="astroquery.esa.euclid.EuclidClass.EUCLID_MESSAGES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EUCLID_MESSAGES</span></code></a></p></td>
+<td><p>Proxy class to default TapPlus object (pointing to the Euclid archive)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.ROW_LIMIT" title="astroquery.esa.euclid.EuclidClass.ROW_LIMIT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ROW_LIMIT</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.cone_search" title="astroquery.esa.euclid.EuclidClass.cone_search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cone_search</span></code></a>(coordinate, radius, *[, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.get_cutout" title="astroquery.esa.euclid.EuclidClass.get_cutout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cutout</span></code></a>(*[, file_path, instrument, id, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.get_datalinks" title="astroquery.esa.euclid.EuclidClass.get_datalinks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_datalinks</span></code></a>(ids, *[, linking_parameter, ...])</p></td>
+<td><p>Gets datalinks associated to the provided identifiers TAP+ only</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.get_observation_products" title="astroquery.esa.euclid.EuclidClass.get_observation_products"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_observation_products</span></code></a>(*[, id, schema, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.get_product" title="astroquery.esa.euclid.EuclidClass.get_product"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_product</span></code></a>(*[, file_name, product_id, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.get_product_list" title="astroquery.esa.euclid.EuclidClass.get_product_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_product_list</span></code></a>(*[, observation_id, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.get_spectrum" title="astroquery.esa.euclid.EuclidClass.get_spectrum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_spectrum</span></code></a>(*, source_id[, schema, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.get_status_messages" title="astroquery.esa.euclid.EuclidClass.get_status_messages"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_status_messages</span></code></a>([verbose])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.is_gz_file" title="astroquery.esa.euclid.EuclidClass.is_gz_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_gz_file</span></code></a>(filepath)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.launch_job" title="astroquery.esa.euclid.EuclidClass.launch_job"><code class="xref py py-obj docutils literal notranslate"><span class="pre">launch_job</span></code></a>(query, *[, name, dump_to_file, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.launch_job_async" title="astroquery.esa.euclid.EuclidClass.launch_job_async"><code class="xref py py-obj docutils literal notranslate"><span class="pre">launch_job_async</span></code></a>(query, *[, name, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.login" title="astroquery.esa.euclid.EuclidClass.login"><code class="xref py py-obj docutils literal notranslate"><span class="pre">login</span></code></a>(*[, user, password, credentials_file, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.login_gui" title="astroquery.esa.euclid.EuclidClass.login_gui"><code class="xref py py-obj docutils literal notranslate"><span class="pre">login_gui</span></code></a>([verbose])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.logout" title="astroquery.esa.euclid.EuclidClass.logout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logout</span></code></a>([verbose])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.query_object" title="astroquery.esa.euclid.EuclidClass.query_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_object</span></code></a>(coordinate, *[, radius, width, ...])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass.EUCLID_MESSAGES">
+<span class="sig-name descname"><span class="pre">EUCLID_MESSAGES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'notification?action=GetNotifications'</span></em><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass.EUCLID_MESSAGES" title="Link to this definition">¶</a></dt>
+<dd><p>Proxy class to default TapPlus object (pointing to the Euclid archive)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass.ROW_LIMIT">
+<span class="sig-name descname"><span class="pre">ROW_LIMIT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">50</span></em><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass.ROW_LIMIT" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass.cone_search">
+<span class="sig-name descname"><span class="pre">cone_search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coordinate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ra_column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec_column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">async_job</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump_to_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'csv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/euclid/core.html#EuclidClass.cone_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass.cone_search" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>coordinate</strong><span class="classifier">astropy.coordinate, mandatory</span></dt><dd><p>coordinates center point</p>
+</dd>
+<dt><strong>radius</strong><span class="classifier">astropy.units, mandatory</span></dt><dd><p>radius</p>
+</dd>
+<dt><strong>table_name</strong><span class="classifier">str, optional, default the table defined for the selected environment</span></dt><dd><p>Table to search</p>
+</dd>
+<dt><strong>ra_column_name</strong><span class="classifier">str, optional, default the column name defined for the selected environment</span></dt><dd><p>Name of the RA column in the table</p>
+</dd>
+<dt><strong>dec_column_name</strong><span class="classifier">str, optional, default the column name defined for the selected environment</span></dt><dd><p>Name of the DEC column in the table</p>
+</dd>
+<dt><strong>async_job</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>executes the job in asynchronous/synchronous mode (default
+synchronous)</p>
+</dd>
+<dt><strong>background</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>when the job is executed in asynchronous mode, this flag specifies
+whether the execution will wait until results are available</p>
+</dd>
+<dt><strong>dump_to_file</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>if True, the results are saved in a file instead of using memory</p>
+</dd>
+<dt><strong>output_file</strong><span class="classifier">str, optional, default None</span></dt><dd><p>file name where the results are saved if dump_to_file is True.
+If this parameter is not provided, the job id is used instead</p>
+</dd>
+<dt><strong>output_format</strong><span class="classifier">str, optional, default ‘csv’</span></dt><dd><p>Output format for the output file</p>
+</dd>
+<dt><strong>columns: list, optional, default None</strong></dt><dd><p>if empty, all columns will be selected</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>flag to display information about the process</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>A Job object</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass.get_cutout">
+<span class="sig-name descname"><span class="pre">get_cutout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/euclid/core.html#EuclidClass.get_cutout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass.get_cutout" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>file_path</strong><span class="classifier">str, mandatory, default None</span></dt><dd><p>file path for the product on the server</p>
+</dd>
+<dt><strong>instrument</strong><span class="classifier">str, mandatory, default None</span></dt><dd><p>instrument for the product, can be ‘VIS’ or ‘NISP’</p>
+</dd>
+<dt><strong>id</strong><span class="classifier">str, mandatory, default None</span></dt><dd><p>the observation id or tile index for MER products</p>
+</dd>
+<dt><strong>coordinate</strong><span class="classifier">astropy.coordinate, mandatory</span></dt><dd><p>coordinates center point</p>
+</dd>
+<dt><strong>radius</strong><span class="classifier">astropy.units, mandatory</span></dt><dd><p>the radius of the cutout to generate</p>
+</dd>
+<dt><strong>output_file</strong><span class="classifier">str, optional</span></dt><dd><p>output file. If no value is provided, a temporary one is created</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>flag to display information about the process</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>The fits file is downloaded, and the local path where the cutout is saved is returned</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass.get_datalinks">
+<span class="sig-name descname"><span class="pre">get_datalinks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ids</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linking_parameter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SOURCE_ID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/euclid/core.html#EuclidClass.get_datalinks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass.get_datalinks" title="Link to this definition">¶</a></dt>
+<dd><p>Gets datalinks associated to the provided identifiers
+TAP+ only</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>ids</strong><span class="classifier">str, int, list of str or list of int, mandatory</span></dt><dd><p>list of identifiers</p>
+</dd>
+<dt><strong>linking_parameter</strong><span class="classifier">str, optional, default SOURCE_ID, valid values: SOURCE_ID</span></dt><dd><p>By default, all the identifiers are considered as source_id</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>flag to display information about the process</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>A table object</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass.get_observation_products">
+<span class="sig-name descname"><span class="pre">get_observation_products</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sedm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_subtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'STK'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'VIS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/euclid/core.html#EuclidClass.get_observation_products"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass.get_observation_products" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>id</strong><span class="classifier">str, mandatory</span></dt><dd><p>observation identifier (observation id for observations, mosaic id for mosaics)</p>
+</dd>
+<dt><strong>schema</strong><span class="classifier">str, optional</span></dt><dd><p>schema name. Default value is ‘sedm’.</p>
+</dd>
+<dt><strong>product_type</strong><span class="classifier">str, mandatory, default None</span></dt><dd><p>list only products of the given type.
+possible values: ‘observation’, ‘mosaic’</p>
+</dd>
+<dt><strong>product_subtype</strong><span class="classifier">str, optional, default ‘STK’</span></dt><dd><p>list only products of the given subtype. Possible values: ‘STK’, ‘ALL’, ‘PSF’, ‘BKG’
+for observations also ‘DET’, ‘WGT’
+for mosaics also ‘GRID_PSF’, ‘FLAG’, ‘RMS’.</p>
+</dd>
+<dt><strong>filter</strong><span class="classifier">str, optional, default ‘VIS’</span></dt><dd><p>list products for this instrument, only for observations. Possible values: ‘VIS’, ‘NIR_J’, ‘NIR_H’, ‘NIR_Y’</p>
+</dd>
+<dt><strong>output_file</strong><span class="classifier">str, optional</span></dt><dd><p>output file, use zip extension when downloading multiple files
+if no value is provided, a temporary one is created</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>flag to display information about the process</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>The fits file(s) are downloaded, and the local path where the product(s) are saved is returned</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass.get_product">
+<span class="sig-name descname"><span class="pre">get_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sedm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/euclid/core.html#EuclidClass.get_product"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass.get_product" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>file_name</strong><span class="classifier">str, optional, default None</span></dt><dd><p>file name for the product. More than one can be specified between comma. Either file_name or product_id
+is mandatory</p>
+</dd>
+<dt><strong>product_id</strong><span class="classifier">str, optional, default None</span></dt><dd><p>product id. More than one can be specified between comma. Either file_name or product_id is mandatory</p>
+</dd>
+<dt><strong>schema</strong><span class="classifier">str, optional, default ‘sedm’</span></dt><dd><p>the data release name (schema) in which the product should be searched</p>
+</dd>
+<dt><strong>output_file</strong><span class="classifier">str, optional</span></dt><dd><p>output file, use zip extension when downloading multiple files
+if no value is provided, a temporary one is created</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>flag to display information about the process</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>The fits file(s) are downloaded, and the local path where the product(s) are saved is returned</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass.get_product_list">
+<span class="sig-name descname"><span class="pre">get_product_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tile_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/euclid/core.html#EuclidClass.get_product_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass.get_product_list" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>observation_id</strong><span class="classifier">str, mandatory</span></dt><dd><p>observation id for observations. It is not compatible with parameter tile_index.</p>
+<p>Searchable products by observation_id: ‘dpdVisRawFrame’, ‘dpdNispRawFrame’,
+,’DpdVisCalibratedQuadFrame’,’DpdVisCalibratedFrameCatalog’, ‘DpdVisStackedFrame’,
+‘DpdVisStackedFrameCatalog’,
+‘DpdNirCalibratedFrame’, ‘DpdNirCalibratedFrameCatalog’, ‘DpdNirStackedFrameCatalog’, ‘DpdNirStackedFrame’,
+‘DpdMerSegmentationMap’, ‘dpdMerFinalCatalog’,
+‘dpdPhzPfOutputCatalog’, ‘dpdPhzPfOutputForL3’,
+‘dpdSpePfOutputCatalog’,
+‘dpdSheLensMcChains’,’dpdSheBiasParams’, ‘dpdSheLensMcFinalCatalog’,’dpdSheLensMcRawCatalog’,
+‘dpdSheMetaCalFinalCatalog’, ‘dpdSheMetaCalRawCatalog’,
+‘dpdHealpixBitMaskVMPZ’, ‘dpdHealpixFootprintMaskVMPZ’, ‘dpdHealpixCoverageVMPZ’,
+‘dpdHealpixDepthMapVMPZ’, ‘dpdHealpixInfoMapVMPZ’,
+‘dpdSleDetectionOutput’,’dpdSleModelOutput’,
+‘DpdSirCombinedSpectra’,’dpdSirScienceFrame’</p>
+</dd>
+<dt><strong>tile_index</strong><span class="classifier">str, mandatory</span></dt><dd><p>tile index for products searchable by tile. It is not compatible with parameter observation_id.</p>
+<p>Searchable products by tile_index:
+‘DpdMerSegmentationMap’, ‘dpdMerFinalCatalog’, ‘DpdMerBksMosaic’,
+‘dpdPhzPfOutputCatalog’,’dpdPhzPfOutputForL3’,
+‘dpdSpePfOutputCatalog’,
+‘dpdSheLensMcChains’, ‘dpdSheBiasParams’,  ‘dpdSheLensMcFinalCatalog’, ‘dpdSheLensMcRawCatalog’,
+‘dpdSheMetaCalFinalCatalog’, ‘dpdSheMetaCalRawCatalog’,
+‘dpdHealpixBitMaskVMPZ’, ‘dpdHealpixFootprintMaskVMPZ’, ‘dpdHealpixCoverageVMPZ’,
+‘dpdHealpixDepthMapVMPZ’,’dpdHealpixInfoMapVMPZ’,
+dpdSleDetectionOutput’, ‘dpdSleModelOutput’,
+‘DpdSirCombinedSpectra’</p>
+</dd>
+<dt><strong>product_type</strong><span class="classifier">str, mandatory, default None</span></dt><dd><p>Available product types:</p>
+<ol class="arabic">
+<li><p>Euclid LE1 observations:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><dl class="simple">
+<dt>VIS</dt><dd><p>DpdVisRawFrame: Vis Raw Frame Product</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>NISP</dt><dd><p>DpdNispRawFrame: NISP Raw Frame Product</p>
+</dd>
+</dl>
+</li>
+</ol>
+</div></blockquote>
+</li>
+<li><p>Euclid LE2/LE3 products:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><dl class="simple">
+<dt>VIS</dt><dd><p>DpdVisCalibratedQuadFrame: VIS Calibrated Frame Product
+DpdVisCalibratedFrameCatalog: VIS Calibrated Frame Catalog
+DpdVisStackedFrame: Vis Stacked Frame Product   - This product is not available in Q1
+DpdVisStackedFrameCatalog: Vis Stacked Catalogue Product    - This product is not available in Q1</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>NIR</dt><dd><p>DpdNirCalibratedFrame: NIR Calibrated Frame
+DpdNirCalibratedFrameCatalog: NIR Calibrated Frame Catalog
+DpdNirStackedFrame: NIR Stacked Frame   - This product is not available in Q1
+DpdNirStackedFrameCatalog: NIR Stacked Frame Catalog    - This product is not available in Q1</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>MER</dt><dd><p>DpdMerSegmentationMap: Segmentation Map Product
+DpdMerBksMosaic: Background-Subtracted Mosaic Product
+dpdMerFinalCatalog: Final Catalog Product                                            - We suggest to use ADQL to retrieve data from this dataset.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>PHZ      - We suggest to use ADQL to retrieve data from these products.</dt><dd><p>dpdPhzPfOutputCatalog: PHZ PF output catalog product for weak lensing
+dpdPhzPfOutputForL3: PHZ PF output catalog product for LE3</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>SPE      - We suggest to use ADQL to retrieve data from this product.</dt><dd><p>dpdSpePfOutputCatalog: SPE PF output catalog product</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>SHE      - None of these product are available in Q1</dt><dd><p>dpdSheLensMcChains: Shear LensMc Chains
+dpdSheBiasParams: Shear Bias Parameters Data Product
+dpdSheLensMcFinalCatalog: Shear LensMc Final Catalog
+dpdSheLensMcRawCatalog: Shear LensMc Raw Catalog
+dpdSheMetaCalFinalCatalog: Shear MetaCal Final Catalog
+dpdSheMetaCalRawCatalog: Shear LensMc Raw Catalog</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>VMPZ-ID</dt><dd><p>dpdHealpixBitMaskVMPZ: Input Product: Bit Mask Parameters
+dpdHealpixFootprintMaskVMPZ: Output Product: HEALPix Footprint Mask
+dpdHealpixCoverageVMPZ: Output Product: HEALPix Coverage Mask
+dpdHealpixDepthMapVMPZ: Input Product: Depth Maps Parameters
+dpdHealpixInfoMapVMPZ: Input Product: Information Map Parameters</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>SLE      - None of these product are available in Q1</dt><dd><p>dpdSleDetectionOutput: SLE Detection Output
+dpdSleModelOutput: SLE Model Output</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>SIR</dt><dd><p>DpdSirCombinedSpectra: Combined Spectra Product                                            - We suggest to use ADQL to retrieve data (spectra) from this dataset.
+dpdSirScienceFrame: Science Frame Product</p>
+</dd>
+</dl>
+</li>
+</ol>
+</div></blockquote>
+</li>
+</ol>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>flag to display information about the process</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>The list of products (astropy.table)</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass.get_spectrum">
+<span class="sig-name descname"><span class="pre">get_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sedm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retrieval_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ALL'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/euclid/core.html#EuclidClass.get_spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass.get_spectrum" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>source_id</strong><span class="classifier">str, mandatory, default None</span></dt><dd><p>source id for the spectrum</p>
+</dd>
+<dt><strong>schema</strong><span class="classifier">str, mandatory, default ‘sedm’</span></dt><dd><p>the data release</p>
+</dd>
+<dt><strong>retrieval_type</strong><span class="classifier">str, optional, default ‘ALL’ to retrieve all data from the list of sources</span></dt><dd><p>retrieval type identifier. Possible values are: ‘SPECTRA_BGS’ for the blue spectrum and ‘SPECTRA_RGS’ for
+the red one.</p>
+</dd>
+<dt><strong>output_file</strong><span class="classifier">str, optional</span></dt><dd><p>output file name. If no value is provided, a temporary one is created with the name
+“&lt;working directory&gt;/temp_&lt;%Y%m%d_%H%M%S&gt;/&lt;source_id&gt;.fits”</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>flag to display information about the process</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>A list of files: the files contained in the downloaded compressed fits file. The format of the file is</dt><dd></dd>
+<dt>SPECTRA_&lt;colour&gt;-&lt;schema&gt; &lt;source_id&gt;.fits’, where &lt;colour&gt; is BGS or RGS, and &lt;schema&gt; and &lt;source_id&gt; are</dt><dd></dd>
+<dt>taken from the input parameters.</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass.get_status_messages">
+<span class="sig-name descname"><span class="pre">get_status_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/euclid/core.html#EuclidClass.get_status_messages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass.get_status_messages" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>verbose</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>flag to display information about the process</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass.is_gz_file">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_gz_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/euclid/core.html#EuclidClass.is_gz_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass.is_gz_file" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass.launch_job">
+<span class="sig-name descname"><span class="pre">launch_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump_to_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'csv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/euclid/core.html#EuclidClass.launch_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass.launch_job" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>query</strong><span class="classifier">str, mandatory</span></dt><dd><p>query to be executed</p>
+</dd>
+<dt><strong>name</strong><span class="classifier">str, optional, default None</span></dt><dd><p>custom name defined by the user for the job that is going to be created</p>
+</dd>
+<dt><strong>dump_to_file</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>if True, the results are saved in a file instead of using memory</p>
+</dd>
+<dt><strong>output_file</strong><span class="classifier">str, optional, default None</span></dt><dd><p>File name where the results are saved if dump_to_file is True.
+If this parameter is not provided, the job id is used instead</p>
+</dd>
+<dt><strong>output_format</strong><span class="classifier">str, optional, default ‘csv’</span></dt><dd><p>output format for the output file</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>flag to display information about the process</p>
+</dd>
+<dt><strong>upload_resource: str, optional, default None</strong></dt><dd><p>resource to be uploaded to UPLOAD_SCHEMA</p>
+</dd>
+<dt><strong>upload_table_name: str, required if uploadResource is provided, default None</strong></dt><dd><p>resource temporary table name associated to the uploaded resource</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>A Job object</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass.launch_job_async">
+<span class="sig-name descname"><span class="pre">launch_job_async</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump_to_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'csv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autorun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/euclid/core.html#EuclidClass.launch_job_async"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass.launch_job_async" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>query</strong><span class="classifier">str, mandatory</span></dt><dd><p>query to be executed</p>
+</dd>
+<dt><strong>name</strong><span class="classifier">str, optional, default None</span></dt><dd><p>custom name defined by the user for the job that is going to be created</p>
+</dd>
+<dt><strong>dump_to_file</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>if True, the results are saved in a file instead of using memory</p>
+</dd>
+<dt><strong>output_file</strong><span class="classifier">str, optional, default None</span></dt><dd><p>file name where the results are saved if dump_to_file is True.
+if this parameter is not provided, the jobid is used instead</p>
+</dd>
+<dt><strong>output_format</strong><span class="classifier">str, optional, default ‘csv’</span></dt><dd><p>format of the results for the output file</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>flag to display information about the process</p>
+</dd>
+<dt><strong>background</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>when the job is executed in asynchronous mode, this flag specifies whether
+the execution will wait until results are available</p>
+</dd>
+<dt><strong>upload_resource: str, optional, default None</strong></dt><dd><p>resource to be uploaded to UPLOAD_SCHEMA</p>
+</dd>
+<dt><strong>upload_table_name: str, required if uploadResource is provided, default None</strong></dt><dd><p>resource temporary table name associated to the uploaded resource</p>
+</dd>
+<dt><strong>autorun</strong><span class="classifier">boolean, optional, default True</span></dt><dd><p>if ‘True’, sets ‘phase’ parameter to ‘RUN’,
+so the framework can start the job.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>A Job object</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass.login">
+<span class="sig-name descname"><span class="pre">login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/euclid/core.html#EuclidClass.login"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass.login" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>user</strong><span class="classifier">str, mandatory if ‘file’ is not provided, default None</span></dt><dd><p>login name</p>
+</dd>
+<dt><strong>password</strong><span class="classifier">str, mandatory if ‘file’ is not provided, default None</span></dt><dd><p>user password</p>
+</dd>
+<dt><strong>credentials_file</strong><span class="classifier">str, mandatory if no ‘user’ &amp; ‘password’ are provided</span></dt><dd><p>file containing user and password in two lines</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>flag to display information about the process</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass.login_gui">
+<span class="sig-name descname"><span class="pre">login_gui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/euclid/core.html#EuclidClass.login_gui"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass.login_gui" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>verbose</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>flag to display information about the process</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass.logout">
+<span class="sig-name descname"><span class="pre">logout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/euclid/core.html#EuclidClass.logout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass.logout" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>verbose</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>flag to display information about the process</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.euclid.EuclidClass.query_object">
+<span class="sig-name descname"><span class="pre">query_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coordinate</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">async_job</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/euclid/core.html#EuclidClass.query_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.euclid.EuclidClass.query_object" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>coordinate</strong><span class="classifier">astropy.coordinate, mandatory</span></dt><dd><p>coordinates center point</p>
+</dd>
+<dt><strong>radius</strong><span class="classifier">astropy.units, required if no ‘width’ nor ‘height’ are provided</span></dt><dd><p>radius (deg)</p>
+</dd>
+<dt><strong>width</strong><span class="classifier">astropy.units, required if no ‘radius’ is provided</span></dt><dd><p>box width</p>
+</dd>
+<dt><strong>height</strong><span class="classifier">astropy.units, required if no ‘radius’ is provided</span></dt><dd><p>box height</p>
+</dd>
+<dt><strong>async_job</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>executes the query (job) in asynchronous/synchronous mode (default
+synchronous)</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>flag to display information about the process</p>
+</dd>
+<dt><strong>columns: list, optional, default None</strong></dt><dd><p>if empty, all columns will be selected</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>The job results (astropy.table)</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">EuclidClass</a><ul>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass"><code class="docutils literal notranslate"><span class="pre">EuclidClass</span></code></a><ul>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.EUCLID_MESSAGES"><code class="docutils literal notranslate"><span class="pre">EuclidClass.EUCLID_MESSAGES</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.ROW_LIMIT"><code class="docutils literal notranslate"><span class="pre">EuclidClass.ROW_LIMIT</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.cone_search"><code class="docutils literal notranslate"><span class="pre">EuclidClass.cone_search()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.get_cutout"><code class="docutils literal notranslate"><span class="pre">EuclidClass.get_cutout()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.get_datalinks"><code class="docutils literal notranslate"><span class="pre">EuclidClass.get_datalinks()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.get_observation_products"><code class="docutils literal notranslate"><span class="pre">EuclidClass.get_observation_products()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.get_product"><code class="docutils literal notranslate"><span class="pre">EuclidClass.get_product()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.get_product_list"><code class="docutils literal notranslate"><span class="pre">EuclidClass.get_product_list()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.get_spectrum"><code class="docutils literal notranslate"><span class="pre">EuclidClass.get_spectrum()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.get_status_messages"><code class="docutils literal notranslate"><span class="pre">EuclidClass.get_status_messages()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.is_gz_file"><code class="docutils literal notranslate"><span class="pre">EuclidClass.is_gz_file()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.launch_job"><code class="docutils literal notranslate"><span class="pre">EuclidClass.launch_job()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.launch_job_async"><code class="docutils literal notranslate"><span class="pre">EuclidClass.launch_job_async()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.login"><code class="docutils literal notranslate"><span class="pre">EuclidClass.login()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.login_gui"><code class="docutils literal notranslate"><span class="pre">EuclidClass.login_gui()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.logout"><code class="docutils literal notranslate"><span class="pre">EuclidClass.logout()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.euclid.EuclidClass.query_object"><code class="docutils literal notranslate"><span class="pre">EuclidClass.query_object()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="../_sources/api/astroquery.esa.euclid.EuclidClass.rst.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 02 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>

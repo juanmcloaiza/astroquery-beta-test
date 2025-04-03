@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>CDS MOC Service (astroquery.mocserver) &#8212; astroquery v0.4.8.dev10179</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+    
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=1d6242bd"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Conf" href="../api/astroquery.mocserver.Conf.html" />
+    <link rel="prev" title="Conf" href="../api/astroquery.mast.Conf.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="../api/astroquery.mocserver.Conf.html" title="Conf">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../api/astroquery.mast.Conf.html" title="Conf">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">astroquery v0.4.8.dev10179</a>
+	 &#187;
+      </li>
+      
+      <li>CDS MOC Service (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.mocserver</span></code>)</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="cds-moc-service-astroquery-mocserver">
+<span id="astroquery-mocserver"></span><h1>CDS MOC Service (<a class="reference internal" href="#module-astroquery.mocserver" title="astroquery.mocserver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.mocserver</span></code></a>)<a class="headerlink" href="#cds-moc-service-astroquery-mocserver" title="Link to this heading">¶</a></h1>
+<section id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h2>
+<p>This module provides a python interface for querying the <a class="reference external" href="http://alasky.unistra.fr/MocServer/query">CDS MOCServer</a>.</p>
+<section id="what-s-a-moc">
+<h3>What’s a MOC?<a class="headerlink" href="#what-s-a-moc" title="Link to this heading">¶</a></h3>
+<p>MOC means Multi-Order Coverage. It’s an <a class="reference external" href="http://ivoa.net/documents/MOC/20140602/REC-MOC-1.0-20140602.pdf">IVOA standard</a> that allows to describe
+Space-Time coverages of arbitrary sky regions, with or without an associated time of
+observation.</p>
+<p>The space component maps the sky with the <a class="reference external" href="https://arxiv.org/abs/astro-ph/9905275">HEALPix sky tessellation</a> to represent regions on the sky
+by hierarchically grouped HEALPix cells. It other words, a Spatial MOC is a set of
+HEALPix cells at different orders.</p>
+<p>The idea is the same for Time MOCs. The time axis is split into time cells.</p>
+<p>For those wanting to know more about MOCs, please refer to <a class="reference external" href="https://ivoa.net/documents/MOC/20220727/REC-moc-2.0-20220727.pdf">the MOC 2.0 specification
+document</a>.</p>
+<p><a class="reference external" href="https://github.com/cds-astro/mocpy">MOCPy</a> is a Python library allowing to manipulate
+these Space-Time Coverage objects. You’re welcome to have a look at
+<a class="reference external" href="https://cds-astro.github.io/mocpy/">MOCPy’s documentation</a>.</p>
+</section>
+<section id="what-s-the-moc-server">
+<h3>What’s the MOC Server?<a class="headerlink" href="#what-s-the-moc-server" title="Link to this heading">¶</a></h3>
+<p>The MOC Server is a service of astronomical resources organized by spatial and/or
+temporal coverages following the Space and Time MOC specification.
+In the MOC Server, there a few tens of thousands of astronomical collections.
+They each have an identifier <code class="docutils literal notranslate"><span class="pre">ID</span></code> and a set of properties that describe their content.
+This is a practical way of finding datasets with criteria on time and/or space.</p>
+<p>The meta data properties are freely assigned by each publisher. You can get the current
+list of properties with their frequency of usage and examples example with
+<a class="reference internal" href="../api/astroquery.mocserver.MOCServerClass.html#astroquery.mocserver.MOCServerClass.list_fields" title="astroquery.mocserver.MOCServerClass.list_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.mocserver.MOCServerClass.list_fields</span></code></a>.
+This method also accepts a string to limit the number of responses. Let’s try with <code class="docutils literal notranslate"><span class="pre">MOC</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.mocserver</span> <span class="kn">import</span> <span class="n">MOCServer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MOCServer</span><span class="o">.</span><span class="n">list_fields</span><span class="p">(</span><span class="s2">&quot;MOC&quot;</span><span class="p">)</span> 
+<span class="go">&lt;Table length=7&gt;</span>
+<span class="go">   field_name    occurrence                                example</span>
+<span class="go">     str27         int64                                    str70</span>
+<span class="go">---------------- ---------- ----------------------------------------------------------------------</span>
+<span class="go">        moc_type      34226                                                                   smoc</span>
+<span class="go">  moc_access_url      33084 https://alasky.unistra.fr/footprints/tables/vizier/J_AJ_165_248_tab...</span>
+<span class="go">moc_sky_fraction      30175                                                               4.271E-6</span>
+<span class="go">       moc_order      30161                                                                     11</span>
+<span class="go">  moc_time_range       5319                                                                   5491</span>
+<span class="go">  moc_time_order       5319                                                                     35</span>
+<span class="go">moc_release_date          4                                                      2015-02-25T11:51Z</span>
+</pre></div>
+</div>
+<p>Here, we learn that there are very few MOC-related field names. The most frequent is
+<code class="docutils literal notranslate"><span class="pre">moc_type</span></code> that will tell if the MOC is a spatial moc (<code class="docutils literal notranslate"><span class="pre">smoc</span></code>), a temporal moc
+(<code class="docutils literal notranslate"><span class="pre">tmoc</span></code>)…</p>
+</section>
+</section>
+<section id="querying-with-a-region">
+<h2>Querying with a region<a class="headerlink" href="#querying-with-a-region" title="Link to this heading">¶</a></h2>
+<p>The MOCServer is optimized to return the datasets having at least one source lying in a
+specific sky region (or time interval).
+The regions can be provided either as astropy-regions from the
+<a class="reference external" href="https://astropy-regions.readthedocs.io/en/stable/">regions</a> python library,
+or as an accepted MOC type (<a class="reference external" href="https://cds-astro.github.io/mocpy/stubs/mocpy.TimeMOC.html#mocpy.TimeMOC" title="(in MOCPy v0.17.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mocpy.TimeMOC</span></code></a>, <a class="reference external" href="https://cds-astro.github.io/mocpy/stubs/mocpy.MOC.html#mocpy.MOC" title="(in MOCPy v0.17.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mocpy.MOC</span></code></a>, <a class="reference external" href="https://cds-astro.github.io/mocpy/stubs/mocpy.STMOC.html#mocpy.STMOC" title="(in MOCPy v0.17.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">STMOC</span></code></a>).
+The frequency MOCs are not yet available.</p>
+<section id="performing-a-query-on-a-cone-region">
+<h3>Performing a query on a cone region<a class="headerlink" href="#performing-a-query-on-a-cone-region" title="Link to this heading">¶</a></h3>
+<p>Let’s get the datasets for which all the data is comprised in a cone (this is
+what the <code class="docutils literal notranslate"><span class="pre">enclosed</span></code> option means for intersect). We also restrict our search to
+datasets describing the sky (with <code class="docutils literal notranslate"><span class="pre">coordinate_system=sky</span></code>).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">coordinates</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">regions</span> <span class="kn">import</span> <span class="n">CircleSkyRegion</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.mocserver</span> <span class="kn">import</span> <span class="n">MOCServer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">center</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">SkyCoord</span><span class="p">(</span><span class="mf">10.8</span><span class="p">,</span> <span class="mf">32.2</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">radius</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">Angle</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cone</span> <span class="o">=</span> <span class="n">CircleSkyRegion</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">radius</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MOCServer</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">cone</span><span class="p">,</span> <span class="n">intersect</span><span class="o">=</span><span class="s2">&quot;enclosed&quot;</span><span class="p">,</span> <span class="n">coordinate_system</span><span class="o">=</span><span class="s2">&quot;sky&quot;</span><span class="p">)</span>  
+<span class="go">&lt;Table length=450&gt;</span>
+<span class="go">              ID               ...</span>
+<span class="go">            str49              ...</span>
+<span class="go">------------------------------ ...</span>
+<span class="go">          CDS/C/GALFAHI/Narrow ...</span>
+<span class="go">      CDS/C/GALFAHI/Narrow/DR2 ...</span>
+<span class="go">        CDS/C/GALFAHI/Wide/DR2 ...</span>
+<span class="go">                CDS/C/HI4PI/HI ...</span>
+<span class="go">                 CDS/I/220/out ...</span>
+<span class="go">                 CDS/I/243/out ...</span>
+<span class="go">                 CDS/I/252/out ...</span>
+<span class="go">                 CDS/I/254/out ...</span>
+<span class="go">                 CDS/I/255/out ...</span>
+<span class="go">                           ... ...</span>
+<span class="go">                 ov-gso/P/WHAM ...</span>
+<span class="go">   simg.de/P/NSNS/DR0_1/halpha ...</span>
+<span class="go">  simg.de/P/NSNS/DR0_1/halpha8 ...</span>
+<span class="go">     simg.de/P/NSNS/DR0_1/hbr8 ...</span>
+<span class="go">simg.de/P/NSNS/DR0_1/sn-halpha ...</span>
+<span class="go">    simg.de/P/NSNS/DR0_1/sn-vc ...</span>
+<span class="go">      simg.de/P/NSNS/DR0_1/tc8 ...</span>
+<span class="go">       simg.de/P/NSNS/DR0_1/vc ...</span>
+<span class="go">     wfau.roe.ac.uk/P/UHSDR1/J ...</span>
+<span class="go">       wfau.roe.ac.uk/UHSDR1/J ...</span>
+</pre></div>
+</div>
+<p>You can also use this method with <a class="reference external" href="https://astropy-regions.readthedocs.io/en/stable/api/regions.PolygonSkyRegion.html#regions.PolygonSkyRegion" title="(in regions v0.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regions.PolygonSkyRegion</span></code></a>, <a class="reference external" href="https://cds-astro.github.io/mocpy/stubs/mocpy.MOC.html#mocpy.MOC" title="(in MOCPy v0.17.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mocpy.MOC</span></code></a>, <a class="reference external" href="https://cds-astro.github.io/mocpy/stubs/mocpy.TimeMOC.html#mocpy.TimeMOC" title="(in MOCPy v0.17.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mocpy.TimeMOC</span></code></a>,
+and <a class="reference external" href="https://cds-astro.github.io/mocpy/stubs/mocpy.STMOC.html#mocpy.STMOC" title="(in MOCPy v0.17.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mocpy.STMOC</span></code></a>. Not providing the region parameter means that the search is done on
+the whole sky (or the whole planet, if we chose a different <code class="docutils literal notranslate"><span class="pre">coordinate_system</span></code>).</p>
+</section>
+</section>
+<section id="querying-by-meta-data">
+<h2>Querying by meta-data<a class="headerlink" href="#querying-by-meta-data" title="Link to this heading">¶</a></h2>
+<section id="retrieving-datasets-based-on-their-meta-data-values">
+<h3>Retrieving datasets based on their meta-data values<a class="headerlink" href="#retrieving-datasets-based-on-their-meta-data-values" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">criteria</span></code> parameter of <a class="reference internal" href="../api/astroquery.mocserver.MOCServerClass.html#astroquery.mocserver.MOCServerClass.query_region" title="astroquery.mocserver.MOCServerClass.query_region"><code class="xref py py-meth docutils literal notranslate"><span class="pre">query_region()</span></code></a>
+allows to write an expression on the dataset’s metadata to filter the output.
+Let’s add a criteria to get only images from the previous query:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">coordinates</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">regions</span> <span class="kn">import</span> <span class="n">CircleSkyRegion</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.mocserver</span> <span class="kn">import</span> <span class="n">MOCServer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">center</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">SkyCoord</span><span class="p">(</span><span class="mf">10.8</span><span class="p">,</span> <span class="mf">32.2</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">radius</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">Angle</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cone</span> <span class="o">=</span> <span class="n">CircleSkyRegion</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">radius</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MOCServer</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">cone</span><span class="p">,</span> <span class="n">intersect</span><span class="o">=</span><span class="s2">&quot;enclosed&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span> <span class="s1">&#39;dataproduct_type&#39;</span><span class="p">,</span> <span class="s1">&#39;moc_sky_fraction&#39;</span><span class="p">],</span>
+<span class="gp">... </span>                <span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;dataproduct_type=image&quot;</span><span class="p">)</span>  
+<span class="go">&lt;Table length=336&gt;</span>
+<span class="go">              ID               dataproduct_type moc_sky_fraction</span>
+<span class="go">            str49                    str5           float64</span>
+<span class="go">------------------------------ ---------------- ----------------</span>
+<span class="go">                 CDS/P/2MASS/H            image              1.0</span>
+<span class="go">                 CDS/P/2MASS/J            image              1.0</span>
+<span class="go">                 CDS/P/2MASS/K            image              1.0</span>
+<span class="go">             CDS/P/2MASS/color            image              1.0</span>
+<span class="go">         CDS/P/AKARI/FIS/Color            image              1.0</span>
+<span class="go">          CDS/P/AKARI/FIS/N160            image              1.0</span>
+<span class="go">           CDS/P/AKARI/FIS/N60            image              1.0</span>
+<span class="go">         CDS/P/AKARI/FIS/WideL            image              1.0</span>
+<span class="go">         CDS/P/AKARI/FIS/WideS            image              1.0</span>
+<span class="go">                           ...              ...              ...</span>
+<span class="go">        ov-gso/P/RASS/SoftBand            image              1.0</span>
+<span class="go">                 ov-gso/P/WHAM            image              1.0</span>
+<span class="go">   simg.de/P/NSNS/DR0_1/halpha            image           0.6464</span>
+<span class="go">  simg.de/P/NSNS/DR0_1/halpha8            image           0.6464</span>
+<span class="go">     simg.de/P/NSNS/DR0_1/hbr8            image            0.651</span>
+<span class="go">simg.de/P/NSNS/DR0_1/sn-halpha            image           0.6466</span>
+<span class="go">    simg.de/P/NSNS/DR0_1/sn-vc            image           0.6466</span>
+<span class="go">      simg.de/P/NSNS/DR0_1/tc8            image            0.651</span>
+<span class="go">       simg.de/P/NSNS/DR0_1/vc            image           0.6464</span>
+<span class="go">     wfau.roe.ac.uk/P/UHSDR1/J            image           0.3083</span>
+</pre></div>
+</div>
+<p>Looking at the <code class="docutils literal notranslate"><span class="pre">dataproduct_type</span></code> column, all the datasets are indeed images. There
+are a few less results than when we did not apply this additional criteria.</p>
+<p>Other examples for filtering expressions can be found on the <a class="reference external" href="http://alasky.unistra.fr/MocServer/example">help page of the MOC Server
+web interface</a>.</p>
+<p>Let’s do a search on the whole sky by omitting the region parameter.
+The next example retrieves all the <code class="docutils literal notranslate"><span class="pre">moc_access_url</span></code> of  datasets having <code class="docutils literal notranslate"><span class="pre">HST</span></code> in
+their identifier. These correspond to the Hubble surveys:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MOCServer</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;ID=*HST*&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                       <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span> <span class="s1">&#39;moc_access_url&#39;</span><span class="p">],</span>
+<span class="gp">... </span>                       <span class="n">casesensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  
+<span class="go">&lt;Table length=45&gt;</span>
+<span class="go">            ID                                moc_access_url</span>
+<span class="go">          str26                                   str51</span>
+<span class="go">-------------------------- ---------------------------------------------------</span>
+<span class="go">CDS/P/HST-programs/3D-DASH                                                  --</span>
+<span class="go">               CDS/P/HST/B                                                  --</span>
+<span class="go">              CDS/P/HST/CO                                                  --</span>
+<span class="go">             CDS/P/HST/EPO                                                  --</span>
+<span class="go">         CDS/P/HST/GOODS/b      http://alasky.unistra.fr/GOODS/GOODSb/Moc.fits</span>
+<span class="go">     CDS/P/HST/GOODS/color http://alasky.unistra.fr/GOODS/GOODS-color/Moc.fits</span>
+<span class="go">         CDS/P/HST/GOODS/i      http://alasky.unistra.fr/GOODS/GOODSi/Moc.fits</span>
+<span class="go">         CDS/P/HST/GOODS/v      http://alasky.unistra.fr/GOODS/GOODSv/Moc.fits</span>
+<span class="go">         CDS/P/HST/GOODS/z      http://alasky.unistra.fr/GOODS/GOODSz/Moc.fits</span>
+<span class="go">                       ...                                                 ...</span>
+<span class="go">               CDS/P/HST/Y                                                  --</span>
+<span class="go">           CDS/P/HST/other                                                  --</span>
+<span class="go">          CDS/P/HST/wideUV                                                  --</span>
+<span class="go">           CDS/P/HST/wideV                                                  --</span>
+<span class="go">      ESAVO/P/HST/ACS-blue                                                  --</span>
+<span class="go">           ESAVO/P/HST/FOC                                                  --</span>
+<span class="go">        ESAVO/P/HST/NICMOS                                                  --</span>
+<span class="go">          ESAVO/P/HST/WFC3                                                  --</span>
+<span class="go">          ESAVO/P/HST/WFPC                                                  --</span>
+<span class="go">         ESAVO/P/HST/WFPC2                                                  --</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="query-for-hierarchical-progressive-surveys-hips">
+<h2>Query for Hierarchical Progressive Surveys (HiPS)<a class="headerlink" href="#query-for-hierarchical-progressive-surveys-hips" title="Link to this heading">¶</a></h2>
+<p>The MOCServer contains an extensive list of <a class="reference external" href="https://ivoa.net/documents/HiPS/">HiPS</a>,
+for images and catalogs. These progressive surveys can be displayed in applications
+such as <a class="reference external" href="https://github.com/cds-astro/ipyaladin">ipyaladin</a>. The
+<a class="reference internal" href="../api/astroquery.mocserver.MOCServerClass.html#astroquery.mocserver.MOCServerClass.query_hips" title="astroquery.mocserver.MOCServerClass.query_hips"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.mocserver.MOCServerClass.query_hips</span></code></a> method allows to find these HiPS.
+It accepts the same parameters (<code class="docutils literal notranslate"><span class="pre">region</span></code> and <code class="docutils literal notranslate"><span class="pre">criteria</span></code> for example) as the other
+methods. The only difference is that the output will only contain HiPS data.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.mocserver</span> <span class="kn">import</span> <span class="n">MOCServer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MOCServer</span><span class="o">.</span><span class="n">query_hips</span><span class="p">(</span><span class="n">coordinate_system</span><span class="o">=</span><span class="s2">&quot;mars&quot;</span><span class="p">)</span> 
+<span class="go">&lt;Table length=25&gt;</span>
+<span class="go">                 ID                 ...</span>
+<span class="go">               str35                ...</span>
+<span class="go">----------------------------------- ...</span>
+<span class="go">           CDS/P/Mars/Express286545 ...</span>
+<span class="go">            CDS/P/Mars/MGS-MOLA-DEM ...</span>
+<span class="go">            CDS/P/Mars/MGS-TES-Dust ...</span>
+<span class="go">              CDS/P/Mars/MOLA-color ...</span>
+<span class="go">                 CDS/P/Mars/MRO-CTX ...</span>
+<span class="go">              CDS/P/Mars/TES-Albedo ...</span>
+<span class="go">     CDS/P/Mars/TES-Thermal-Inertia ...</span>
+<span class="go">     CDS/P/Mars/THEMIS-Day-100m-v12 ...</span>
+<span class="go">CDS/P/Mars/THEMIS-IR-Night-100m-v14 ...</span>
+<span class="go">                                ... ...</span>
+<span class="go">    idoc/P/omega/emissivite_5-03mic ...</span>
+<span class="go">    idoc/P/omega/emissivite_5-05mic ...</span>
+<span class="go">    idoc/P/omega/emissivite_5-07mic ...</span>
+<span class="go">    idoc/P/omega/emissivite_5-09mic ...</span>
+<span class="go">          idoc/P/omega/ferric_bd530 ...</span>
+<span class="go">          idoc/P/omega/ferric_nnphs ...</span>
+<span class="go">          idoc/P/omega/olivine_osp1 ...</span>
+<span class="go">          idoc/P/omega/olivine_osp2 ...</span>
+<span class="go">          idoc/P/omega/olivine_osp3 ...</span>
+<span class="go">       idoc/P/omega/pyroxene_bd2000 ...                                                                                                                                                                                             doi:10.1029/2012JE004117 ...                         omega pyroxene_bd2000</span>
+</pre></div>
+</div>
+<p>Here, we see that there are currently 25 HiPS surveys for the planet Mars available in
+the MOCServer.</p>
+</section>
+<section id="personalization-of-the-queries">
+<h2>Personalization of the queries<a class="headerlink" href="#personalization-of-the-queries" title="Link to this heading">¶</a></h2>
+<section id="changing-the-default-fields">
+<h3>Changing the default fields<a class="headerlink" href="#changing-the-default-fields" title="Link to this heading">¶</a></h3>
+<p>By default, <a class="reference internal" href="../api/astroquery.mocserver.MOCServerClass.html#astroquery.mocserver.MOCServerClass.query_region" title="astroquery.mocserver.MOCServerClass.query_region"><code class="xref py py-meth docutils literal notranslate"><span class="pre">query_region()</span></code></a> returns an
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a> with information about the matching datasets. The default fields
+are <code class="docutils literal notranslate"><span class="pre">ID</span></code>, <code class="docutils literal notranslate"><span class="pre">obs_title</span></code>, <code class="docutils literal notranslate"><span class="pre">obs_description</span></code>, <code class="docutils literal notranslate"><span class="pre">nb_rows</span></code>, <code class="docutils literal notranslate"><span class="pre">obs_regime</span></code>,
+<code class="docutils literal notranslate"><span class="pre">bib_reference</span></code>, and <code class="docutils literal notranslate"><span class="pre">dataproduct_type</span></code>.
+To change this default behavior, use the <code class="docutils literal notranslate"><span class="pre">fields</span></code> parameter.
+Let’s say we would like only the <code class="docutils literal notranslate"><span class="pre">ID</span></code>, and the <code class="docutils literal notranslate"><span class="pre">moc_sky_fraction</span></code> for this query:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">coordinates</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">regions</span> <span class="kn">import</span> <span class="n">CircleSkyRegion</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.mocserver</span> <span class="kn">import</span> <span class="n">MOCServer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">center</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">SkyCoord</span><span class="p">(</span><span class="mf">10.8</span><span class="p">,</span> <span class="mf">32.2</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">radius</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">Angle</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cone</span> <span class="o">=</span> <span class="n">CircleSkyRegion</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">radius</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MOCServer</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">cone</span><span class="p">,</span>
+<span class="gp">... </span>                       <span class="n">intersect</span><span class="o">=</span><span class="s2">&quot;enclosed&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                       <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span> <span class="s1">&#39;moc_sky_fraction&#39;</span><span class="p">])</span>  
+<span class="go">&lt;Table length=450&gt;</span>
+<span class="go">               ID               moc_sky_fraction</span>
+<span class="go">             str49                  float64</span>
+<span class="go">                 CDS/I/220/out           0.9697</span>
+<span class="go">                 CDS/I/243/out              1.0</span>
+<span class="go">                 CDS/I/252/out           0.9993</span>
+<span class="go">                 CDS/I/254/out              1.0</span>
+<span class="go">                 CDS/I/255/out           0.9696</span>
+<span class="go">                           ...              ...</span>
+<span class="go">                 ov-gso/P/WHAM              1.0</span>
+<span class="go">   simg.de/P/NSNS/DR0_1/halpha           0.6464</span>
+<span class="go">  simg.de/P/NSNS/DR0_1/halpha8           0.6464</span>
+<span class="go">     simg.de/P/NSNS/DR0_1/hbr8            0.651</span>
+<span class="go">simg.de/P/NSNS/DR0_1/sn-halpha           0.6466</span>
+</pre></div>
+</div>
+<p>We now see in a single glance that the dataset <code class="docutils literal notranslate"><span class="pre">CDS/I/220/out</span></code> covers almost all the
+sky!</p>
+</section>
+<section id="limiting-the-number-of-returned-datasets">
+<h3>Limiting the number of returned datasets<a class="headerlink" href="#limiting-the-number-of-returned-datasets" title="Link to this heading">¶</a></h3>
+<p>Another parameter called <code class="docutils literal notranslate"><span class="pre">max_rec</span></code> specifies an upper limit for the number of data-sets to be returned:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.mocserver</span> <span class="kn">import</span> <span class="n">MOCServer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mocpy</span> <span class="kn">import</span> <span class="n">MOC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MOCServer</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">MOC</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="s2">&quot;5/22-24&quot;</span><span class="p">),</span> <span class="n">max_rec</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> 
+<span class="go">&lt;Table length=3&gt;</span>
+<span class="go">           ID            ... dataproduct_type</span>
+<span class="go">         str24           ...       str7</span>
+<span class="go">------------------------ ... ----------------</span>
+<span class="go"> CDS/J/AJ/156/102/table9 ...          catalog</span>
+<span class="go">CDS/J/ApJS/257/54/table1 ...          catalog</span>
+<span class="go">     CDS/III/39A/catalog ...          catalog</span>
+</pre></div>
+</div>
+<p>This result has only 3 rows although we know that more datasets match the query.
+The result will come faster than requesting all results.</p>
+</section>
+<section id="returning-a-mocpy-object-as-a-result">
+<h3>Returning a <code class="docutils literal notranslate"><span class="pre">mocpy</span></code> object as a result<a class="headerlink" href="#returning-a-mocpy-object-as-a-result" title="Link to this heading">¶</a></h3>
+<p>If you want the union of all the MOCs of the datasets matching the query, you can
+get the result as a <a class="reference external" href="https://cds-astro.github.io/mocpy/stubs/mocpy.MOC.html#mocpy.MOC" title="(in MOCPy v0.17.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mocpy.MOC</span></code></a>, <a class="reference external" href="https://cds-astro.github.io/mocpy/stubs/mocpy.TimeMOC.html#mocpy.TimeMOC" title="(in MOCPy v0.17.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mocpy.TimeMOC</span></code></a>, or <a class="reference external" href="https://cds-astro.github.io/mocpy/stubs/mocpy.STMOC.html#mocpy.STMOC" title="(in MOCPy v0.17.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mocpy.STMOC</span></code></a> object instead of an
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a> by setting the parameter <code class="docutils literal notranslate"><span class="pre">return_moc</span></code> to <code class="docutils literal notranslate"><span class="pre">smoc</span></code>, <code class="docutils literal notranslate"><span class="pre">tmoc</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">stmoc</span></code>. An additional parameter <code class="docutils literal notranslate"><span class="pre">max_norder</span></code> allows to set the resolution/precision
+of the returned MOC.</p>
+<p>As an example, we would like to obtain the union of the space coverage of all the
+Hubble surveys:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mocpy</span> <span class="kn">import</span> <span class="n">MOC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.mocserver</span> <span class="kn">import</span> <span class="n">MOCServer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">moc</span> <span class="o">=</span> <span class="n">MOCServer</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">return_moc</span><span class="o">=</span><span class="s2">&quot;smoc&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                             <span class="n">max_norder</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+<span class="gp">... </span>                             <span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;ID=*HST*&quot;</span><span class="p">)</span> 
+</pre></div>
+</div>
+<p>The resulting MOC looks like:</p>
+<img alt="../_images/HST_union.png" src="../_images/HST_union.png" />
+</section>
+<section id="retrieve-the-stmoc-of-a-specific-dataset">
+<h3>Retrieve the <a class="reference external" href="https://cds-astro.github.io/mocpy/stubs/mocpy.STMOC.html#mocpy.STMOC" title="(in MOCPy v0.17.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">STMOC</span></code></a> of a specific dataset<a class="headerlink" href="#retrieve-the-stmoc-of-a-specific-dataset" title="Link to this heading">¶</a></h3>
+<p>To retrieve the MOC of a specific dataset, we can use
+<a class="reference internal" href="../api/astroquery.mocserver.MOCServerClass.html#astroquery.mocserver.MOCServerClass.query_region" title="astroquery.mocserver.MOCServerClass.query_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_region</span></code></a>.
+This example will show you how to get the space-time MOC (i.e. a <a class="reference external" href="https://cds-astro.github.io/mocpy/stubs/mocpy.STMOC.html#mocpy.STMOC" title="(in MOCPy v0.17.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mocpy.STMOC</span></code></a>
+object) of the <code class="docutils literal notranslate"><span class="pre">GALEXGR6/AIS/FUV</span></code> survey.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mocpy</span> <span class="kn">import</span> <span class="n">MOC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.mocserver</span> <span class="kn">import</span> <span class="n">MOCServer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">moc_galex</span> <span class="o">=</span> <span class="n">MOCServer</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;ID=CDS/P/GALEXGR6/AIS/FUV&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                                   <span class="n">return_moc</span><span class="o">=</span><span class="s2">&quot;stmoc&quot;</span><span class="p">,</span> <span class="n">max_norder</span><span class="o">=</span><span class="s2">&quot;s7 t26&quot;</span><span class="p">)</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;GALEX GR6 contains data taken from </span><span class="si">{</span><span class="n">moc_galex</span><span class="o">.</span><span class="n">min_time</span><span class="o">.</span><span class="n">iso</span><span class="si">}</span><span class="s2"> to&quot;</span>
+<span class="gp">... </span>      <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">moc_galex</span><span class="o">.</span><span class="n">max_time</span><span class="o">.</span><span class="n">iso</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>  
+<span class="go">GALEX GR6 contains data taken from 2010-03-31 18:02:05.602 to 2010-06-01 18:57:24.787.</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that for Space-Time MOCs the <code class="docutils literal notranslate"><span class="pre">max_norder</span></code> parameter is not an integer but a
+string that contains the information about both the spatial order and the time order.
+Here, we requested a spatial order of 7 (roughly 27’) and a time order of 26 (roughly
+9 hours).</p>
+</div>
+</section>
+<section id="finding-data-on-a-specific-solar-system-body">
+<h3>Finding data on a specific solar system body<a class="headerlink" href="#finding-data-on-a-specific-solar-system-body" title="Link to this heading">¶</a></h3>
+<p>The default value for <code class="docutils literal notranslate"><span class="pre">coordinate_system</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>. It means that we’re looking for
+data for the sky and all other possible frames. This parameter can take all the values
+listed by <a class="reference internal" href="../api/astroquery.mocserver.MOCServerClass.html#astroquery.mocserver.MOCServerClass.list_coordinate_systems" title="astroquery.mocserver.MOCServerClass.list_coordinate_systems"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.mocserver.MOCServerClass.list_coordinate_systems</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.mocserver</span> <span class="kn">import</span> <span class="n">MOCServer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MOCServer</span><span class="o">.</span><span class="n">list_coordinate_systems</span><span class="p">()</span>  
+<span class="go">[&#39;ariel&#39;, &#39;callisto&#39;, &#39;ceres&#39;, &#39;charon&#39;, &#39;dione&#39;, &#39;earth&#39;, &#39;enceladus&#39;, &#39;equatorial&#39;, &#39;europa&#39;, &#39;galactic&#39;, &#39;ganymede&#39;, &#39;iapetus&#39;, &#39;io&#39;, &#39;jupiter&#39;, &#39;mars&#39;, &#39;mars-pia20284&#39;, &#39;mars-pia24422&#39;, &#39;mars-stimson&#39;, &#39;mercury&#39;, &#39;mimas&#39;, &#39;miranda&#39;, &#39;moon&#39;, &#39;moon-pan1&#39;, &#39;neptune&#39;, &#39;oberon&#39;, &#39;pluto&#39;, &#39;rhea&#39;, &#39;sky&#39;, &#39;sun&#39;, &#39;tethys&#39;, &#39;titan&#39;, &#39;titania&#39;, &#39;triton&#39;, &#39;umbriel&#39;, &#39;venus&#39;]</span>
+</pre></div>
+</div>
+<p>Where the special value <code class="docutils literal notranslate"><span class="pre">sky</span></code> means any celestial frame (mainly <code class="docutils literal notranslate"><span class="pre">equatorial</span></code> and
+<code class="docutils literal notranslate"><span class="pre">galactic</span></code>).</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">coordinate_system</span></code> parameter can be used in any of the query methods like so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.mocserver</span> <span class="kn">import</span> <span class="n">MOCServer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MOCServer</span><span class="o">.</span><span class="n">query_hips</span><span class="p">(</span><span class="n">coordinate_system</span><span class="o">=</span><span class="s2">&quot;ariel&quot;</span><span class="p">)</span> 
+<span class="go">&lt;Table length=1&gt;</span>
+<span class="go">         ID           obs_title   ... dataproduct_type</span>
+<span class="go">       str19            str13     ...       str5</span>
+<span class="go">------------------- ------------- ... ----------------</span>
+<span class="go">CDS/P/Ariel/Voyager Ariel Voyager ...            image</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="reference-api">
+<h2>Reference/API<a class="headerlink" href="#reference-api" title="Link to this heading">¶</a></h2>
+<section id="module-astroquery.mocserver">
+<span id="astroquery-mocserver-package"></span><h3>astroquery.mocserver Package<a class="headerlink" href="#module-astroquery.mocserver" title="Link to this heading">¶</a></h3>
+<section id="cds-mocserver-query-tool">
+<h4>CDS MOCServer Query Tool.<a class="headerlink" href="#cds-mocserver-query-tool" title="Link to this heading">¶</a></h4>
+<dl class="field-list simple">
+<dt class="field-odd">Author<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Matthieu Baumann (<a class="reference external" href="mailto:matthieu&#46;baumann&#37;&#52;&#48;astro&#46;unistra&#46;fr">matthieu<span>&#46;</span>baumann<span>&#64;</span>astro<span>&#46;</span>unistra<span>&#46;</span>fr</a>)</p>
+</dd>
+</dl>
+<p>This package is for querying the CDS MOC service, primarily hosted at:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://alasky.unistra.fr/MocServer/query">http://alasky.unistra.fr/MocServer/query</a></p></li>
+<li><p><a class="reference external" href="http://alaskybis.unistra.fr/MocServer/query">http://alaskybis.unistra.fr/MocServer/query</a> (mirror)</p></li>
+</ul>
+<p>Note: If the access to MOCs with the MOCServer tool was helpful for your research,
+the following acknowledgment would be appreciated:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">This</span> <span class="n">research</span> <span class="n">has</span> <span class="n">made</span> <span class="n">use</span> <span class="n">of</span> <span class="n">the</span> <span class="n">MOCServer</span><span class="p">,</span> <span class="n">a</span> <span class="n">tool</span> <span class="n">developed</span> <span class="n">at</span> <span class="n">CDS</span><span class="p">,</span> <span class="n">Strasbourg</span><span class="p">,</span>
+<span class="n">France</span> <span class="n">aiming</span> <span class="n">at</span> <span class="n">retrieving</span> <span class="n">MOCs</span><span class="o">/</span><span class="n">meta</span><span class="o">-</span><span class="n">data</span> <span class="kn">from</span> <span class="nn">known</span> <span class="n">data</span><span class="o">-</span><span class="n">sets</span><span class="o">.</span> <span class="n">MOC</span> <span class="ow">is</span> <span class="n">an</span> <span class="n">IVOA</span>
+<span class="n">standard</span> <span class="n">described</span> <span class="ow">in</span> <span class="p">:</span>
+<span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">ivoa</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">documents</span><span class="o">/</span><span class="n">MOC</span><span class="o">/</span><span class="mi">20140602</span><span class="o">/</span><span class="n">REC</span><span class="o">-</span><span class="n">MOC</span><span class="o">-</span><span class="mf">1.0</span><span class="o">-</span><span class="mf">20140602.</span><span class="n">pdf</span>
+</pre></div>
+</div>
+</section>
+<section id="classes">
+<h4>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h4>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/astroquery.mocserver.Conf.html#astroquery.mocserver.Conf" title="astroquery.mocserver.Conf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Conf</span></code></a>()</p></td>
+<td><p>Configuration parameters for <code class="docutils literal notranslate"><span class="pre">astroquery.template_module</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/astroquery.mocserver.MOCServerClass.html#astroquery.mocserver.MOCServerClass" title="astroquery.mocserver.MOCServerClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MOCServerClass</span></code></a>()</p></td>
+<td><p>Query the <a class="reference external" href="http://alasky.unistra.fr/MocServer/query">CDS MOCServer</a>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">CDS MOC Service (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.mocserver</span></code>)</a><ul>
+<li><a class="reference internal" href="#getting-started">Getting started</a><ul>
+<li><a class="reference internal" href="#what-s-a-moc">What’s a MOC?</a></li>
+<li><a class="reference internal" href="#what-s-the-moc-server">What’s the MOC Server?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#querying-with-a-region">Querying with a region</a><ul>
+<li><a class="reference internal" href="#performing-a-query-on-a-cone-region">Performing a query on a cone region</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#querying-by-meta-data">Querying by meta-data</a><ul>
+<li><a class="reference internal" href="#retrieving-datasets-based-on-their-meta-data-values">Retrieving datasets based on their meta-data values</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#query-for-hierarchical-progressive-surveys-hips">Query for Hierarchical Progressive Surveys (HiPS)</a></li>
+<li><a class="reference internal" href="#personalization-of-the-queries">Personalization of the queries</a><ul>
+<li><a class="reference internal" href="#changing-the-default-fields">Changing the default fields</a></li>
+<li><a class="reference internal" href="#limiting-the-number-of-returned-datasets">Limiting the number of returned datasets</a></li>
+<li><a class="reference internal" href="#returning-a-mocpy-object-as-a-result">Returning a <code class="docutils literal notranslate"><span class="pre">mocpy</span></code> object as a result</a></li>
+<li><a class="reference internal" href="#retrieve-the-stmoc-of-a-specific-dataset">Retrieve the <code class="xref py py-obj docutils literal notranslate"><span class="pre">STMOC</span></code> of a specific dataset</a></li>
+<li><a class="reference internal" href="#finding-data-on-a-specific-solar-system-body">Finding data on a specific solar system body</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#reference-api">Reference/API</a><ul>
+<li><a class="reference internal" href="#module-astroquery.mocserver">astroquery.mocserver Package</a><ul>
+<li><a class="reference internal" href="#cds-mocserver-query-tool">CDS MOCServer Query Tool.</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="../_sources/mocserver/mocserver.rst.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 02 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,104 @@
+<ns0:svg xmlns:ns0="http://www.w3.org/2000/svg" xmlns:ns1="http://www.w3.org/1999/xlink" width="362pt" height="142pt" viewBox="0.00 0.00 362.00 142.00">
+<ns0:g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 138)">
+<ns0:title>inheritancee655ce4927</ns0:title>
+
+<ns0:g id="node1" class="node">
+<ns0:title>BaseVOError</ns0:title>
+<ns0:g id="a_node1"><ns0:a ns1:href="../api/astroquery.vo_conesearch.exceptions.BaseVOError.html#astroquery.vo_conesearch.exceptions.BaseVOError" ns1:title="Base class for VO exceptions." target="_top">
+<ns0:polygon fill="white" stroke="black" stroke-width="0.5" points="73.75,-96 0,-96 0,-76 73.75,-76 73.75,-96" />
+<ns0:text text-anchor="middle" x="36.88" y="-82.5" font-family="Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans" font-size="10.00">BaseVOError</ns0:text>
+</ns0:a>
+</ns0:g>
+</ns0:g>
+
+<ns0:g id="node2" class="node">
+<ns0:title>ConeSearchError</ns0:title>
+<ns0:g id="a_node2"><ns0:a ns1:href="../api/astroquery.vo_conesearch.exceptions.ConeSearchError.html#astroquery.vo_conesearch.exceptions.ConeSearchError" ns1:title="General Cone Search exception." target="_top">
+<ns0:polygon fill="white" stroke="black" stroke-width="0.5" points="200.75,-115 109.75,-115 109.75,-95 200.75,-95 200.75,-115" />
+<ns0:text text-anchor="middle" x="155.25" y="-101.5" font-family="Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans" font-size="10.00">ConeSearchError</ns0:text>
+</ns0:a>
+</ns0:g>
+</ns0:g>
+
+<ns0:g id="edge1" class="edge">
+<ns0:title>BaseVOError-&gt;ConeSearchError</ns0:title>
+<ns0:path fill="none" stroke="black" stroke-width="0.5" d="M74.06,-91.91C83.25,-93.41 93.31,-95.05 103.09,-96.65" />
+<ns0:polygon fill="black" stroke="black" stroke-width="0.5" points="103.51,-98.49 108.73,-97.57 104.08,-95.03 103.51,-98.49" />
+</ns0:g>
+
+<ns0:g id="node4" class="node">
+<ns0:title>VOSError</ns0:title>
+<ns0:g id="a_node4"><ns0:a ns1:href="../api/astroquery.vo_conesearch.exceptions.VOSError.html#astroquery.vo_conesearch.exceptions.VOSError" ns1:title="General VO service exception." target="_top">
+<ns0:polygon fill="white" stroke="black" stroke-width="0.5" points="184.25,-77 126.25,-77 126.25,-57 184.25,-57 184.25,-77" />
+<ns0:text text-anchor="middle" x="155.25" y="-63.5" font-family="Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans" font-size="10.00">VOSError</ns0:text>
+</ns0:a>
+</ns0:g>
+</ns0:g>
+
+<ns0:g id="edge6" class="edge">
+<ns0:title>BaseVOError-&gt;VOSError</ns0:title>
+<ns0:path fill="none" stroke="black" stroke-width="0.5" d="M74.06,-80.09C88.52,-77.73 105.12,-75.02 119.44,-72.68" />
+<ns0:polygon fill="black" stroke="black" stroke-width="0.5" points="120.45,-74.29 125.1,-71.76 119.89,-70.84 120.45,-74.29" />
+</ns0:g>
+
+<ns0:g id="node3" class="node">
+<ns0:title>DuplicateCatalogName</ns0:title>
+<ns0:g id="a_node3"><ns0:a ns1:href="../api/astroquery.vo_conesearch.exceptions.DuplicateCatalogName.html#astroquery.vo_conesearch.exceptions.DuplicateCatalogName" ns1:title="VO catalog of the same title already exists." target="_top">
+<ns0:polygon fill="white" stroke="black" stroke-width="0.5" points="354,-134 236.75,-134 236.75,-114 354,-114 354,-134" />
+<ns0:text text-anchor="middle" x="295.38" y="-120.5" font-family="Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans" font-size="10.00">DuplicateCatalogName</ns0:text>
+</ns0:a>
+</ns0:g>
+</ns0:g>
+
+<ns0:g id="edge2" class="edge">
+<ns0:title>VOSError-&gt;DuplicateCatalogName</ns0:title>
+<ns0:path fill="none" stroke="black" stroke-width="0.5" d="M181.83,-77.49C188.06,-80.17 194.68,-83.11 200.75,-86 217.08,-93.78 220.1,-97.92 236.75,-105 242.09,-107.27 247.8,-109.44 253.47,-111.46" />
+<ns0:polygon fill="black" stroke="black" stroke-width="0.5" points="253.58,-113.35 258.88,-113.33 254.73,-110.04 253.58,-113.35" />
+</ns0:g>
+
+<ns0:g id="node5" class="node">
+<ns0:title>DuplicateCatalogURL</ns0:title>
+<ns0:g id="a_node5"><ns0:a ns1:href="../api/astroquery.vo_conesearch.exceptions.DuplicateCatalogURL.html#astroquery.vo_conesearch.exceptions.DuplicateCatalogURL" ns1:title="VO catalog of the same access URL already exists." target="_top">
+<ns0:polygon fill="white" stroke="black" stroke-width="0.5" points="351,-96 239.75,-96 239.75,-76 351,-76 351,-96" />
+<ns0:text text-anchor="middle" x="295.38" y="-82.5" font-family="Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans" font-size="10.00">DuplicateCatalogURL</ns0:text>
+</ns0:a>
+</ns0:g>
+</ns0:g>
+
+<ns0:g id="edge3" class="edge">
+<ns0:title>VOSError-&gt;DuplicateCatalogURL</ns0:title>
+<ns0:path fill="none" stroke="black" stroke-width="0.5" d="M184.53,-70.89C198.59,-72.82 216.16,-75.24 233.1,-77.57" />
+<ns0:polygon fill="black" stroke="black" stroke-width="0.5" points="233.37,-79.37 238.56,-78.32 233.84,-75.91 233.37,-79.37" />
+</ns0:g>
+
+<ns0:g id="node6" class="node">
+<ns0:title>InvalidAccessURL</ns0:title>
+<ns0:g id="a_node6"><ns0:a ns1:href="../api/astroquery.vo_conesearch.exceptions.InvalidAccessURL.html#astroquery.vo_conesearch.exceptions.InvalidAccessURL" ns1:title="Invalid access URL." target="_top">
+<ns0:polygon fill="white" stroke="black" stroke-width="0.5" points="344.25,-58 246.5,-58 246.5,-38 344.25,-38 344.25,-58" />
+<ns0:text text-anchor="middle" x="295.38" y="-44.5" font-family="Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans" font-size="10.00">InvalidAccessURL</ns0:text>
+</ns0:a>
+</ns0:g>
+</ns0:g>
+
+<ns0:g id="edge4" class="edge">
+<ns0:title>VOSError-&gt;InvalidAccessURL</ns0:title>
+<ns0:path fill="none" stroke="black" stroke-width="0.5" d="M184.53,-63.11C200.49,-60.91 220.97,-58.1 239.91,-55.49" />
+<ns0:polygon fill="black" stroke="black" stroke-width="0.5" points="240.8,-57.14 245.52,-54.72 240.33,-53.67 240.8,-57.14" />
+</ns0:g>
+
+<ns0:g id="node7" class="node">
+<ns0:title>MissingCatalog</ns0:title>
+<ns0:g id="a_node7"><ns0:a ns1:href="../api/astroquery.vo_conesearch.exceptions.MissingCatalog.html#astroquery.vo_conesearch.exceptions.MissingCatalog" ns1:title="VO catalog is missing." target="_top">
+<ns0:polygon fill="white" stroke="black" stroke-width="0.5" points="337.12,-20 253.62,-20 253.62,0 337.12,0 337.12,-20" />
+<ns0:text text-anchor="middle" x="295.38" y="-6.5" font-family="Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans" font-size="10.00">MissingCatalog</ns0:text>
+</ns0:a>
+</ns0:g>
+</ns0:g>
+
+<ns0:g id="edge5" class="edge">
+<ns0:title>VOSError-&gt;MissingCatalog</ns0:title>
+<ns0:path fill="none" stroke="black" stroke-width="0.5" d="M176.46,-56.61C192.56,-48.55 215.79,-37.36 236.75,-29 242.4,-26.74 248.43,-24.54 254.39,-22.48" />
+<ns0:polygon fill="black" stroke="black" stroke-width="0.5" points="255.42,-23.98 259.59,-20.71 254.29,-20.66 255.42,-23.98" />
+</ns0:g>
+</ns0:g>
+</ns0:svg>

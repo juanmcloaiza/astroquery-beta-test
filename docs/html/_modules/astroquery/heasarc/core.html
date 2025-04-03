@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astroquery.heasarc.core &#8212; astroquery v0.4.8.dev10177</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    
+    <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../../_static/documentation_options.js?v=51006566"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../../../_static/copybutton.js"></script>
+    <link rel="icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">astroquery v0.4.8.dev10177</a>
+	 &#187;
+      </li>
+      <li><a href="../../index.html" >Module code</a> &#187;</li>
+      <li><a href="../heasarc.html" accesskey="U">astroquery.heasarc</a> &#187;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for astroquery.heasarc.core</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">tarfile</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Row</span>
+<span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">coordinates</span>
+<span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span> <span class="nn">astropy.utils.decorators</span> <span class="kn">import</span> <span class="n">deprecated</span><span class="p">,</span> <span class="n">deprecated_renamed_argument</span>
+
+<span class="kn">import</span> <span class="nn">pyvo</span>
+
+<span class="kn">from</span> <span class="nn">astroquery</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">..query</span> <span class="kn">import</span> <span class="n">BaseQuery</span><span class="p">,</span> <span class="n">BaseVOQuery</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">commons</span><span class="p">,</span> <span class="n">parse_coordinates</span>
+<span class="kn">from</span> <span class="nn">..exceptions</span> <span class="kn">import</span> <span class="n">InvalidQueryError</span><span class="p">,</span> <span class="n">NoResultsWarning</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">conf</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Heasarc&#39;</span><span class="p">,</span> <span class="s1">&#39;HeasarcClass&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="HeasarcClass">
+<a class="viewcode-back" href="../../../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass">[docs]</a>
+<span class="k">class</span> <span class="nc">HeasarcClass</span><span class="p">(</span><span class="n">BaseVOQuery</span><span class="p">,</span> <span class="n">BaseQuery</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for accessing HEASARC data with VO protocol using the Xamin backend.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># we can move url to Config later</span>
+    <span class="n">VO_URL</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">VO_URL</span>
+    <span class="n">TAR_URL</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">TAR_URL</span>
+    <span class="n">S3_BUCKET</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">S3_BUCKET</span>
+    <span class="n">timeout</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">timeout</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize some basic useful variables&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tap</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_datalink</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_meta_info</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;TAP service&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tap</span> <span class="o">=</span> <span class="n">pyvo</span><span class="o">.</span><span class="n">dal</span><span class="o">.</span><span class="n">TAPService</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">VO_URL</span><span class="si">}</span><span class="s1">/tap&#39;</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_session</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tap</span><span class="o">.</span><span class="n">_session</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tap</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Queries and holds meta-information about the catalogs.</span>
+
+<span class="sd">        This is a table that holds useful information such as</span>
+<span class="sd">        the list of default columns per catalog, the reasonable default</span>
+<span class="sd">        search radius per table that is appropriate for a mission etc.</span>
+<span class="sd">        Instead of making a server call for each catalog for that type information,</span>
+<span class="sd">        we do a single one and then post-process the resulting table.</span>
+
+<span class="sd">        These are not meant to be used directly by the user.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;SELECT split_part(name, &#39;.&#39;, 1) AS table, &quot;</span>
+                <span class="s2">&quot;split_part(name, &#39;.&#39;, 2) AS par, &quot;</span>
+                <span class="s2">&quot;CAST(value AS DECIMAL) AS value &quot;</span>
+                <span class="s2">&quot;FROM metainfo &quot;</span>
+                <span class="s2">&quot;WHERE (type = &#39;parameter&#39; and relation = &#39;order&#39;) &quot;</span>
+                <span class="s2">&quot;OR relation LIKE &#39;defaultSearchRadius&#39; &quot;</span>
+                <span class="s2">&quot;ORDER BY value&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_meta_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">to_table</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_meta_info</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_meta_info</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_meta_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta_info</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_meta_info</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta_info</span>
+
+    <span class="k">def</span> <span class="nf">_get_default_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catalog_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of default columns for a catalog</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        catalog_name : str</span>
+<span class="sd">            The name of catalog as a str</span>
+
+<span class="sd">        Return</span>
+<span class="sd">        ------</span>
+<span class="sd">        a list of column names</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="p">[</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">catalog_name</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="p">[</span><span class="s1">&#39;par&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">meta</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">)</span>
+        <span class="n">defaults</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;par&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">defaults</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HeasarcClass.get_default_radius">
+<a class="viewcode-back" href="../../../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.get_default_radius">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_default_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catalog_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a mission-appropriate default radius for a catalog</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        catalog_name : str</span>
+<span class="sd">            The name of catalog as a str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The radius as `~astropy.units.Quantity`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="p">[</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="p">[</span><span class="s1">&#39;table&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">catalog_name</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="p">[</span><span class="s1">&#39;par&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">arcmin</span>
+        <span class="k">return</span> <span class="n">radius</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_set_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set requests.Session to use when querying the data</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        session : `~requests.Session`</span>
+<span class="sd">            The requests.Session to use</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;session is not a `~requests.Session` instance&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_session</span> <span class="o">=</span> <span class="n">session</span>
+
+<div class="viewcode-block" id="HeasarcClass.list_catalogs">
+<a class="viewcode-back" href="../../../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.list_catalogs">[docs]</a>
+    <span class="k">def</span> <span class="nf">list_catalogs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">keywords</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a table of all available catalogs with two columns</span>
+<span class="sd">        (name, description)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        master : bool</span>
+<span class="sd">            Select only master catalogs. Default is False</span>
+<span class="sd">        keywords : str or list</span>
+<span class="sd">            a str or a list of str of keywords used as search</span>
+<span class="sd">            terms for catalogs. Words with a str separated by a space</span>
+<span class="sd">            are AND&#39;ed, while words in a list are OR&#39;ed</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        `~astropy.table.Table` with columns: name, description</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">keywords</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">keywords</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">keywords</span> <span class="o">=</span> <span class="p">[</span><span class="n">keywords</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">wrd</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">wrd</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">]):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;non-str found in keywords elements&#39;</span><span class="p">)</span>
+
+        <span class="c1"># use &#39;mast&#39; to include both &#39;master&#39; and &#39;mastr&#39;</span>
+        <span class="n">names</span><span class="p">,</span> <span class="n">desc</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">lab</span><span class="p">,</span> <span class="n">tab</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s1">&#39;TAP&#39;</span> <span class="ow">in</span> <span class="n">lab</span> <span class="ow">or</span> <span class="p">(</span><span class="n">master</span> <span class="ow">and</span> <span class="s1">&#39;mast&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lab</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">keywords</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">matched</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="nb">all</span><span class="p">([</span><span class="n">wrd</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">lab</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">tab</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                            <span class="k">for</span> <span class="n">wrd</span> <span class="ow">in</span> <span class="n">wrds</span><span class="o">.</span><span class="n">split</span><span class="p">()])</span>
+                        <span class="k">for</span> <span class="n">wrds</span> <span class="ow">in</span> <span class="n">keywords</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">matched</span><span class="p">:</span>
+                    <span class="k">continue</span>
+            <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lab</span><span class="p">)</span>
+            <span class="n">desc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tab</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Table</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">names</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">desc</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="HeasarcClass.query_mission_list">
+<a class="viewcode-back" href="../../../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.query_mission_list">[docs]</a>
+    <span class="nd">@deprecated</span><span class="p">(</span>
+        <span class="n">since</span><span class="o">=</span><span class="s1">&#39;0.4.8&#39;</span><span class="p">,</span>
+        <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;list_catalogs&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">query_mission_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">get_query_payload</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a list of all available mission catalogs with descriptions.</span>
+
+<span class="sd">        This method is deprecated, and is included only for limited</span>
+<span class="sd">        backward compatibility with the old astroquery.Heasarc that uses</span>
+<span class="sd">        the Browse interface. Please use `list_catalogs` instead.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_catalogs</span><span class="p">(</span><span class="n">master</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HeasarcClass.list_columns">
+<a class="viewcode-back" href="../../../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.list_columns">[docs]</a>
+    <span class="k">def</span> <span class="nf">list_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catalog_name</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the columns available in catalog_name as a table</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        catalog_name : str</span>
+<span class="sd">            The name of catalog as a str</span>
+<span class="sd">        full : bool</span>
+<span class="sd">            If True, return all columns, otherwise, return the standard list</span>
+<span class="sd">            of columns</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : `~astropy.table.Table`</span>
+<span class="sd">            A table with columns: name, description, unit</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="o">.</span><span class="n">tables</span>
+        <span class="k">if</span> <span class="n">catalog_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">tables</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">catalog_name</span><span class="si">}</span><span class="s1"> is not available as a public catalog. &#39;</span>
+                   <span class="s1">&#39;Try passing keywords to `~Heasarc.list_catalogs` to find &#39;</span>
+                   <span class="s1">&#39;the catalog name&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="n">default_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_default_columns</span><span class="p">(</span><span class="n">catalog_name</span><span class="p">)</span>
+
+        <span class="n">names</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">unit</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">[</span><span class="n">catalog_name</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">full</span> <span class="ow">or</span> <span class="n">col</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">default_cols</span><span class="p">:</span>
+                <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">desc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+                <span class="n">unit</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">unit</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="n">Table</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">names</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">desc</span><span class="p">,</span> <span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="n">unit</span><span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">cols</span></div>
+
+
+<div class="viewcode-block" id="HeasarcClass.query_mission_cols">
+<a class="viewcode-back" href="../../../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.query_mission_cols">[docs]</a>
+    <span class="nd">@deprecated</span><span class="p">(</span>
+        <span class="n">since</span><span class="o">=</span><span class="s1">&#39;0.4.8&#39;</span><span class="p">,</span>
+        <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;list_columns&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">query_mission_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mission</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                           <span class="n">get_query_payload</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query around a specific object within a given mission catalog</span>
+
+<span class="sd">        NOTE: This method is deprecated, and is included only for limited</span>
+<span class="sd">        backward compatibility with the old astroquery.Heasarc that uses</span>
+<span class="sd">        the Browse interface. Please use `list_columns` instead.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mission : str</span>
+<span class="sd">            Mission catalog (short name) to search from</span>
+<span class="sd">        fields : str, optional</span>
+<span class="sd">            Return format for columns from the server available options:</span>
+<span class="sd">            * Standard      : Return default catalog columns</span>
+<span class="sd">            * All (default) : Return all catalog columns</span>
+<span class="sd">            * &lt;custom&gt;      : User defined csv list of columns to be returned</span>
+<span class="sd">        cache : bool, optional</span>
+<span class="sd">            Defaults to True. If set overrides global caching behavior.</span>
+<span class="sd">            See :ref:`caching documentation &lt;astroquery_cache&gt;`.</span>
+<span class="sd">        All other parameters have no effect</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fields&#39;</span><span class="p">,</span> <span class="s1">&#39;All&#39;</span><span class="p">)</span>
+        <span class="n">full</span> <span class="o">=</span> <span class="n">fields</span> <span class="o">!=</span> <span class="s1">&#39;Standard&#39;</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_columns</span><span class="p">(</span><span class="n">mission</span><span class="p">,</span> <span class="n">full</span><span class="o">=</span><span class="n">full</span><span class="p">)</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;__&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">col</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">cols</span></div>
+
+
+<div class="viewcode-block" id="HeasarcClass.query_tap">
+<a class="viewcode-back" href="../../../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.query_tap">[docs]</a>
+    <span class="k">def</span> <span class="nf">query_tap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">maxrec</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send query to HEASARC&#39;s Xamin TAP using ADQL.</span>
+<span class="sd">        Results in `~pyvo.dal.TAPResults` format.</span>
+<span class="sd">        result.to_table gives `~astropy.table.Table` format.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query : str</span>
+<span class="sd">            ADQL query to be executed</span>
+<span class="sd">        maxrec : int</span>
+<span class="sd">            maximum number of records to return</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : `~pyvo.dal.TAPResults`</span>
+<span class="sd">            TAP query result.</span>
+<span class="sd">        result.to_table : `~astropy.table.Table`</span>
+<span class="sd">            TAP query result as `~astropy.table.Table`</span>
+<span class="sd">        result.to_qtable : `~astropy.table.QTable`</span>
+<span class="sd">            TAP query result as `~astropy.table.QTable`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;TAP query: </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_saved_query</span> <span class="o">=</span> <span class="n">query</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s1">&#39;ADQL&#39;</span><span class="p">,</span> <span class="n">maxrec</span><span class="o">=</span><span class="n">maxrec</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HeasarcClass.query_region">
+<a class="viewcode-back" href="../../../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.query_region">[docs]</a>
+    <span class="nd">@deprecated_renamed_argument</span><span class="p">(</span>
+        <span class="p">(</span><span class="s1">&#39;mission&#39;</span><span class="p">,</span> <span class="s1">&#39;fields&#39;</span><span class="p">,</span> <span class="s1">&#39;resultmax&#39;</span><span class="p">,</span> <span class="s1">&#39;entry&#39;</span><span class="p">,</span> <span class="s1">&#39;coordsys&#39;</span><span class="p">,</span> <span class="s1">&#39;equinox&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;displaymode&#39;</span><span class="p">,</span> <span class="s1">&#39;action&#39;</span><span class="p">,</span> <span class="s1">&#39;sortvar&#39;</span><span class="p">,</span> <span class="s1">&#39;cache&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;catalog&#39;</span><span class="p">,</span> <span class="s1">&#39;columns&#39;</span><span class="p">,</span> <span class="s1">&#39;maxrec&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span>
+         <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">since</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0.4.8&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">arg_in_kwargs</span><span class="o">=</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span>
+                       <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">query_region</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">catalog</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                     <span class="n">spatial</span><span class="o">=</span><span class="s1">&#39;cone&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">polygon</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">add_offset</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                     <span class="n">get_query_payload</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">maxrec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Queries the HEASARC TAP server around a coordinate and returns a</span>
+<span class="sd">        `~astropy.table.Table` object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        position : str, `astropy.coordinates` object</span>
+<span class="sd">            Gives the position of the center of the cone or box if performing</span>
+<span class="sd">            a cone or box search. Required if spatial is ``&#39;cone&#39;`` or</span>
+<span class="sd">            ``&#39;box&#39;``. Ignored if spatial is ``&#39;polygon&#39;`` or ``&#39;all-sky&#39;``.</span>
+<span class="sd">        catalog : str</span>
+<span class="sd">            The catalog to query. To list the available catalogs, use</span>
+<span class="sd">            :meth:`~astroquery.heasarc.HeasarcClass.list_catalogs`.</span>
+<span class="sd">        spatial : str</span>
+<span class="sd">            Type of spatial query: ``&#39;cone&#39;``, ``&#39;box&#39;``, ``&#39;polygon&#39;``, and</span>
+<span class="sd">            ``&#39;all-sky&#39;``. Defaults to ``&#39;cone&#39;``.</span>
+<span class="sd">        radius : str or `~astropy.units.Quantity` object, [optional for</span>
+<span class="sd">            spatial == ``&#39;cone&#39;``].</span>
+<span class="sd">            The string must be parsable by `~astropy.coordinates.Angle`. The</span>
+<span class="sd">            appropriate `~astropy.units.Quantity` object from</span>
+<span class="sd">            `astropy.units` may also be used. If None, a default value</span>
+<span class="sd">            appropriate for the selected catalog is used. To see the default</span>
+<span class="sd">            radius for the catalog, see</span>
+<span class="sd">            `get_default_radius`.</span>
+<span class="sd">        width : str, `~astropy.units.Quantity` object [Required for</span>
+<span class="sd">            spatial == ``&#39;box&#39;``.]</span>
+<span class="sd">            The string must be parsable by `~astropy.coordinates.Angle`. The</span>
+<span class="sd">            appropriate `~astropy.units.Quantity` object from `astropy.units`</span>
+<span class="sd">            may also be used.</span>
+<span class="sd">        polygon : list, [Required for spatial is ``&#39;polygon&#39;``]</span>
+<span class="sd">            A list of ``(ra, dec)`` pairs (as tuples), in decimal degrees,</span>
+<span class="sd">            outlining the polygon to search in. It can also be a list of</span>
+<span class="sd">            `astropy.coordinates` object or strings that can be parsed by</span>
+<span class="sd">            `astropy.coordinates.ICRS`.</span>
+<span class="sd">        add_offset: bool</span>
+<span class="sd">            If True and spatial==&#39;cone&#39;, add a search_offset column that</span>
+<span class="sd">            indicates the separation (in arcmin) between the requested</span>
+<span class="sd">            coordinate and the entry coordinates in the catalog. Default is False.</span>
+<span class="sd">        get_query_payload : bool, optional</span>
+<span class="sd">            If `True` then returns the generated ADQL query as str.</span>
+<span class="sd">            Defaults to `False`.</span>
+<span class="sd">        columns : str, optional</span>
+<span class="sd">            Target column list with value separated by a comma(,).</span>
+<span class="sd">            Use * for all the columns. The default is to return a subset</span>
+<span class="sd">            of the columns that are generally the most useful.</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            If False, suppress vo warnings.</span>
+<span class="sd">        maxrec : int, optional</span>
+<span class="sd">            Maximum number of records</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        table : A `~astropy.table.Table` object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if verbose is False then suppress any VOTable related warnings</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">commons</span><span class="o">.</span><span class="n">suppress_vo_warnings</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">catalog</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidQueryError</span><span class="p">(</span><span class="s2">&quot;catalog name is required! Use &#39;xray&#39; &quot;</span>
+                                    <span class="s2">&quot;to search the master X-ray catalog&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_default_columns</span><span class="p">(</span><span class="n">catalog</span><span class="p">))</span>
+            <span class="k">if</span> <span class="s1">&#39;__row&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+                <span class="n">columns</span> <span class="o">+=</span> <span class="s1">&#39;,__row&#39;</span>
+
+        <span class="k">if</span> <span class="n">spatial</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;all-sky&#39;</span><span class="p">:</span>
+            <span class="n">where</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">elif</span> <span class="n">spatial</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;polygon&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">coords_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">parse_coordinates</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span><span class="o">.</span><span class="n">icrs</span>
+                               <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">polygon</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">coords_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">coordinates</span><span class="o">.</span><span class="n">SkyCoord</span><span class="p">(</span><span class="o">*</span><span class="n">coord</span><span class="p">)</span><span class="o">.</span><span class="n">icrs</span>
+                                   <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">polygon</span><span class="p">]</span>
+                <span class="k">except</span> <span class="n">u</span><span class="o">.</span><span class="n">UnitTypeError</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Polygon endpoints are being interpreted as &quot;</span>
+                                  <span class="s2">&quot;RA/Dec pairs specified in decimal degree &quot;</span>
+                                  <span class="s2">&quot;units.&quot;</span><span class="p">)</span>
+                    <span class="n">coords_list</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="n">coordinates</span><span class="o">.</span><span class="n">SkyCoord</span><span class="p">(</span><span class="o">*</span><span class="n">coord</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">icrs</span>
+                        <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">polygon</span>
+                    <span class="p">]</span>
+
+            <span class="n">coords_str</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">coord</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">deg</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">coord</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">deg</span><span class="si">}</span><span class="s1">&#39;</span>
+                          <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">coords_list</span><span class="p">]</span>
+            <span class="n">where</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot; WHERE CONTAINS(POINT(&#39;ICRS&#39;,ra,dec),&quot;</span>
+                     <span class="sa">f</span><span class="s2">&quot;POLYGON(&#39;ICRS&#39;,</span><span class="si">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">coords_str</span><span class="p">)</span><span class="si">}</span><span class="s2">))=1&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">coords_icrs</span> <span class="o">=</span> <span class="n">parse_coordinates</span><span class="p">(</span><span class="n">position</span><span class="p">)</span><span class="o">.</span><span class="n">icrs</span>
+            <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span> <span class="o">=</span> <span class="n">coords_icrs</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span> <span class="n">coords_icrs</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">deg</span>
+
+            <span class="k">if</span> <span class="n">spatial</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;cone&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">radius</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">radius</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_radius</span><span class="p">(</span><span class="n">catalog</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">radius</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">Angle</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span>
+                <span class="n">where</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot; WHERE CONTAINS(POINT(&#39;ICRS&#39;,ra,dec),CIRCLE(&quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;&#39;ICRS&#39;,</span><span class="si">{</span><span class="n">ra</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">dec</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">radius</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">))=1&quot;</span><span class="p">)</span>
+                <span class="c1"># add search_offset for the case of cone</span>
+                <span class="k">if</span> <span class="n">add_offset</span><span class="p">:</span>
+                    <span class="n">columns</span> <span class="o">+=</span> <span class="p">(</span><span class="s2">&quot;,DISTANCE(POINT(&#39;ICRS&#39;,ra,dec), &quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;POINT(&#39;ICRS&#39;,</span><span class="si">{</span><span class="n">ra</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">dec</span><span class="si">}</span><span class="s2">)) as search_offset&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">spatial</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;box&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">width</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">Angle</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+                <span class="n">where</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot; WHERE CONTAINS(POINT(&#39;ICRS&#39;,ra,dec),&quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;BOX(&#39;ICRS&#39;,</span><span class="si">{</span><span class="n">ra</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">dec</span><span class="si">}</span><span class="s2">,</span><span class="si">{</span><span class="n">width</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">,&quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">width</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">))=1&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unrecognized spatial query type. Must be one&quot;</span>
+                                 <span class="s2">&quot; of &#39;cone&#39;, &#39;box&#39;, &#39;polygon&#39;, or &#39;all-sky&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="n">adql</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;SELECT </span><span class="si">{</span><span class="n">columns</span><span class="si">}</span><span class="s1"> FROM </span><span class="si">{</span><span class="n">catalog</span><span class="si">}{</span><span class="n">where</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="k">if</span> <span class="n">get_query_payload</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">adql</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">adql</span><span class="p">,</span> <span class="n">maxrec</span><span class="o">=</span><span class="n">maxrec</span><span class="p">)</span>
+
+        <span class="c1"># save the response in case we want to use it later</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_result</span> <span class="o">=</span> <span class="n">response</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_catalog_name</span> <span class="o">=</span> <span class="n">catalog</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">to_table</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">add_offset</span><span class="p">:</span>
+            <span class="n">table</span><span class="p">[</span><span class="s1">&#39;search_offset&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">arcmin</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">table</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="n">NoResultsWarning</span><span class="p">(</span><span class="s2">&quot;No matching rows were found in the query.&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">table</span></div>
+
+
+<div class="viewcode-block" id="HeasarcClass.query_object">
+<a class="viewcode-back" href="../../../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.query_object">[docs]</a>
+    <span class="nd">@deprecated</span><span class="p">(</span>
+        <span class="n">since</span><span class="o">=</span><span class="s1">&#39;0.4.8&#39;</span><span class="p">,</span>
+        <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;query_region&#39;</span>
+    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">query_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_name</span><span class="p">,</span> <span class="n">mission</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                     <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">get_query_payload</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                     <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query around a specific object within a given mission catalog</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        object_name : str</span>
+<span class="sd">            Object to query around. To set search radius use the &#39;radius&#39;</span>
+<span class="sd">            parameter.</span>
+<span class="sd">        mission : str</span>
+<span class="sd">            Mission catalog to search from</span>
+<span class="sd">        cache : bool</span>
+<span class="sd">            Defaults to True. If set overrides global caching behavior.</span>
+<span class="sd">            See :ref:`caching documentation &lt;astroquery_cache&gt;`.</span>
+<span class="sd">        **kwargs :</span>
+<span class="sd">            see `~astroquery.heasarc.HeasarcClass._args_to_payload` for list</span>
+<span class="sd">            of additional parameters that can be used to refine search query.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">coordinates</span><span class="o">.</span><span class="n">SkyCoord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="n">object_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">catalog</span><span class="o">=</span><span class="n">mission</span><span class="p">,</span> <span class="n">spatial</span><span class="o">=</span><span class="s1">&#39;cone&#39;</span><span class="p">,</span>
+                                 <span class="n">get_query_payload</span><span class="o">=</span><span class="n">get_query_payload</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HeasarcClass.locate_data">
+<a class="viewcode-back" href="../../../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.locate_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">locate_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_result</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">catalog_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get links to data products</span>
+<span class="sd">        Use vo/datalinks to query the data products for some query_results.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query_result : `astropy.table.Table` or `astropy.table.Row`, optional</span>
+<span class="sd">            A table that contain the search results. Typically as</span>
+<span class="sd">            returned by query_region. If None, use the table from the</span>
+<span class="sd">            most recent query_region call.</span>
+<span class="sd">        catalog_name : str</span>
+<span class="sd">            The catalog name for the which the query_result belongs to.</span>
+<span class="sd">            If None, use the one from the most recent query_region call.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        table : A `~astropy.table.Table` object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">query_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_last_result&#39;</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_result</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;query_result is None, and none &#39;</span>
+                                 <span class="s1">&#39;found from a previous search&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">query_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_result</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query_result</span><span class="p">,</span> <span class="n">Row</span><span class="p">):</span>
+            <span class="n">query_result</span> <span class="o">=</span> <span class="n">query_result</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="n">query_result</span><span class="o">.</span><span class="n">index</span><span class="p">]]</span>
+
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query_result</span><span class="p">,</span> <span class="n">Table</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s1">&#39;query_result need to be an astropy.table.Table or &#39;</span>
+                <span class="s1">&#39;astropy.table.Row&#39;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># make sure we have a column __row</span>
+        <span class="k">if</span> <span class="s1">&#39;__row&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">query_result</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No __row column found in query_result. &#39;</span>
+                             <span class="s1">&#39;query_result needs to be the output of &#39;</span>
+                             <span class="s1">&#39;query_region or a subset.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">catalog_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">catalog_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_catalog_name</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">catalog_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">catalog_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tap</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown catalog name: </span><span class="si">{</span><span class="n">catalog_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="c1"># datalink url</span>
+        <span class="n">dlink_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">VO_URL</span><span class="si">}</span><span class="s1">/datalink/</span><span class="si">{</span><span class="n">catalog_name</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="n">pyvo</span><span class="o">.</span><span class="n">dal</span><span class="o">.</span><span class="n">adhoc</span><span class="o">.</span><span class="n">DatalinkQuery</span><span class="p">(</span>
+            <span class="n">baseurl</span><span class="o">=</span><span class="n">dlink_url</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">query_result</span><span class="p">[</span><span class="s1">&#39;__row&#39;</span><span class="p">],</span>
+            <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_session</span>
+        <span class="p">)</span>
+        <span class="n">dl_result</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span><span class="o">.</span><span class="n">to_table</span><span class="p">()</span>
+        <span class="c1"># include rows that have directory links (i.e. data) and those</span>
+        <span class="c1"># that report errors (usually means there are no data products)</span>
+        <span class="n">dl_result</span> <span class="o">=</span> <span class="n">dl_result</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">mask_or</span><span class="p">(</span>
+            <span class="n">dl_result</span><span class="p">[</span><span class="s1">&#39;content_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;directory&#39;</span><span class="p">,</span>
+            <span class="n">dl_result</span><span class="p">[</span><span class="s1">&#39;error_message&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span>
+        <span class="p">)]</span>
+        <span class="n">dl_result</span> <span class="o">=</span> <span class="n">dl_result</span><span class="p">[[</span><span class="s1">&#39;ID&#39;</span><span class="p">,</span> <span class="s1">&#39;access_url&#39;</span><span class="p">,</span> <span class="s1">&#39;content_length&#39;</span><span class="p">,</span> <span class="s1">&#39;error_message&#39;</span><span class="p">]]</span>
+
+        <span class="c1"># add sciserver and s3 columns</span>
+        <span class="n">newcol</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="sa">f</span><span class="s2">&quot;/FTP/</span><span class="si">{</span><span class="n">row</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;FTP/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;//&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;FTP&#39;</span> <span class="ow">in</span> <span class="n">row</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">dl_result</span><span class="p">[</span><span class="s1">&#39;access_url&#39;</span><span class="p">]</span>
+        <span class="p">]</span>
+        <span class="n">dl_result</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">newcol</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;sciserver&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">newcol</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;s3://</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">S3_BUCKET</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">row</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">row</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+                  <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">dl_result</span><span class="p">[</span><span class="s1">&#39;sciserver&#39;</span><span class="p">]]</span>
+        <span class="n">dl_result</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">newcol</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;aws&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dl_result</span></div>
+
+
+<div class="viewcode-block" id="HeasarcClass.enable_cloud">
+<a class="viewcode-back" href="../../../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.enable_cloud">[docs]</a>
+    <span class="k">def</span> <span class="nf">enable_cloud</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">provider</span><span class="o">=</span><span class="s1">&#39;aws&#39;</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enable downloading public files from the cloud.</span>
+<span class="sd">        Requires the boto3 library to function.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        provider : str</span>
+<span class="sd">            Which cloud data provider to use. Currently, only &#39;aws&#39; is</span>
+<span class="sd">            supported.</span>
+<span class="sd">        profile : str</span>
+<span class="sd">            Profile to use to identify yourself to the cloud provider</span>
+<span class="sd">            (usually in ~/.aws/config).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">boto3</span>
+            <span class="kn">import</span> <span class="nn">botocore</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s1">&#39;The cloud feature requires the boto3 package. &#39;</span>
+                <span class="s1">&#39;Install it first.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">profile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Enabling anonymous cloud data access ...&#39;</span><span class="p">)</span>
+            <span class="n">config</span> <span class="o">=</span> <span class="n">botocore</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Config</span><span class="p">(</span>
+                <span class="n">signature_version</span><span class="o">=</span><span class="n">botocore</span><span class="o">.</span><span class="n">UNSIGNED</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">s3_resource</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">profile</span><span class="p">:</span>
+            <span class="c1"># profile is False, use system env credentials</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">s3_resource</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Enabling cloud data access with profile: </span><span class="si">{</span><span class="n">profile</span><span class="si">}</span><span class="s1"> ...&#39;</span><span class="p">)</span>
+            <span class="n">session</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span><span class="n">profile_name</span><span class="o">=</span><span class="n">profile</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">s3_resource</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="n">service_name</span><span class="o">=</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">s3_client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">s3_resource</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">client</span></div>
+
+
+<div class="viewcode-block" id="HeasarcClass.download_data">
+<a class="viewcode-back" href="../../../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.download_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">download_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">links</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s1">&#39;heasarc&#39;</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download data products in links with a choice of getting the</span>
+<span class="sd">        data from either the heasarc server, sciserver, or the cloud in AWS.</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        links : `astropy.table.Table` or `astropy.table.Row`</span>
+<span class="sd">            The result from locate_data</span>
+<span class="sd">        host : str</span>
+<span class="sd">            The data host. The options are: heasarc (default), sciserver, aws.</span>
+<span class="sd">            If host == &#39;sciserver&#39;, data is copied from the local mounted</span>
+<span class="sd">            data drive.</span>
+<span class="sd">            If host == &#39;aws&#39;, data is downloaded from Amazon S3 Open</span>
+<span class="sd">            Data Repository.</span>
+<span class="sd">        location : str</span>
+<span class="sd">            local folder where the downloaded file will be saved.</span>
+<span class="sd">            Default is current working directory</span>
+
+<span class="sd">        Note that ff you are downloading large datasets (more 10 10GB),</span>
+<span class="sd">        from the main heasarc server, it is recommended that you split</span>
+<span class="sd">        it up, so that if the downloaded is interrupted, you do not need</span>
+<span class="sd">        to start again.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">links</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input links table is empty&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">links</span><span class="p">,</span> <span class="n">Row</span><span class="p">):</span>
+            <span class="n">links</span> <span class="o">=</span> <span class="n">links</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="n">links</span><span class="o">.</span><span class="n">index</span><span class="p">]]</span>
+
+        <span class="k">if</span> <span class="n">host</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;heasarc&#39;</span><span class="p">,</span> <span class="s1">&#39;sciserver&#39;</span><span class="p">,</span> <span class="s1">&#39;aws&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;host has to be one of heasarc, sciserver, aws&#39;</span><span class="p">)</span>
+
+        <span class="n">host_column</span> <span class="o">=</span> <span class="s1">&#39;access_url&#39;</span> <span class="k">if</span> <span class="n">host</span> <span class="o">==</span> <span class="s1">&#39;heasarc&#39;</span> <span class="k">else</span> <span class="n">host</span>
+        <span class="k">if</span> <span class="n">host_column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">links</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;No </span><span class="si">{</span><span class="n">host_column</span><span class="si">}</span><span class="s1"> column found in the table. Call &#39;</span>
+                <span class="s1">&#39;`~locate_data` first&#39;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># remove rows that dont have data, if any</span>
+        <span class="k">if</span> <span class="s1">&#39;error_message&#39;</span> <span class="ow">in</span> <span class="n">links</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+            <span class="n">links</span> <span class="o">=</span> <span class="n">links</span><span class="p">[</span><span class="n">links</span><span class="p">[</span><span class="s1">&#39;error_message&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">host</span> <span class="o">==</span> <span class="s1">&#39;heasarc&#39;</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Downloading data from the HEASARC ...&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_download_heasarc</span><span class="p">(</span><span class="n">links</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">host</span> <span class="o">==</span> <span class="s1">&#39;sciserver&#39;</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Copying data on Sciserver ...&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_copy_sciserver</span><span class="p">(</span><span class="n">links</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">host</span> <span class="o">==</span> <span class="s1">&#39;aws&#39;</span><span class="p">:</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Downloading data AWS S3 ...&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_download_s3</span><span class="p">(</span><span class="n">links</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_download_heasarc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">links</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download data from the heasarc main server using xamin&#39;s tar servlet</span>
+
+<span class="sd">        Do not call directly.</span>
+<span class="sd">        Users should be using `~self.download_data` instead</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        links : `astropy.table.Table`</span>
+<span class="sd">            The result from locate_data</span>
+<span class="sd">        location : str</span>
+<span class="sd">            local folder where the downloaded file will be saved.</span>
+<span class="sd">            Default is current working directory</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># The limit comes from the size of the string in the POST request</span>
+        <span class="k">if</span> <span class="s1">&#39;content_length&#39;</span> <span class="ow">in</span> <span class="n">links</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="n">links</span><span class="p">[</span><span class="s1">&#39;content_length&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="o">**</span><span class="mi">30</span>
+            <span class="k">if</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The size of the requested file is large </span><span class="si">{</span><span class="n">size</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> GB. &quot;</span>
+                    <span class="s2">&quot;If the download is interrupted, you may need to start &quot;</span>
+                    <span class="s2">&quot;again. Consider downloading the data in chunks.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">file_list</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;/FTP/</span><span class="si">{</span><span class="n">link</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;FTP/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                     <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">links</span><span class="p">[</span><span class="s1">&#39;access_url&#39;</span><span class="p">]]</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;files&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;&gt;</span><span class="si">{</span><span class="s2">&quot;&amp;&amp;&gt;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_list</span><span class="p">)</span><span class="si">}</span><span class="s1">&amp;&amp;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;filter&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span>
+        <span class="p">}</span>
+
+        <span class="c1"># get local_filepath name</span>
+        <span class="n">local_filepath</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s1">/heasarc-data.tar&#39;</span>
+        <span class="n">iname</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">local_filepath</span><span class="p">):</span>
+            <span class="n">local_filepath</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s1">/heasarc-data.</span><span class="si">{</span><span class="n">iname</span><span class="si">}</span><span class="s1">.tar&#39;</span>
+            <span class="n">iname</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Downloading to </span><span class="si">{</span><span class="n">local_filepath</span><span class="si">}</span><span class="s1"> ...&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_download_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TAR_URL</span><span class="p">,</span> <span class="n">local_filepath</span><span class="p">,</span>
+                            <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
+                            <span class="n">continuation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span>
+                            <span class="n">head_safe</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># if all good and we have a tar file untar it</span>
+        <span class="k">if</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">is_tarfile</span><span class="p">(</span><span class="n">local_filepath</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Untar </span><span class="si">{</span><span class="n">local_filepath</span><span class="si">}</span><span class="s1"> to </span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s1"> ...&#39;</span><span class="p">)</span>
+            <span class="n">tfile</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">TarFile</span><span class="p">(</span><span class="n">local_filepath</span><span class="p">)</span>
+            <span class="n">tfile</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">location</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="s2">&quot;fully_trusted&quot;</span><span class="p">)</span>
+            <span class="n">tfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">local_filepath</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;An error occurred when downloading the data. Retry again.&#39;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_copy_sciserver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">links</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy data from the local archive on sciserver</span>
+
+<span class="sd">        Do not call directly.</span>
+<span class="sd">        Users should be using `~self.download_data` instead</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s1">&#39;/FTP/&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                <span class="s1">&#39;No data archive found. This should be run on Sciserver &#39;</span>
+                <span class="s1">&#39;with the data drive mounted.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># make sure the output folder exits</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">links</span><span class="p">[</span><span class="s1">&#39;sciserver&#39;</span><span class="p">]:</span>
+            <span class="n">link</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Copying to </span><span class="si">{</span><span class="n">link</span><span class="si">}</span><span class="s1"> from the data drive ...&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">link</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;No data found in </span><span class="si">{</span><span class="n">link</span><span class="si">}</span><span class="s1">. &#39;</span>
+                    <span class="s1">&#39;Make sure you are running this on Sciserver. &#39;</span>
+                    <span class="s1">&#39;If you think data is missing, please contact the &#39;</span>
+                    <span class="s1">&#39;Heasarc Help desk&#39;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">link</span><span class="p">):</span>
+                <span class="n">download_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">link</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">))</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">download_dir</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_download_s3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">links</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Download data from AWS S3</span>
+<span class="sd">        Assuming open access.</span>
+
+<span class="sd">        Do not call directly.</span>
+<span class="sd">        Users should be using `~self.download_data` instead</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">keys_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">link</span> <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">links</span><span class="p">[</span><span class="s1">&#39;aws&#39;</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;s3_resource&#39;</span><span class="p">):</span>
+            <span class="c1"># all the data is public for now; no profile is needed</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">enable_cloud</span><span class="p">(</span><span class="n">provider</span><span class="o">=</span><span class="s1">&#39;aws&#39;</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_s3_tree_download</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">bucket_name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">local</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Download nested keys from s3&quot;&quot;&quot;</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_objects_v2</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">Prefix</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Contents&#39;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s1">&#39;Key&#39;</span><span class="p">]</span>
+                <span class="n">path2</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">dest</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">local</span><span class="p">,</span> <span class="n">key</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">path2</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">:])</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">dest</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
+
+        <span class="c1"># loop through the requested links</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys_list</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;downloading </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;s3://</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">S3_BUCKET</span><span class="si">}</span><span class="s1">/&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">_s3_tree_download</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s3_client</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">S3_BUCKET</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span></div>
+
+
+
+<span class="n">Heasarc</span> <span class="o">=</span> <span class="n">HeasarcClass</span><span class="p">()</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 01 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>

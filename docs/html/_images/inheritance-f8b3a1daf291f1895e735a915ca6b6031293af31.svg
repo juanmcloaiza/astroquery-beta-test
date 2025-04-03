@@ -1,0 +1,29 @@
+<ns0:svg xmlns:ns0="http://www.w3.org/2000/svg" xmlns:ns1="http://www.w3.org/1999/xlink" width="307pt" height="28pt" viewBox="0.00 0.00 307.00 28.00">
+<ns0:g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 24)">
+<ns0:title>inheritance2f8b22fcda</ns0:title>
+
+<ns0:g id="node1" class="node">
+<ns0:title>BaseVOValidationError</ns0:title>
+<ns0:g id="a_node1"><ns0:a ns1:href="../api/astroquery.vo_conesearch.validator.exceptions.BaseVOValidationError.html#astroquery.vo_conesearch.validator.exceptions.BaseVOValidationError" ns1:title="Base class for VO validation exceptions." target="_top">
+<ns0:polygon fill="white" stroke="black" stroke-width="0.5" points="115.75,-20 0,-20 0,0 115.75,0 115.75,-20" />
+<ns0:text text-anchor="middle" x="57.88" y="-6.5" font-family="Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans" font-size="10.00">BaseVOValidationError</ns0:text>
+</ns0:a>
+</ns0:g>
+</ns0:g>
+
+<ns0:g id="node2" class="node">
+<ns0:title>ValidationMultiprocessingError</ns0:title>
+<ns0:g id="a_node2"><ns0:a ns1:href="../api/astroquery.vo_conesearch.validator.exceptions.ValidationMultiprocessingError.html#astroquery.vo_conesearch.validator.exceptions.ValidationMultiprocessingError" ns1:title="Validation using multiprocessing failed." target="_top">
+<ns0:polygon fill="white" stroke="black" stroke-width="0.5" points="299,-20 151.75,-20 151.75,0 299,0 299,-20" />
+<ns0:text text-anchor="middle" x="225.38" y="-6.5" font-family="Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans" font-size="10.00">ValidationMultiprocessingError</ns0:text>
+</ns0:a>
+</ns0:g>
+</ns0:g>
+
+<ns0:g id="edge1" class="edge">
+<ns0:title>BaseVOValidationError-&gt;ValidationMultiprocessingError</ns0:title>
+<ns0:path fill="none" stroke="black" stroke-width="0.5" d="M115.83,-10C125.26,-10 135.2,-10 145.06,-10" />
+<ns0:polygon fill="black" stroke="black" stroke-width="0.5" points="145.77,-11.75 150.77,-10 145.77,-8.25 145.77,-11.75" />
+</ns0:g>
+</ns0:g>
+</ns0:svg>

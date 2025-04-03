@@ -1,0 +1,41 @@
+MOCServerClass
+==============
+
+.. currentmodule:: astroquery.mocserver
+
+.. autoclass:: MOCServerClass
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~MOCServerClass.DEFAULT_FIELDS
+      ~MOCServerClass.TIMEOUT
+      ~MOCServerClass.URL
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~MOCServerClass.find_datasets
+      ~MOCServerClass.list_coordinate_systems
+      ~MOCServerClass.list_fields
+      ~MOCServerClass.query_async
+      ~MOCServerClass.query_hips
+      ~MOCServerClass.query_region
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: DEFAULT_FIELDS
+   .. autoattribute:: TIMEOUT
+   .. autoattribute:: URL
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: find_datasets
+   .. automethod:: list_coordinate_systems
+   .. automethod:: list_fields
+   .. automethod:: query_async
+   .. automethod:: query_hips
+   .. automethod:: query_region

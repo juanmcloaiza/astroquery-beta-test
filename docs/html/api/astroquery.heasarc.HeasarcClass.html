@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>HeasarcClass &#8212; astroquery v0.4.8.dev10179</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+    
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=1d6242bd"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Conf" href="astroquery.heasarc.Conf.html" />
+    <link rel="prev" title="HEASARC Queries (astroquery.heasarc)" href="../heasarc/heasarc.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astroquery.heasarc.Conf.html" title="Conf">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../heasarc/heasarc.html" title="HEASARC Queries (astroquery.heasarc)">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">astroquery v0.4.8.dev10179</a>
+	 &#187;
+      </li>
+      <li><a href="../heasarc/heasarc.html" accesskey="U">HEASARC Queries (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.heasarc</span></code>)</a> &#187;</li>
+      
+      <li>HeasarcClass</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="heasarcclass">
+<h1>HeasarcClass<a class="headerlink" href="#heasarcclass" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="astroquery.heasarc.HeasarcClass">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">astroquery.heasarc.</span></span><span class="sig-name descname"><span class="pre">HeasarcClass</span></span><a class="reference internal" href="../_modules/astroquery/heasarc/core.html#HeasarcClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.heasarc.HeasarcClass" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astroquery.query.BaseVOQuery.html#astroquery.query.BaseVOQuery" title="astroquery.query.BaseVOQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseVOQuery</span></code></a>, <a class="reference internal" href="astroquery.query.BaseQuery.html#astroquery.query.BaseQuery" title="astroquery.query.BaseQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseQuery</span></code></a></p>
+<p>Class for accessing HEASARC data with VO protocol using the Xamin backend.</p>
+<p>Initialize some basic useful variables</p>
+<p class="rubric">Attributes Summary</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.S3_BUCKET" title="astroquery.heasarc.HeasarcClass.S3_BUCKET"><code class="xref py py-obj docutils literal notranslate"><span class="pre">S3_BUCKET</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.TAR_URL" title="astroquery.heasarc.HeasarcClass.TAR_URL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TAR_URL</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.VO_URL" title="astroquery.heasarc.HeasarcClass.VO_URL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VO_URL</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.tap" title="astroquery.heasarc.HeasarcClass.tap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tap</span></code></a></p></td>
+<td><p>TAP service</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.timeout" title="astroquery.heasarc.HeasarcClass.timeout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">timeout</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.download_data" title="astroquery.heasarc.HeasarcClass.download_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_data</span></code></a>(links[, host, location])</p></td>
+<td><p>Download data products in links with a choice of getting the data from either the heasarc server, sciserver, or the cloud in AWS.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.enable_cloud" title="astroquery.heasarc.HeasarcClass.enable_cloud"><code class="xref py py-obj docutils literal notranslate"><span class="pre">enable_cloud</span></code></a>([provider, profile])</p></td>
+<td><p>Enable downloading public files from the cloud.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.get_default_radius" title="astroquery.heasarc.HeasarcClass.get_default_radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_default_radius</span></code></a>(catalog_name)</p></td>
+<td><p>Get a mission-appropriate default radius for a catalog</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.list_catalogs" title="astroquery.heasarc.HeasarcClass.list_catalogs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_catalogs</span></code></a>(*[, master, keywords])</p></td>
+<td><p>Return a table of all available catalogs with two columns (name, description)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.list_columns" title="astroquery.heasarc.HeasarcClass.list_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_columns</span></code></a>(catalog_name[, full])</p></td>
+<td><p>Return the columns available in catalog_name as a table</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.locate_data" title="astroquery.heasarc.HeasarcClass.locate_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">locate_data</span></code></a>([query_result, catalog_name])</p></td>
+<td><p>Get links to data products Use vo/datalinks to query the data products for some query_results.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.query_mission_cols" title="astroquery.heasarc.HeasarcClass.query_mission_cols"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_mission_cols</span></code></a>(mission, *[, cache, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.query_mission_list" title="astroquery.heasarc.HeasarcClass.query_mission_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_mission_list</span></code></a>(*[, cache, get_query_payload])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.query_object" title="astroquery.heasarc.HeasarcClass.query_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_object</span></code></a>(object_name, mission, *[, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.query_region" title="astroquery.heasarc.HeasarcClass.query_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_region</span></code></a>([position, catalog, radius, ...])</p></td>
+<td><p>Queries the HEASARC TAP server around a coordinate and returns a <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a> object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.query_tap" title="astroquery.heasarc.HeasarcClass.query_tap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_tap</span></code></a>(query, *[, maxrec])</p></td>
+<td><p>Send query to HEASARC's Xamin TAP using ADQL.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astroquery.heasarc.HeasarcClass.S3_BUCKET">
+<span class="sig-name descname"><span class="pre">S3_BUCKET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'nasa-heasarc'</span></em><a class="headerlink" href="#astroquery.heasarc.HeasarcClass.S3_BUCKET" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astroquery.heasarc.HeasarcClass.TAR_URL">
+<span class="sig-name descname"><span class="pre">TAR_URL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://heasarc.gsfc.nasa.gov/xamin/TarServlet'</span></em><a class="headerlink" href="#astroquery.heasarc.HeasarcClass.TAR_URL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astroquery.heasarc.HeasarcClass.VO_URL">
+<span class="sig-name descname"><span class="pre">VO_URL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://heasarc.gsfc.nasa.gov/xamin/vo'</span></em><a class="headerlink" href="#astroquery.heasarc.HeasarcClass.VO_URL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astroquery.heasarc.HeasarcClass.tap">
+<span class="sig-name descname"><span class="pre">tap</span></span><a class="headerlink" href="#astroquery.heasarc.HeasarcClass.tap" title="Link to this definition">¶</a></dt>
+<dd><p>TAP service</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astroquery.heasarc.HeasarcClass.timeout">
+<span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">30</span></em><a class="headerlink" href="#astroquery.heasarc.HeasarcClass.timeout" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.heasarc.HeasarcClass.download_data">
+<span class="sig-name descname"><span class="pre">download_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">links</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'heasarc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/heasarc/core.html#HeasarcClass.download_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.heasarc.HeasarcClass.download_data" title="Link to this definition">¶</a></dt>
+<dd><p>Download data products in links with a choice of getting the
+data from either the heasarc server, sciserver, or the cloud in AWS.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>links</strong><span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a> or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Row.html#astropy.table.Row" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astropy.table.Row</span></code></a></span></dt><dd><p>The result from locate_data</p>
+</dd>
+<dt><strong>host</strong><span class="classifier">str</span></dt><dd><p>The data host. The options are: heasarc (default), sciserver, aws.
+If host == ‘sciserver’, data is copied from the local mounted
+data drive.
+If host == ‘aws’, data is downloaded from Amazon S3 Open
+Data Repository.</p>
+</dd>
+<dt><strong>location</strong><span class="classifier">str</span></dt><dd><p>local folder where the downloaded file will be saved.
+Default is current working directory</p>
+</dd>
+<dt><strong>Note that ff you are downloading large datasets (more 10 10GB),</strong></dt><dd></dd>
+<dt><strong>from the main heasarc server, it is recommended that you split</strong></dt><dd></dd>
+<dt><strong>it up, so that if the downloaded is interrupted, you do not need</strong></dt><dd></dd>
+<dt><strong>to start again.</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.heasarc.HeasarcClass.enable_cloud">
+<span class="sig-name descname"><span class="pre">enable_cloud</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">provider</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'aws'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/heasarc/core.html#HeasarcClass.enable_cloud"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.heasarc.HeasarcClass.enable_cloud" title="Link to this definition">¶</a></dt>
+<dd><p>Enable downloading public files from the cloud.
+Requires the boto3 library to function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>provider</strong><span class="classifier">str</span></dt><dd><p>Which cloud data provider to use. Currently, only ‘aws’ is
+supported.</p>
+</dd>
+<dt><strong>profile</strong><span class="classifier">str</span></dt><dd><p>Profile to use to identify yourself to the cloud provider
+(usually in ~/.aws/config).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.heasarc.HeasarcClass.get_default_radius">
+<span class="sig-name descname"><span class="pre">get_default_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">catalog_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/heasarc/core.html#HeasarcClass.get_default_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.heasarc.HeasarcClass.get_default_radius" title="Link to this definition">¶</a></dt>
+<dd><p>Get a mission-appropriate default radius for a catalog</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>catalog_name</strong><span class="classifier">str</span></dt><dd><p>The name of catalog as a str</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>The radius as <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Quantity</span></code></a></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.heasarc.HeasarcClass.list_catalogs">
+<span class="sig-name descname"><span class="pre">list_catalogs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">master</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keywords</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/heasarc/core.html#HeasarcClass.list_catalogs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.heasarc.HeasarcClass.list_catalogs" title="Link to this definition">¶</a></dt>
+<dd><p>Return a table of all available catalogs with two columns
+(name, description)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>master</strong><span class="classifier">bool</span></dt><dd><p>Select only master catalogs. Default is False</p>
+</dd>
+<dt><strong>keywords</strong><span class="classifier">str or list</span></dt><dd><p>a str or a list of str of keywords used as search
+terms for catalogs. Words with a str separated by a space
+are AND’ed, while words in a list are OR’ed</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a> with columns: name, description</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.heasarc.HeasarcClass.list_columns">
+<span class="sig-name descname"><span class="pre">list_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">catalog_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/heasarc/core.html#HeasarcClass.list_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.heasarc.HeasarcClass.list_columns" title="Link to this definition">¶</a></dt>
+<dd><p>Return the columns available in catalog_name as a table</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>catalog_name</strong><span class="classifier">str</span></dt><dd><p>The name of catalog as a str</p>
+</dd>
+<dt><strong>full</strong><span class="classifier">bool</span></dt><dd><p>If True, return all columns, otherwise, return the standard list
+of columns</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><strong>result</strong><span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a></span></dt><dd><p>A table with columns: name, description, unit</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.heasarc.HeasarcClass.locate_data">
+<span class="sig-name descname"><span class="pre">locate_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_result</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catalog_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/heasarc/core.html#HeasarcClass.locate_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.heasarc.HeasarcClass.locate_data" title="Link to this definition">¶</a></dt>
+<dd><p>Get links to data products
+Use vo/datalinks to query the data products for some query_results.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>query_result</strong><span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a> or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Row.html#astropy.table.Row" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astropy.table.Row</span></code></a>, optional</span></dt><dd><p>A table that contain the search results. Typically as
+returned by query_region. If None, use the table from the
+most recent query_region call.</p>
+</dd>
+<dt><strong>catalog_name</strong><span class="classifier">str</span></dt><dd><p>The catalog name for the which the query_result belongs to.
+If None, use the one from the most recent query_region call.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><strong>table</strong><span class="classifier">A <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a> object.</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.heasarc.HeasarcClass.query_mission_cols">
+<span class="sig-name descname"><span class="pre">query_mission_cols</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mission</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_query_payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/heasarc/core.html#HeasarcClass.query_mission_cols"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.heasarc.HeasarcClass.query_mission_cols" title="Link to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.4.8: </span>The query_mission_cols function is deprecated and may be removed in a future version.
+    Use list_columns instead.</p>
+</div>
+<p>Query around a specific object within a given mission catalog</p>
+<blockquote>
+<div><p>NOTE: This method is deprecated, and is included only for limited
+backward compatibility with the old astroquery.Heasarc that uses
+the Browse interface. Please use <a class="reference internal" href="#astroquery.heasarc.HeasarcClass.list_columns" title="astroquery.heasarc.HeasarcClass.list_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_columns</span></code></a> instead.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>mission</strong><span class="classifier">str</span></dt><dd><p>Mission catalog (short name) to search from</p>
+</dd>
+<dt><strong>fields</strong><span class="classifier">str, optional</span></dt><dd><p>Return format for columns from the server available options:
+* Standard      : Return default catalog columns
+* All (default) : Return all catalog columns
+* &lt;custom&gt;      : User defined csv list of columns to be returned</p>
+</dd>
+<dt><strong>cache</strong><span class="classifier">bool, optional</span></dt><dd><p>Defaults to True. If set overrides global caching behavior.
+See <a class="reference internal" href="../index.html#astroquery-cache"><span class="std std-ref">caching documentation</span></a>.</p>
+</dd>
+<dt><strong>All other parameters have no effect</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.heasarc.HeasarcClass.query_mission_list">
+<span class="sig-name descname"><span class="pre">query_mission_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_query_payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/heasarc/core.html#HeasarcClass.query_mission_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.heasarc.HeasarcClass.query_mission_list" title="Link to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.4.8: </span>The query_mission_list function is deprecated and may be removed in a future version.
+    Use list_catalogs instead.</p>
+</div>
+<p>Returns a list of all available mission catalogs with descriptions.</p>
+<blockquote>
+<div><p>This method is deprecated, and is included only for limited
+backward compatibility with the old astroquery.Heasarc that uses
+the Browse interface. Please use <a class="reference internal" href="#astroquery.heasarc.HeasarcClass.list_catalogs" title="astroquery.heasarc.HeasarcClass.list_catalogs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_catalogs</span></code></a> instead.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.heasarc.HeasarcClass.query_object">
+<span class="sig-name descname"><span class="pre">query_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mission</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_query_payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/heasarc/core.html#HeasarcClass.query_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.heasarc.HeasarcClass.query_object" title="Link to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.4.8: </span>The query_object function is deprecated and may be removed in a future version.
+    Use query_region instead.</p>
+</div>
+<p>Query around a specific object within a given mission catalog</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>object_name</strong><span class="classifier">str</span></dt><dd><p>Object to query around. To set search radius use the ‘radius’
+parameter.</p>
+</dd>
+<dt><strong>mission</strong><span class="classifier">str</span></dt><dd><p>Mission catalog to search from</p>
+</dd>
+<dt><strong>cache</strong><span class="classifier">bool</span></dt><dd><p>Defaults to True. If set overrides global caching behavior.
+See <a class="reference internal" href="../index.html#astroquery-cache"><span class="std std-ref">caching documentation</span></a>.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt><dd><p>see <code class="xref py py-obj docutils literal notranslate"><span class="pre">_args_to_payload</span></code> for list
+of additional parameters that can be used to refine search query.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.heasarc.HeasarcClass.query_region">
+<span class="sig-name descname"><span class="pre">query_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">catalog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spatial</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cone'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polygon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_query_payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxrec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/heasarc/core.html#HeasarcClass.query_region"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.heasarc.HeasarcClass.query_region" title="Link to this definition">¶</a></dt>
+<dd><p>Queries the HEASARC TAP server around a coordinate and returns a
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a> object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>position</strong><span class="classifier">str, <a class="reference external" href="https://docs.astropy.org/en/stable/coordinates/ref_api.html#module-astropy.coordinates" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astropy.coordinates</span></code></a> object</span></dt><dd><p>Gives the position of the center of the cone or box if performing
+a cone or box search. Required if spatial is <code class="docutils literal notranslate"><span class="pre">'cone'</span></code> or
+<code class="docutils literal notranslate"><span class="pre">'box'</span></code>. Ignored if spatial is <code class="docutils literal notranslate"><span class="pre">'polygon'</span></code> or <code class="docutils literal notranslate"><span class="pre">'all-sky'</span></code>.</p>
+</dd>
+<dt><strong>catalog</strong><span class="classifier">str</span></dt><dd><p>The catalog to query. To list the available catalogs, use
+<a class="reference internal" href="#astroquery.heasarc.HeasarcClass.list_catalogs" title="astroquery.heasarc.HeasarcClass.list_catalogs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">list_catalogs()</span></code></a>.</p>
+</dd>
+<dt><strong>spatial</strong><span class="classifier">str</span></dt><dd><p>Type of spatial query: <code class="docutils literal notranslate"><span class="pre">'cone'</span></code>, <code class="docutils literal notranslate"><span class="pre">'box'</span></code>, <code class="docutils literal notranslate"><span class="pre">'polygon'</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">'all-sky'</span></code>. Defaults to <code class="docutils literal notranslate"><span class="pre">'cone'</span></code>.</p>
+</dd>
+<dt><strong>radius</strong><span class="classifier">str or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Quantity</span></code></a> object, [optional for</span></dt><dd><p>spatial == <code class="docutils literal notranslate"><span class="pre">'cone'</span></code>].
+The string must be parsable by <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.Angle.html#astropy.coordinates.Angle" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Angle</span></code></a>. The
+appropriate <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Quantity</span></code></a> object from
+<a class="reference external" href="https://docs.astropy.org/en/stable/units/ref_api.html#module-astropy.units" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astropy.units</span></code></a> may also be used. If None, a default value
+appropriate for the selected catalog is used. To see the default
+radius for the catalog, see
+<a class="reference internal" href="#astroquery.heasarc.HeasarcClass.get_default_radius" title="astroquery.heasarc.HeasarcClass.get_default_radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_default_radius</span></code></a>.</p>
+</dd>
+<dt><strong>width</strong><span class="classifier">str, <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Quantity</span></code></a> object [Required for</span></dt><dd><p>spatial == <code class="docutils literal notranslate"><span class="pre">'box'</span></code>.]
+The string must be parsable by <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.Angle.html#astropy.coordinates.Angle" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Angle</span></code></a>. The
+appropriate <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Quantity</span></code></a> object from <a class="reference external" href="https://docs.astropy.org/en/stable/units/ref_api.html#module-astropy.units" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astropy.units</span></code></a>
+may also be used.</p>
+</dd>
+<dt><strong>polygon</strong><span class="classifier">list, [Required for spatial is <code class="docutils literal notranslate"><span class="pre">'polygon'</span></code>]</span></dt><dd><p>A list of <code class="docutils literal notranslate"><span class="pre">(ra,</span> <span class="pre">dec)</span></code> pairs (as tuples), in decimal degrees,
+outlining the polygon to search in. It can also be a list of
+<a class="reference external" href="https://docs.astropy.org/en/stable/coordinates/ref_api.html#module-astropy.coordinates" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astropy.coordinates</span></code></a> object or strings that can be parsed by
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.ICRS.html#astropy.coordinates.ICRS" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astropy.coordinates.ICRS</span></code></a>.</p>
+</dd>
+<dt><strong>add_offset: bool</strong></dt><dd><p>If True and spatial==’cone’, add a search_offset column that
+indicates the separation (in arcmin) between the requested
+coordinate and the entry coordinates in the catalog. Default is False.</p>
+</dd>
+<dt><strong>get_query_payload</strong><span class="classifier">bool, optional</span></dt><dd><p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then returns the generated ADQL query as str.
+Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+</dd>
+<dt><strong>columns</strong><span class="classifier">str, optional</span></dt><dd><p>Target column list with value separated by a comma(,).
+Use * for all the columns. The default is to return a subset
+of the columns that are generally the most useful.</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional</span></dt><dd><p>If False, suppress vo warnings.</p>
+</dd>
+<dt><strong>maxrec</strong><span class="classifier">int, optional</span></dt><dd><p>Maximum number of records</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><strong>table</strong><span class="classifier">A <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a> object.</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.heasarc.HeasarcClass.query_tap">
+<span class="sig-name descname"><span class="pre">query_tap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxrec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/heasarc/core.html#HeasarcClass.query_tap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.heasarc.HeasarcClass.query_tap" title="Link to this definition">¶</a></dt>
+<dd><p>Send query to HEASARC’s Xamin TAP using ADQL.
+Results in <a class="reference external" href="https://pyvo.readthedocs.io/en/stable/api/pyvo.dal.TAPResults.html#pyvo.dal.TAPResults" title="(in pyvo v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TAPResults</span></code></a> format.
+result.to_table gives <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a> format.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>query</strong><span class="classifier">str</span></dt><dd><p>ADQL query to be executed</p>
+</dd>
+<dt><strong>maxrec</strong><span class="classifier">int</span></dt><dd><p>maximum number of records to return</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><strong>result</strong><span class="classifier"><a class="reference external" href="https://pyvo.readthedocs.io/en/stable/api/pyvo.dal.TAPResults.html#pyvo.dal.TAPResults" title="(in pyvo v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TAPResults</span></code></a></span></dt><dd><p>TAP query result.</p>
+</dd>
+<dt><strong>result.to_table</strong><span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a></span></dt><dd><p>TAP query result as <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a></p>
+</dd>
+<dt><strong>result.to_qtable</strong><span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.QTable.html#astropy.table.QTable" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QTable</span></code></a></span></dt><dd><p>TAP query result as <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.QTable.html#astropy.table.QTable" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QTable</span></code></a></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">HeasarcClass</a><ul>
+<li><a class="reference internal" href="#astroquery.heasarc.HeasarcClass"><code class="docutils literal notranslate"><span class="pre">HeasarcClass</span></code></a><ul>
+<li><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.S3_BUCKET"><code class="docutils literal notranslate"><span class="pre">HeasarcClass.S3_BUCKET</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.TAR_URL"><code class="docutils literal notranslate"><span class="pre">HeasarcClass.TAR_URL</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.VO_URL"><code class="docutils literal notranslate"><span class="pre">HeasarcClass.VO_URL</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.tap"><code class="docutils literal notranslate"><span class="pre">HeasarcClass.tap</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.timeout"><code class="docutils literal notranslate"><span class="pre">HeasarcClass.timeout</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.download_data"><code class="docutils literal notranslate"><span class="pre">HeasarcClass.download_data()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.enable_cloud"><code class="docutils literal notranslate"><span class="pre">HeasarcClass.enable_cloud()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.get_default_radius"><code class="docutils literal notranslate"><span class="pre">HeasarcClass.get_default_radius()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.list_catalogs"><code class="docutils literal notranslate"><span class="pre">HeasarcClass.list_catalogs()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.list_columns"><code class="docutils literal notranslate"><span class="pre">HeasarcClass.list_columns()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.locate_data"><code class="docutils literal notranslate"><span class="pre">HeasarcClass.locate_data()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.query_mission_cols"><code class="docutils literal notranslate"><span class="pre">HeasarcClass.query_mission_cols()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.query_mission_list"><code class="docutils literal notranslate"><span class="pre">HeasarcClass.query_mission_list()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.query_object"><code class="docutils literal notranslate"><span class="pre">HeasarcClass.query_object()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.query_region"><code class="docutils literal notranslate"><span class="pre">HeasarcClass.query_region()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.heasarc.HeasarcClass.query_tap"><code class="docutils literal notranslate"><span class="pre">HeasarcClass.query_tap()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="../_sources/api/astroquery.heasarc.HeasarcClass.rst.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 02 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Splatalogue Queries (astroquery.splatalogue) &#8212; astroquery v0.4.8.dev10179</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+    
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=1d6242bd"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="SplatalogueClass" href="../api/astroquery.splatalogue.SplatalogueClass.html" />
+    <link rel="prev" title="Conf" href="../api/astroquery.skyview.Conf.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="../api/astroquery.splatalogue.SplatalogueClass.html" title="SplatalogueClass">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../api/astroquery.skyview.Conf.html" title="Conf">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">astroquery v0.4.8.dev10179</a>
+	 &#187;
+      </li>
+      
+      <li>Splatalogue Queries (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.splatalogue</span></code>)</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="splatalogue-queries-astroquery-splatalogue">
+<span id="astroquery-splatalogue"></span><h1>Splatalogue Queries (<a class="reference internal" href="#module-astroquery.splatalogue" title="astroquery.splatalogue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.splatalogue</span></code></a>)<a class="headerlink" href="#splatalogue-queries-astroquery-splatalogue" title="Link to this heading">¶</a></h1>
+<section id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h2>
+<p>This module provides an interface to the <a class="reference external" href="https://splatalogue.online/">Splatalogue web service</a>
+It returns tables of spectral lines with features that you can specify by the
+same means generally available on the Splatalogue website.</p>
+<section id="searching-for-lines">
+<h3>Searching for Lines<a class="headerlink" href="#searching-for-lines" title="Link to this heading">¶</a></h3>
+<p>In the Splatalogue web interface, you select “species” of interest using the left side menu
+seen in the <a class="reference external" href="https://splatalogue.online/#/basic">query interface</a>.  You can access the line list:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.splatalogue</span> <span class="kn">import</span> <span class="n">Splatalogue</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">line_ids</span> <span class="o">=</span> <span class="n">Splatalogue</span><span class="o">.</span><span class="n">get_species_ids</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This will return the complete Splatalogue chemical species list, including all isotopologues, etc.
+To search within this list for a particular species, you can use regular expressions:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">CO_containing_species</span> <span class="o">=</span> <span class="n">Splatalogue</span><span class="o">.</span><span class="n">get_species_ids</span><span class="p">(</span><span class="n">species_regex</span><span class="o">=</span><span class="s1">&#39;CO&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">CO_containing_species</span><span class="p">)</span>
+<span class="go">105</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">just_CO</span> <span class="o">=</span> <span class="n">Splatalogue</span><span class="o">.</span><span class="n">get_species_ids</span><span class="p">(</span><span class="n">species_regex</span><span class="o">=</span><span class="s1">&#39; CO &#39;</span><span class="p">)</span> <span class="c1"># note the spaces</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">just_CO</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">just_CO</span>
+<span class="go">{&#39;02812 CO v = 0 - Carbon Monoxide&#39;: &#39;204&#39;,</span>
+<span class="go"> &#39;02813 CO v = 1 - Carbon Monoxide&#39;: &#39;990&#39;,</span>
+<span class="go"> &#39;02814 CO v = 2 - Carbon Monoxide&#39;: &#39;991&#39;,</span>
+<span class="go"> &#39;02815 CO v = 3 - Carbon Monoxide&#39;: &#39;1343&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">carbon_monoxide</span> <span class="o">=</span> <span class="n">Splatalogue</span><span class="o">.</span><span class="n">get_species_ids</span><span class="p">(</span><span class="s1">&#39;Carbon Monoxide&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">carbon_monoxide</span><span class="p">)</span> <span class="c1"># includes isotopologues</span>
+<span class="go">17</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">carbon_monoxide</span>
+<span class="go">{&#39;02931 13CO+ - Carbon Monoxide Ion&#39;: &#39;21107&#39;,</span>
+<span class="go"> &#39;03027 C18O+ - Carbon Monoxide Ion&#39;: &#39;21108&#39;,</span>
+<span class="go"> &#39;03119 13C18O+ - Carbon Monoxide Ion&#39;: &#39;21109&#39;,</span>
+<span class="go"> &#39;02812 CO v = 0 - Carbon Monoxide&#39;: &#39;204&#39;,</span>
+<span class="go"> &#39;02813 CO v = 1 - Carbon Monoxide&#39;: &#39;990&#39;,</span>
+<span class="go"> &#39;02816 CO+ v = 0 - Carbon Monoxide Ion&#39;: &#39;709&#39;,</span>
+<span class="go"> &#39;02910 13CO v = 0 - Carbon Monoxide&#39;: &#39;4&#39;,</span>
+<span class="go"> &#39;02913 C17O - Carbon Monoxide&#39;: &#39;226&#39;,</span>
+<span class="go"> &#39;03005 C18O - Carbon Monoxide&#39;: &#39;245&#39;,</span>
+<span class="go"> &#39;03006 13C17O - Carbon Monoxide&#39;: &#39;264&#39;,</span>
+<span class="go"> &#39;03101 13C18O - Carbon Monoxide&#39;: &#39;14&#39;,</span>
+<span class="go"> &#39;02814 CO v = 2 - Carbon Monoxide&#39;: &#39;991&#39;,</span>
+<span class="go"> &#39;02815 CO v = 3 - Carbon Monoxide&#39;: &#39;1343&#39;,</span>
+<span class="go"> &#39;02817 CO+ v = 1 - Carbon Monoxide Ion&#39;: &#39;21273&#39;,</span>
+<span class="go"> &#39;02911 13CO v = 1 - Carbon Monoxide&#39;: &#39;992&#39;,</span>
+<span class="go"> &#39;02912 13CO v = 2 - Carbon Monoxide&#39;: &#39;993&#39;,</span>
+<span class="go"> &#39;03004 14CO - Carbon Monoxide&#39;: &#39;778&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atomic_weight_88</span> <span class="o">=</span> <span class="n">Splatalogue</span><span class="o">.</span><span class="n">get_species_ids</span><span class="p">(</span><span class="s1">&#39;^088&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atomic_weight_88</span>
+<span class="go">{&#39;08801 SiC5 - Silicon Tetracarbide&#39;: &#39;265&#39;,</span>
+<span class="go"> &#39;08803 C6O - Hexacarbon monoxide&#39;: &#39;585&#39;,</span>
+<span class="go"> &#39;08802 CH3C6H - Methyltriacetylene&#39;: &#39;388&#39;}</span>
+</pre></div>
+</div>
+<p>The returned items are dictionaries, but they are also searchable.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># note leading space</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">carbon_monoxide</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39; 13&#39;</span><span class="p">)</span>
+<span class="go">{&#39;02931 13CO+ - Carbon Monoxide Ion&#39;: &#39;21107&#39;,</span>
+<span class="go"> &#39;03119 13C18O+ - Carbon Monoxide Ion&#39;: &#39;21109&#39;,</span>
+<span class="go"> &#39;02910 13CO v = 0 - Carbon Monoxide&#39;: &#39;4&#39;,</span>
+<span class="go"> &#39;03006 13C17O - Carbon Monoxide&#39;: &#39;264&#39;,</span>
+<span class="go"> &#39;03101 13C18O - Carbon Monoxide&#39;: &#39;14&#39;,</span>
+<span class="go"> &#39;02911 13CO v = 1 - Carbon Monoxide&#39;: &#39;992&#39;,</span>
+<span class="go"> &#39;02912 13CO v = 2 - Carbon Monoxide&#39;: &#39;993&#39;}</span>
+</pre></div>
+</div>
+</section>
+<section id="querying-splatalogue-getting-line-information">
+<h3>Querying Splatalogue: Getting Line Information<a class="headerlink" href="#querying-splatalogue-getting-line-information" title="Link to this heading">¶</a></h3>
+<p>Unlike most astroquery tools, the <a class="reference external" href="https://www.splatalogue.online">Splatalogue</a> tool closely resembles the
+online interface.  In principle, we can make a higher level wrapper, but it is
+not obvious what other parameters one might want to query on (whereas with
+catalogs, you almost always need a sky-position based query tool).</p>
+<p>Any feature you can change on the <a class="reference external" href="https://splatalogue.online/#/basic">Splatalogue web form</a>
+can be modified in the
+<a class="reference internal" href="../api/astroquery.splatalogue.SplatalogueClass.html#astroquery.splatalogue.SplatalogueClass.query_lines" title="astroquery.splatalogue.SplatalogueClass.query_lines"><code class="xref py py-meth docutils literal notranslate"><span class="pre">query_lines()</span></code></a> tool.</p>
+<p>For any Splatalogue query, you <em>must</em> specify a minimum/maximum frequency.
+However, you can do it with astropy units, so wavelengths are OK too.</p>
+<p>(note that in the following examples, <code class="docutils literal notranslate"><span class="pre">max_width=100</span></code> is set to minimize the
+size of the printout and assist with doctests; it is not needed as the default
+<code class="docutils literal notranslate"><span class="pre">pprint</span></code> behavior is to fill the terminal width)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CO1to0</span> <span class="o">=</span> <span class="n">Splatalogue</span><span class="o">.</span><span class="n">query_lines</span><span class="p">(</span><span class="mf">115.271</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GHz</span><span class="p">,</span> <span class="mf">115.273</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GHz</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CO1to0</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">max_width</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="go"> species_id                                          name                                                     chemical_name             ... searchErrorMessage sqlquery requestnumber</span>
+<span class="go"> ---------- -------------------------------------------------------------------------------------- ------------------------------------ ... ------------------ -------- -------------</span>
+<span class="go">      21228                                        &lt;i&gt;GA&lt;/i&gt;-&lt;i&gt;n&lt;/i&gt;-C&lt;sub&gt;4&lt;/sub&gt;H&lt;sub&gt;9&lt;/sub&gt;CN                      n-Butyl cyanide ...                        None             0</span>
+<span class="go">       1288 NH&lt;sub&gt;2&lt;/sub&gt;CH&lt;sub&gt;2&lt;/sub&gt;CH&lt;sub&gt;2&lt;/sub&gt;OH &lt;font color=&quot;red&quot;&gt;v&lt;sub&gt;26&lt;/sub&gt;=1&lt;/font&gt;                         Aminoethanol ...                        None             0</span>
+<span class="go">        204                                                      CO &lt;font color=&quot;red&quot;&gt;v = 0&lt;/font&gt;                      Carbon Monoxide ...                        None             0</span>
+<span class="go">        204                                                      CO &lt;font color=&quot;red&quot;&gt;v = 0&lt;/font&gt;                      Carbon Monoxide ...                        None             0</span>
+<span class="go">        204                                                      CO &lt;font color=&quot;red&quot;&gt;v = 0&lt;/font&gt;                      Carbon Monoxide ...                        None             0</span>
+<span class="go">        204                                                      CO &lt;font color=&quot;red&quot;&gt;v = 0&lt;/font&gt;                      Carbon Monoxide ...                        None             0</span>
+<span class="go">          8                                                                                   FeCO                    Iron Monocarbonyl ...                        None             0</span>
+<span class="go">       1321                                                 CH&lt;sub&gt;3&lt;/sub&gt;CHNH&lt;sub&gt;2&lt;/sub&gt;COOH - I                      &amp;alpha;-Alanine ...                        None             0</span>
+<span class="go">      21092                                                                     s-trans-H2C=CHCOOH                       Propenoic acid ...                        None             0</span>
+<span class="go">        529                               CH&lt;sub&gt;3&lt;/sub&gt;CHO &lt;font color=&quot;red&quot;&gt;v = 0, 1 &amp; 2 &lt;/font&gt;                         Acetaldehyde ...                        None             0</span>
+<span class="go">        529                               CH&lt;sub&gt;3&lt;/sub&gt;CHO &lt;font color=&quot;red&quot;&gt;v = 0, 1 &amp; 2 &lt;/font&gt;                         Acetaldehyde ...                        None             0</span>
+<span class="go">      21067                                                   &lt;i&gt;c&lt;/i&gt;-C&lt;sub&gt;5&lt;/sub&gt;H&lt;sub&gt;5&lt;/sub&gt;N                             Pyridine ...                        None             0</span>
+<span class="go">      21067                                                   &lt;i&gt;c&lt;/i&gt;-C&lt;sub&gt;5&lt;/sub&gt;H&lt;sub&gt;5&lt;/sub&gt;N                             Pyridine ...                        None             0</span>
+<span class="go">       1275                                                           &lt;i&gt;c&lt;/i&gt;-CH&lt;sub&gt;2&lt;/sub&gt;CHCHO                             Propenal ...                        None             0</span>
+<span class="go">       1275                                                           &lt;i&gt;c&lt;/i&gt;-CH&lt;sub&gt;2&lt;/sub&gt;CHCHO                             Propenal ...                        None             0</span>
+<span class="go">       1288 NH&lt;sub&gt;2&lt;/sub&gt;CH&lt;sub&gt;2&lt;/sub&gt;CH&lt;sub&gt;2&lt;/sub&gt;OH &lt;font color=&quot;red&quot;&gt;v&lt;sub&gt;26&lt;/sub&gt;=1&lt;/font&gt;                         Aminoethanol ...                        None             0</span>
+<span class="go">       1288 NH&lt;sub&gt;2&lt;/sub&gt;CH&lt;sub&gt;2&lt;/sub&gt;CH&lt;sub&gt;2&lt;/sub&gt;OH &lt;font color=&quot;red&quot;&gt;v&lt;sub&gt;26&lt;/sub&gt;=1&lt;/font&gt;                         Aminoethanol ...                        None             0</span>
+<span class="go">       1288 NH&lt;sub&gt;2&lt;/sub&gt;CH&lt;sub&gt;2&lt;/sub&gt;CH&lt;sub&gt;2&lt;/sub&gt;OH &lt;font color=&quot;red&quot;&gt;v&lt;sub&gt;26&lt;/sub&gt;=1&lt;/font&gt;                         Aminoethanol ...                        None             0</span>
+<span class="go">       1288 NH&lt;sub&gt;2&lt;/sub&gt;CH&lt;sub&gt;2&lt;/sub&gt;CH&lt;sub&gt;2&lt;/sub&gt;OH &lt;font color=&quot;red&quot;&gt;v&lt;sub&gt;26&lt;/sub&gt;=1&lt;/font&gt;                         Aminoethanol ...                        None             0</span>
+<span class="go">       1370                                             CH&lt;sub&gt;3&lt;/sub&gt;O&lt;sup&gt;13&lt;/sup&gt;CHO (TopModel)                       Methyl Formate ...                        None             0</span>
+<span class="go">      21026                                                                   CH3O13CHO, vt = 0, 1 Methyl formate, v&lt;sub&gt;t&lt;/sub&gt; = 0, 1 ...                        None             0</span>
+<span class="go">       1314                     H&lt;sub&gt;2&lt;/sub&gt;NCH&lt;sub&gt;2&lt;/sub&gt;COOH - II &lt;font color=&quot;red&quot;&gt;v=1&lt;/font&gt;                              Glycine ...                        None             0</span>
+<span class="go">       1284                                   cis-CH&lt;sub&gt;2&lt;/sub&gt;OHCHO &lt;font color=&quot;red&quot;&gt;v=3&lt;/font&gt;                       Glycolaldehyde ...                        None             0</span>
+</pre></div>
+</div>
+<p>Querying just by frequency isn’t particularly effective; a nicer approach is to
+use both frequency and chemical name.  If you can remember that CO 2-1 is approximately
+in the 1 mm band, but you don’t know its exact frequency (after all, why else would you be using splatalogue?),
+this query works:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">CO2to1</span> <span class="o">=</span> <span class="n">Splatalogue</span><span class="o">.</span><span class="n">query_lines</span><span class="p">(</span><span class="mi">1</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span> <span class="n">chemical_name</span><span class="o">=</span><span class="s2">&quot; CO &quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CO2to1</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">max_width</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="go">species_id                name                chemical_name  resolved_QNs linelist LovasASTIntensity ... telescope_Lovas_NIST transitionBandColor  searchErrorMessage sqlquery requestnumber</span>
+<span class="go"> ---------- --------------------------------- --------------- ------------ -------- ----------------- ... -------------------- -------------------- ------------------ -------- -------------</span>
+<span class="go">       1343        CO &lt;font color=&quot;red&quot;&gt;v = 3 Carbon Monoxide         2- 1     CDMS                   ...                      datatablelightpurple                        None             0</span>
+<span class="go">        991 CO &lt;font color=&quot;red&quot;&gt;v = 2&lt;/font&gt; Carbon Monoxide         2- 1     CDMS                   ...                      datatablelightpurple                        None             0</span>
+<span class="go">        991 CO &lt;font color=&quot;red&quot;&gt;v = 2&lt;/font&gt; Carbon Monoxide         2- 1    SLAIM                   ...                      datatablelightpurple                        None             0</span>
+<span class="go">        990 CO &lt;font color=&quot;red&quot;&gt;v = 1&lt;/font&gt; Carbon Monoxide         2- 1     CDMS                   ...                      datatablelightpurple                        None             0</span>
+<span class="go">        990 CO &lt;font color=&quot;red&quot;&gt;v = 1&lt;/font&gt; Carbon Monoxide         2- 1    SLAIM           0.62 Jy ...                      datatablelightpurple                        None             0</span>
+<span class="go">        204 CO &lt;font color=&quot;red&quot;&gt;v = 0&lt;/font&gt; Carbon Monoxide          2-1     CDMS               70. ...         NRAO     11m datatablelightpurple                        None             0</span>
+<span class="go">        204 CO &lt;font color=&quot;red&quot;&gt;v = 0&lt;/font&gt; Carbon Monoxide          2-1      JPL                   ...                      datatablelightpurple                        None             0</span>
+<span class="go">        204 CO &lt;font color=&quot;red&quot;&gt;v = 0&lt;/font&gt; Carbon Monoxide          2-1    Lovas               70. ...         NRAO     11m datatablelightpurple                        None             0</span>
+<span class="go">        204 CO &lt;font color=&quot;red&quot;&gt;v = 0&lt;/font&gt; Carbon Monoxide         2- 1    SLAIM               70. ...                      datatablelightpurple                        None             0</span>
+</pre></div>
+</div>
+<p>Of course, there’s some noise in there: both the vibrationally excited line and a whole lot of different line lists.
+Start by thinning out the line lists used:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">CO2to1</span> <span class="o">=</span> <span class="n">Splatalogue</span><span class="o">.</span><span class="n">query_lines</span><span class="p">(</span><span class="mi">1</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span> <span class="n">chemical_name</span><span class="o">=</span><span class="s2">&quot; CO &quot;</span><span class="p">,</span> <span class="n">only_NRAO_recommended</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CO2to1</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">max_width</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="go"> species_id                name                chemical_name  resolved_QNs linelist LovasASTIntensity ... telescope_Lovas_NIST transitionBandColor  searchErrorMessage sqlquery requestnumber</span>
+<span class="go"> ---------- --------------------------------- --------------- ------------ -------- ----------------- ... -------------------- -------------------- ------------------ -------- -------------</span>
+<span class="go">        990 CO &lt;font color=&quot;red&quot;&gt;v = 1&lt;/font&gt; Carbon Monoxide         2- 1     CDMS                   ...                      datatablelightpurple                        None             0</span>
+<span class="go">        204 CO &lt;font color=&quot;red&quot;&gt;v = 0&lt;/font&gt; Carbon Monoxide          2-1     CDMS               70. ...         NRAO     11m datatablelightpurple                        None             0</span>
+</pre></div>
+</div>
+<p>Then get rid of the vibrationally excited line by setting an energy upper limit in Kelvin:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">CO2to1</span> <span class="o">=</span> <span class="n">Splatalogue</span><span class="o">.</span><span class="n">query_lines</span><span class="p">(</span><span class="mi">1</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">mm</span><span class="p">,</span> <span class="n">chemical_name</span><span class="o">=</span><span class="s2">&quot; CO &quot;</span><span class="p">,</span>
+<span class="gp">... </span>                                 <span class="n">only_NRAO_recommended</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">... </span>                                 <span class="n">energy_max</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">energy_type</span><span class="o">=</span><span class="s1">&#39;eu_k&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CO2to1</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">max_width</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="go">species_id                name                chemical_name  resolved_QNs linelist LovasASTIntensity ... telescope_Lovas_NIST transitionBandColor  searchErrorMessage sqlquery requestnumber</span>
+<span class="go"> ---------- --------------------------------- --------------- ------------ -------- ----------------- ... -------------------- -------------------- ------------------ -------- -------------</span>
+<span class="go">        204 CO &lt;font color=&quot;red&quot;&gt;v = 0&lt;/font&gt; Carbon Monoxide          2-1     CDMS               70. ...         NRAO     11m datatablelightpurple                        None             0</span>
+</pre></div>
+</div>
+</section>
+<section id="a-note-on-recombination-lines">
+<h3>A note on recombination lines<a class="headerlink" href="#a-note-on-recombination-lines" title="Link to this heading">¶</a></h3>
+<p>Radio recombination lines are included in the splatalogue catalog under the
+names “Hydrogen Recombination Line”, “Helium Recombination Line”, and “Carbon
+Recombination Line”.  If you want to search specifically for the alpha, beta,
+delta, gamma, epsilon, or zeta lines, you need to use the unicode character for
+these symbols (Hα, Hβ, Hγ, Hδ, Hε, Hζ), even though they will show up as
+<code class="docutils literal notranslate"><span class="pre">&amp;alpha;</span></code> in the ASCII table.  For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ha_result</span> <span class="o">=</span> <span class="n">Splatalogue</span><span class="o">.</span><span class="n">query_lines</span><span class="p">(</span><span class="mi">84</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GHz</span><span class="p">,</span> <span class="mi">115</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GHz</span><span class="p">,</span> <span class="n">chemical_name</span><span class="o">=</span><span class="s1">&#39;Hα&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ha_result</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">max_width</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="go"> species_id   name          chemical_name           resolved_QNs    linelist LovasASTIntensity ... source_Lovas_NIST telescope_Lovas_NIST transitionBandColor searchErrorMessage sqlquery requestnumber</span>
+<span class="go"> ---------- -------- --------------------------- ------------------ -------- ----------------- ... ----------------- -------------------- ------------------- ------------------ -------- -------------</span>
+<span class="go">       1154 H&amp;alpha; Hydrogen Recombination Line  H ( 42 ) &amp;alpha;    Recomb                   ...                                           datatableskyblue                        None             0</span>
+<span class="go">       1154 H&amp;alpha; Hydrogen Recombination Line  H ( 41 ) &amp;alpha;    Recomb                   ...                                           datatableskyblue                        None             0</span>
+<span class="go">       1154 H&amp;alpha; Hydrogen Recombination Line  H ( 40 ) &amp;alpha;    Recomb                   ...                                           datatableskyblue                        None             0</span>
+<span class="go">       1154 H&amp;alpha; Hydrogen Recombination Line  H ( 39 ) &amp;alpha;    Recomb                   ...                                           datatableskyblue                        None             0</span>
+</pre></div>
+</div>
+<p>You could also search by specifying the line list</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">recomb_result</span> <span class="o">=</span> <span class="n">Splatalogue</span><span class="o">.</span><span class="n">query_lines</span><span class="p">(</span><span class="mi">84</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GHz</span><span class="p">,</span> <span class="mi">85</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GHz</span><span class="p">,</span> <span class="n">line_lists</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Recombination&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">recomb_result</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">max_width</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="go">species_id    name          chemical_name            resolved_QNs    linelist LovasASTIntensity ... source_Lovas_NIST telescope_Lovas_NIST transitionBandColor searchErrorMessage sqlquery requestnumber</span>
+<span class="go">---------- --------- --------------------------- ------------------- -------- ----------------- ... ----------------- -------------------- ------------------- ------------------ -------- -------------</span>
+<span class="go">      1156  H&amp;gamma; Hydrogen Recombination Line   H ( 60 ) &amp;gamma;    Recomb                   ...                                           datatableskyblue                        None             0</span>
+<span class="go">      1162 He&amp;gamma;   Helium Recombination Line  He ( 60 ) &amp;gamma;    Recomb                   ...                                           datatableskyblue                        None             0</span>
+<span class="go">      1166  C&amp;gamma;   Carbon Recombination Line   C ( 60 ) &amp;gamma;    Recomb                   ...                                           datatableskyblue                        None             0</span>
+</pre></div>
+</div>
+</section>
+<section id="cleaning-up-the-returned-data">
+<h3>Cleaning Up the Returned Data<a class="headerlink" href="#cleaning-up-the-returned-data" title="Link to this heading">¶</a></h3>
+<p>Depending on what sub-field you work in, you may be interested in fine-tuning
+splatalogue queries to return only a subset of the columns and lines on a
+regular basis.  For example, if you want data returned preferentially in units
+of K rather than inverse cm, you’re interested in low-energy lines, and you want your
+data sorted by energy, you can use an approach like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">S</span> <span class="o">=</span> <span class="n">Splatalogue</span><span class="p">(</span><span class="n">energy_max</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="n">energy_type</span><span class="o">=</span><span class="s1">&#39;eu_k&#39;</span><span class="p">,</span> <span class="n">energy_levels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Four&#39;</span><span class="p">],</span>
+<span class="gp">... </span>   <span class="n">line_strengths</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;CDMSJPL&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">trimmed_query</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">columns</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;species_id&#39;</span><span class="p">,</span> <span class="s1">&#39;chemical_name&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;resolved_QNs&#39;</span><span class="p">,</span>
+<span class="gp">... </span>               <span class="s1">&#39;orderedfreq&#39;</span><span class="p">,</span>
+<span class="gp">... </span>               <span class="s1">&#39;aij&#39;</span><span class="p">,</span>
+<span class="gp">... </span>               <span class="s1">&#39;upper_state_energy_K&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">table</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">query_lines</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)[</span><span class="n">columns</span><span class="p">]</span>
+<span class="gp">... </span>    <span class="n">table</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;upper_state_energy_K&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">table</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trimmed_query</span><span class="p">(</span><span class="mi">1</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GHz</span><span class="p">,</span><span class="mi">30</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">GHz</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">chemical_name</span><span class="o">=</span><span class="s1">&#39;(H2.*Formaldehyde)|( HDCO )&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">energy_max</span><span class="o">=</span><span class="mi">50</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">max_width</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+<span class="go">species_id chemical_name             name                     resolved_QNs         orderedfreq   aij    upper_state_energy_K</span>
+<span class="go">---------- ------------- ---------------------------- ---------------------------- ----------- -------- --------------------</span>
+<span class="go">       109  Formaldehyde                         HDCO       1(  1, 0)-   1(  1, 1)    5346.142 -8.44112             11.18258</span>
+<span class="go">       109  Formaldehyde                         HDCO           1( 1, 0)- 1( 1, 1)   5346.1616 -8.31295             11.18287</span>
+<span class="go">       109  Formaldehyde                         HDCO              1(1,0) - 1(1,1)   5346.1416 -8.31616             11.18301</span>
+<span class="go">       155  Formaldehyde H&lt;sub&gt;2&lt;/sub&gt;C&lt;sup&gt;18&lt;/sup&gt;O       1(  1, 0)-   1(  1, 1)    4388.797 -8.22052             15.30187</span>
+<span class="go">       155  Formaldehyde H&lt;sub&gt;2&lt;/sub&gt;C&lt;sup&gt;18&lt;/sup&gt;O  1( 1, 0)- 1( 1, 1), F= 1- 0   4388.7783  -9.0498             15.30206</span>
+<span class="go">       155  Formaldehyde H&lt;sub&gt;2&lt;/sub&gt;C&lt;sup&gt;18&lt;/sup&gt;O  1( 1, 0)- 1( 1, 1), F= 0- 1   4388.7957 -8.57268             15.30206</span>
+<span class="go">       155  Formaldehyde H&lt;sub&gt;2&lt;/sub&gt;C&lt;sup&gt;18&lt;/sup&gt;O  1( 1, 0)- 1( 1, 1), F= 2- 2   4388.7965 -8.69765             15.30206</span>
+<span class="go">       155  Formaldehyde H&lt;sub&gt;2&lt;/sub&gt;C&lt;sup&gt;18&lt;/sup&gt;O              1(1,0) - 1(1,1)    4388.797 -8.57272             15.30206</span>
+<span class="go">       155  Formaldehyde H&lt;sub&gt;2&lt;/sub&gt;C&lt;sup&gt;18&lt;/sup&gt;O  1( 1, 0)- 1( 1, 1), F= 2- 1   4388.8012 -9.17475             15.30206</span>
+<span class="go">       155  Formaldehyde H&lt;sub&gt;2&lt;/sub&gt;C&lt;sup&gt;18&lt;/sup&gt;O  1( 1, 0)- 1( 1, 1), F= 1- 2   4388.8036  -8.9529             15.30206</span>
+</pre></div>
+</div>
+<p>There are utility functions in <code class="docutils literal notranslate"><span class="pre">astroquery.splatalogue.utils</span></code> that automate
+some of the above cleanup.</p>
+</section>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<p>If you are repeatedly getting failed queries, or bad/out-of-date results, try clearing your cache:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.splatalogue</span> <span class="kn">import</span> <span class="n">Splatalogue</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Splatalogue</span><span class="o">.</span><span class="n">clear_cache</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If this function is unavailable, upgrade your version of astroquery.
+The <code class="docutils literal notranslate"><span class="pre">clear_cache</span></code> function was introduced in version 0.4.7.dev8479.</p>
+</section>
+<section id="reference-api">
+<h2>Reference/API<a class="headerlink" href="#reference-api" title="Link to this heading">¶</a></h2>
+<section id="module-astroquery.splatalogue">
+<span id="astroquery-splatalogue-package"></span><h3>astroquery.splatalogue Package<a class="headerlink" href="#module-astroquery.splatalogue" title="Link to this heading">¶</a></h3>
+<section id="splatalogue-catalog-query-tool">
+<h4>Splatalogue Catalog Query Tool<a class="headerlink" href="#splatalogue-catalog-query-tool" title="Link to this heading">¶</a></h4>
+<dl class="field-list simple">
+<dt class="field-odd">Author<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Adam Ginsburg (<a class="reference external" href="mailto:adam&#46;g&#46;ginsburg&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>g<span>&#46;</span>ginsburg<span>&#64;</span>gmail<span>&#46;</span>com</a>)</p>
+</dd>
+<dt class="field-even">Originally contributed by<span class="colon">:</span></dt>
+<dd class="field-even"><p>Magnus Vilhelm Persson (<a class="reference external" href="mailto:magnusp&#37;&#52;&#48;vilhelm&#46;nu">magnusp<span>&#64;</span>vilhelm<span>&#46;</span>nu</a>)</p>
+</dd>
+</dl>
+</section>
+<section id="classes">
+<h4>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h4>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/astroquery.splatalogue.SplatalogueClass.html#astroquery.splatalogue.SplatalogueClass" title="astroquery.splatalogue.SplatalogueClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SplatalogueClass</span></code></a>(**kwargs)</p></td>
+<td><p>Initialize a Splatalogue query class with default arguments set.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/astroquery.splatalogue.Conf.html#astroquery.splatalogue.Conf" title="astroquery.splatalogue.Conf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Conf</span></code></a>()</p></td>
+<td><p>Configuration parameters for <a class="reference internal" href="#module-astroquery.splatalogue" title="astroquery.splatalogue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.splatalogue</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Splatalogue Queries (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.splatalogue</span></code>)</a><ul>
+<li><a class="reference internal" href="#getting-started">Getting Started</a><ul>
+<li><a class="reference internal" href="#searching-for-lines">Searching for Lines</a></li>
+<li><a class="reference internal" href="#querying-splatalogue-getting-line-information">Querying Splatalogue: Getting Line Information</a></li>
+<li><a class="reference internal" href="#a-note-on-recombination-lines">A note on recombination lines</a></li>
+<li><a class="reference internal" href="#cleaning-up-the-returned-data">Cleaning Up the Returned Data</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li><a class="reference internal" href="#reference-api">Reference/API</a><ul>
+<li><a class="reference internal" href="#module-astroquery.splatalogue">astroquery.splatalogue Package</a><ul>
+<li><a class="reference internal" href="#splatalogue-catalog-query-tool">Splatalogue Catalog Query Tool</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="../_sources/splatalogue/splatalogue.rst.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 02 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>

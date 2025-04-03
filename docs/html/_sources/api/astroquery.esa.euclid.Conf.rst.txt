@@ -1,0 +1,53 @@
+Conf
+====
+
+.. currentmodule:: astroquery.esa.euclid
+
+.. autoclass:: Conf
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~Conf.BASIC_DOWNLOAD_DATA_PRODUCTS
+      ~Conf.CALIBRATED_FRAME_PRODUCTS
+      ~Conf.COMBINED_SPECTRA_PRODUCTS
+      ~Conf.ENVIRONMENTS
+      ~Conf.EUCLID_CUTOUT_SERVER
+      ~Conf.EUCLID_DATALINK_SERVER
+      ~Conf.EUCLID_TAP_SERVER
+      ~Conf.FRAME_CATALOG_PRODUCTS
+      ~Conf.MER_SEGMENTATION_MAP_PRODUCTS
+      ~Conf.MOSAIC_PRODUCTS
+      ~Conf.OBSERVATION_STACK_PRODUCTS
+      ~Conf.PRODUCT_TYPES
+      ~Conf.RAW_FRAME_PRODUCTS
+      ~Conf.ROW_LIMIT
+      ~Conf.SCHEMAS
+      ~Conf.SIR_SCIENCE_FRAME_PRODUCTS
+      ~Conf.URL_BASE
+      ~Conf.USE_NAMES_OVER_IDS
+      ~Conf.VALID_DATALINK_RETRIEVAL_TYPES
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: BASIC_DOWNLOAD_DATA_PRODUCTS
+   .. autoattribute:: CALIBRATED_FRAME_PRODUCTS
+   .. autoattribute:: COMBINED_SPECTRA_PRODUCTS
+   .. autoattribute:: ENVIRONMENTS
+   .. autoattribute:: EUCLID_CUTOUT_SERVER
+   .. autoattribute:: EUCLID_DATALINK_SERVER
+   .. autoattribute:: EUCLID_TAP_SERVER
+   .. autoattribute:: FRAME_CATALOG_PRODUCTS
+   .. autoattribute:: MER_SEGMENTATION_MAP_PRODUCTS
+   .. autoattribute:: MOSAIC_PRODUCTS
+   .. autoattribute:: OBSERVATION_STACK_PRODUCTS
+   .. autoattribute:: PRODUCT_TYPES
+   .. autoattribute:: RAW_FRAME_PRODUCTS
+   .. autoattribute:: ROW_LIMIT
+   .. autoattribute:: SCHEMAS
+   .. autoattribute:: SIR_SCIENCE_FRAME_PRODUCTS
+   .. autoattribute:: URL_BASE
+   .. autoattribute:: USE_NAMES_OVER_IDS
+   .. autoattribute:: VALID_DATALINK_RETRIEVAL_TYPES

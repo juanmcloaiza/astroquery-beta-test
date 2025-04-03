@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ESA Integral Science Legacy Archive (ISLA) (astroquery.esa.integral) &#8212; astroquery v0.4.8.dev10179</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css?v=7f9a90b1" />
+    
+    <script src="../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../_static/documentation_options.js?v=1d6242bd"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../../_static/copybutton.js"></script>
+    <link rel="icon" href="../../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="IntegralClass" href="../../api/astroquery.esa.integral.IntegralClass.html" />
+    <link rel="prev" title="Conf" href="../../api/astroquery.esa.hubble.Conf.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="../../api/astroquery.esa.integral.IntegralClass.html" title="IntegralClass">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../../api/astroquery.esa.hubble.Conf.html" title="Conf">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../../index.html">astroquery v0.4.8.dev10179</a>
+	 &#187;
+      </li>
+      
+      <li>ESA Integral Science Legacy Archive (ISLA) (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.esa.integral</span></code>)</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="esa-integral-science-legacy-archive-isla-astroquery-esa-integral">
+<span id="astroquery-esa-integral"></span><h1>ESA Integral Science Legacy Archive (ISLA) (<a class="reference internal" href="#module-astroquery.esa.integral" title="astroquery.esa.integral"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.esa.integral</span></code></a>)<a class="headerlink" href="#esa-integral-science-legacy-archive-isla-astroquery-esa-integral" title="Link to this heading">¶</a></h1>
+<p>INTEGRAL is the INTernational Gamma-Ray Astrophysics Laboratory of the
+European Space Agency. It observes the Universe in the X-ray and soft
+gamma-ray band. Since its launch, on October 17, 2002, the ISDC receives
+the spacecraft telemetry within seconds and provides alerts, processed
+data and analysis software to the worldwide scientific community.</p>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
+<section id="adql-queries-to-isla-tap">
+<h3>1. ADQL Queries to ISLA TAP<a class="headerlink" href="#adql-queries-to-isla-tap" title="Link to this heading">¶</a></h3>
+<p>The Query TAP functionality facilitates the execution of custom Table Access Protocol (TAP)
+queries within the Integral Science Legacy Archive. Results can be exported to a specified
+file in the chosen format, and queries may be executed asynchronously.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.integral</span> <span class="kn">import</span> <span class="n">IntegralClass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isla</span> <span class="o">=</span> <span class="n">IntegralClass</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isla</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="s1">&#39;select * from ivoa.obscore&#39;</span><span class="p">)</span>
+
+<span class="go">access_estsize   access_format                                     access_url                                   calib_level ...    t_max       t_min    t_resolution t_xel</span>
+<span class="go">    int64            object                                          object                                        int32    ...   float64     float64     float64    int64</span>
+<span class="go">-------------- ----------------- ------------------------------------------------------------------------------ ----------- ... ----------- ----------- ------------ -----</span>
+<span class="go">         26923 application/x-tar https://isla.esac.esa.int/tap/data?retrieval_type=SCW&amp;b2JzaWQ9MDA2MDAwMjAwMDE=           2 ... 52594.80985 52593.47308      6.1e-05     1</span>
+<span class="go">        488697 application/x-tar https://isla.esac.esa.int/tap/data?retrieval_type=SCW&amp;b2JzaWQ9MDA2MDAwNDAwMDE=           2 ... 52596.64583 52596.46613      6.1e-05     1</span>
+<span class="go">       3459831 application/x-tar https://isla.esac.esa.int/tap/data?retrieval_type=SCW&amp;b2JzaWQ9MDA2MDAwNjAwMDI=           2 ... 52600.54167  52599.4592      6.1e-05     1</span>
+<span class="go">           ...               ...                                                                            ...         ... ...         ...         ...          ...   ...</span>
+<span class="go">        351253 application/x-tar https://isla.esac.esa.int/tap/data?retrieval_type=SCW&amp;b2JzaWQ9ODg4MDExMzAwMDQ=           2 ... 57188.63542 57188.28125      6.1e-05     1</span>
+<span class="go">         10195 application/x-tar https://isla.esac.esa.int/tap/data?retrieval_type=SCW&amp;b2JzaWQ9ODg4MDExMzAwMDU=           2 ... 57189.64284 57189.28867      6.1e-05     1</span>
+<span class="go">        817730 application/x-tar https://isla.esac.esa.int/tap/data?retrieval_type=SCW&amp;b2JzaWQ9ODg5OTgwMTAzMDE=           2 ... 52636.82597 52636.49534      6.1e-05     1</span>
+</pre></div>
+</div>
+</section>
+<section id="getting-sources">
+<h3>2. Getting sources<a class="headerlink" href="#getting-sources" title="Link to this heading">¶</a></h3>
+<p>Users can utilize this method to retrieve a target from the Archive by specifying a target name.
+The output can be formatted and saved as needed.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.integral</span> <span class="kn">import</span> <span class="n">IntegralClass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isla</span> <span class="o">=</span> <span class="n">IntegralClass</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isla</span><span class="o">.</span><span class="n">get_sources</span><span class="p">(</span><span class="n">target_name</span><span class="o">=</span><span class="s1">&#39;crab&#39;</span><span class="p">)</span>
+
+<span class="go"> name          ra               dec           source_id</span>
+<span class="go">object      float64           float64           object</span>
+<span class="go">------ ----------------- ----------------- ----------------</span>
+<span class="go">  Crab 83.63320922851562 22.01447105407715 J053432.0+220052</span>
+</pre></div>
+</div>
+</section>
+<section id="getting-metadata-associated-to-sources">
+<h3>3. Getting metadata associated to sources<a class="headerlink" href="#getting-metadata-associated-to-sources" title="Link to this heading">¶</a></h3>
+<p>By invoking this method, users gain access to detailed metadata for a given source,
+identified by its target name. The metadata provides in-depth information about the source’s archival.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.integral</span> <span class="kn">import</span> <span class="n">IntegralClass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isla</span> <span class="o">=</span> <span class="n">IntegralClass</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metadata</span> <span class="o">=</span> <span class="n">isla</span><span class="o">.</span><span class="n">get_source_metadata</span><span class="p">(</span><span class="n">target_name</span><span class="o">=</span><span class="s1">&#39;Crab&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metadata</span>
+<span class="go">[{&#39;name&#39;: &#39;Integral&#39;, &#39;link&#39;: None, &#39;metadata&#39;: [{&#39;param&#39;: &#39;Name&#39;, &#39;value&#39;: &#39;Crab&#39;}, {&#39;param&#39;: &#39;Id&#39;, &#39;value&#39;: &#39;J053432.0+220052&#39;}, {&#39;param&#39;: &#39;Coordinates degrees&#39;, &#39;value&#39;: &#39;83.6324 22.0174&#39;}, {&#39;param&#39;: &#39;Coordinates&#39;, &#39;value&#39;: &#39;05 34 31.78 22 01 02.64&#39;}, {&#39;param&#39;: &#39;Galactic&#39;, &#39;value&#39;: &#39;184.55 -5.78&#39;}, {&#39;param&#39;: &#39;Isgri flag2&#39;, &#39;value&#39;: &#39;very bright source&#39;}, {&#39;param&#39;: &#39;Jemx flag&#39;, &#39;value&#39;: &#39;detected&#39;}, {&#39;param&#39;: &#39;Spi flag&#39;, &#39;value&#39;: &#39;detected&#39;}, {&#39;param&#39;: &#39;Picsit flag&#39;, &#39;value&#39;: &#39;detected&#39;}]}, {&#39;name&#39;: &#39;Simbad&#39;, &#39;link&#39;: &#39;https://simbad.cds.unistra.fr/simbad/sim-id?Ident=Crab&#39;, &#39;metadata&#39;: [{&#39;param&#39;: &#39;Id&#39;, &#39;value&#39;: &#39;NAME Crab&#39;}, {&#39;param&#39;: &#39;Type&#39;, &#39;value&#39;: &#39;SuperNova Remnant&#39;}, {&#39;param&#39;: &#39;Other types&#39;, &#39;value&#39;: &#39;HII|IR|Psr|Rad|SNR|X|gam&#39;}]}]</span>
+</pre></div>
+</div>
+</section>
+<section id="retrieving-observations-from-isla">
+<h3>4. Retrieving observations from ISLA<a class="headerlink" href="#retrieving-observations-from-isla" title="Link to this heading">¶</a></h3>
+<p>Observation data can be extracted using this method, defining a criteria such as target name,
+coordinates, search radius, time range, or revolution number range.
+The data can be formatted and saved to a file, with the option to perform the
+operation asynchronously.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.integral</span> <span class="kn">import</span> <span class="n">IntegralClass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isla</span> <span class="o">=</span> <span class="n">IntegralClass</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isla</span><span class="o">.</span><span class="n">get_observations</span><span class="p">(</span><span class="n">target_name</span><span class="o">=</span><span class="s1">&#39;crab&#39;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span> <span class="n">start_revno</span><span class="o">=</span><span class="s1">&#39;0290&#39;</span><span class="p">,</span> <span class="n">end_revno</span><span class="o">=</span><span class="s1">&#39;0599&#39;</span><span class="p">)</span>
+<span class="go">   dec                 email              end_revno       endtime       ...      starttime       surname                               title</span>
+<span class="go"> float64               str60                object         object       ...        object         str20                                str120</span>
+<span class="go">---------- ------------------------------ --------- ------------------- ... ------------------- ---------- --------------------------------------------------------------</span>
+<span class="go">26.3157778 peter.kretschmar!@obs.unige.ch      0352 2005-09-02 21:20:59 ... 2005-08-31 11:07:06 Kretschmar Target of Opportunity Observations of an Outburst in A 0535+26</span>
+<span class="go">    22.684             isdc-iswt@unige.ch      0300 2005-03-30 22:42:38 ... 2005-03-30 10:34:41       ISWT                                 Crab spring/05 IBIS 10 deg arc</span>
+<span class="go">    20.611             isdc-iswt@unige.ch      0300 2005-03-31 13:35:11 ... 2005-03-30 22:44:07       ISWT                                 Crab spring/05 IBIS 10 deg arc</span>
+<span class="go">       ...                            ...       ...                 ... ...                 ...        ...                                                            ...</span>
+<span class="go">22.0144444         inthelp@sciops.esa.int      0541 2007-03-21 00:08:52 ... 2007-03-20 21:30:30     Public                       Crab-2007 Spring: JEM-X VC settings test</span>
+<span class="go">22.0144444         inthelp@sciops.esa.int      0541 2007-03-22 03:16:24 ... 2007-03-21 00:10:22     Public                         Crab-2007 Spring: IBIS on-axis staring</span>
+<span class="go">22.0144444         inthelp@sciops.esa.int      0541 2007-03-20 15:35:22 ... 2007-03-19 12:53:21     Public                              Crab-2007 Spring: SPI 5x5 pattern</span>
+</pre></div>
+</div>
+</section>
+<section id="downloading-science-windows">
+<h3>5. Downloading Science Windows<a class="headerlink" href="#downloading-science-windows" title="Link to this heading">¶</a></h3>
+<p>Science window data can be downloaded using this method by providing only one identifier,
+such as science window IDs, observation ID, revolution number, or proposal ID.
+An additional parameter, read_fits (default value True) reads automatically the downloaded FITS files.</p>
+<ul class="simple">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">read_fits=True</span></code>, a list of objects containing filename, path and the FITS file opened is returned.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">read_fits=False</span></code>, the file name and path where the file has been downloaded is provided.</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.integral</span> <span class="kn">import</span> <span class="n">IntegralClass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isla</span> <span class="o">=</span> <span class="n">IntegralClass</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isla</span><span class="o">.</span><span class="n">download_science_windows</span><span class="p">(</span><span class="n">science_windows</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;008100430010&#39;</span><span class="p">,</span> <span class="s1">&#39;033400230030&#39;</span><span class="p">],</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="timeline-retrieval">
+<h3>6. Timeline retrieval<a class="headerlink" href="#timeline-retrieval" title="Link to this heading">¶</a></h3>
+<p>This method enables the exploration of the observation timeline for a specific region in the sky.
+Users can provide right ascension (RA) and declination (Dec) coordinates and adjust the radius
+to refine their search.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.integral</span> <span class="kn">import</span> <span class="n">IntegralClass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isla</span> <span class="o">=</span> <span class="n">IntegralClass</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">coordinates</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="mf">83.63320922851562</span><span class="p">,</span> <span class="mf">22.01447105407715</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timeline</span> <span class="o">=</span> <span class="n">isla</span><span class="o">.</span><span class="n">get_timeline</span><span class="p">(</span><span class="n">coordinates</span><span class="o">=</span><span class="n">coordinates</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timeline</span>
+<span class="go">{&#39;total_items&#39;: 8714, &#39;fraFC&#39;: 0.8510442965343126, &#39;totEffExpo&#39;: 16416293.994214607, &#39;timeline&#39;: &lt;Table length=8714&gt;</span>
+<span class="go">     scwExpo            scwRevs                scwTimes                scwOffAxis</span>
+<span class="go">     float64            float64                 object                  float64</span>
+<span class="go">------------------ ------------------ -------------------------- ---------------------</span>
+<span class="go"> 5147.824025240096  39.07800595179441 2003-02-07 07:01:25.500000 0.0025430719729003476</span>
+<span class="go"> 4212.920636876789  39.09690979681126 2003-02-07 08:21:21.500000 0.0025430719729003476</span>
+<span class="go"> 4212.920651101999  39.11392562227784 2003-02-07 09:33:18.500000 0.0025430719729003476</span>
+<span class="go">               ...                ...                        ...                   ...</span>
+<span class="go">1675.7455103834102 2767.3106645083526 2024-04-17 13:39:13.500000     4.729406754053243</span>
+<span class="go">1815.2853971426027   2767.31963717696 2024-04-17 14:13:35.500000     4.203559877974954</span>
+<span class="go">  2014.34083657953 2767.3294779577823        2024-04-17 14:51:17     4.731196416616404}</span>
+</pre></div>
+</div>
+</section>
+<section id="retrieving-epochs">
+<h3>7. Retrieving epochs<a class="headerlink" href="#retrieving-epochs" title="Link to this heading">¶</a></h3>
+<p>A list of observation epochs can be retrieved using this method, focusing on periods when data for a
+specific target, instrument, or energy band is available.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.integral</span> <span class="kn">import</span> <span class="n">IntegralClass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isla</span> <span class="o">=</span> <span class="n">IntegralClass</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isla</span><span class="o">.</span><span class="n">get_epochs</span><span class="p">(</span><span class="n">target_name</span><span class="o">=</span><span class="s1">&#39;J011705.1-732636&#39;</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="s1">&#39;28_40&#39;</span><span class="p">)</span>
+<span class="go">     epoch</span>
+<span class="go">     object</span>
+<span class="go">----------------</span>
+<span class="go">0152_01200360001</span>
+<span class="go">0745_06340000001</span>
+<span class="go">0746_06340000001</span>
+<span class="go">             ...</span>
+<span class="go">1618_12200430006</span>
+<span class="go">1618_12200430009</span>
+<span class="go">1618_12200430011</span>
+</pre></div>
+</div>
+<p>This will perform an ADQL search to the Integral database and will return the output.</p>
+</section>
+<section id="data-download">
+<h3>8. Data Download<a class="headerlink" href="#data-download" title="Link to this heading">¶</a></h3>
+<p>For each of the following features, an additional parameter, read_fits, is available.</p>
+<ul class="simple">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">read_fits=True</span></code>, a list of objects containing filename, path and the FITS file opened is returned.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">read_fits=False</span></code>, the file names and paths where the files have been downloaded is provided.</p></li>
+</ul>
+<section id="retrieving-long-term-timeseries">
+<h4>8.1. Retrieving Long-Term Timeseries<a class="headerlink" href="#retrieving-long-term-timeseries" title="Link to this heading">¶</a></h4>
+<p>This method provides access to long-term timeseries data for a specified target.
+Users can refine their results by selecting an instrument or energy band.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.integral</span> <span class="kn">import</span> <span class="n">IntegralClass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isla</span> <span class="o">=</span> <span class="n">IntegralClass</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ltt</span> <span class="o">=</span> <span class="n">isla</span><span class="o">.</span><span class="n">get_long_term_timeseries</span><span class="p">(</span><span class="n">target_name</span><span class="o">=</span><span class="s1">&#39;J174537.0-290107&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="s1">&#39;jem-x&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="retrieving-short-term-timeseries">
+<h4>8.2. Retrieving Short-Term Timeseries<a class="headerlink" href="#retrieving-short-term-timeseries" title="Link to this heading">¶</a></h4>
+<p>This method allows for the download of short-term time series data for a target and epoch of interest.
+Users can refine their search using instrument or energy band filters and
+the results are saved to a file for detailed examination.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.integral</span> <span class="kn">import</span> <span class="n">IntegralClass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isla</span> <span class="o">=</span> <span class="n">IntegralClass</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stt</span> <span class="o">=</span> <span class="n">isla</span><span class="o">.</span><span class="n">get_short_term_timeseries</span><span class="p">(</span><span class="n">target_name</span><span class="o">=</span><span class="s1">&#39;J011705.1-732636&#39;</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="s1">&#39;28_40&#39;</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="s1">&#39;0745_06340000001&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="retrieving-spectra">
+<h4>8.3. Retrieving spectra<a class="headerlink" href="#retrieving-spectra" title="Link to this heading">¶</a></h4>
+<p>This method allows users to download spectral data for a target and epoch.
+Users can apply filters, such as instrument or energy band, and save the results to an
+output file for further processing.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.integral</span> <span class="kn">import</span> <span class="n">IntegralClass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isla</span> <span class="o">=</span> <span class="n">IntegralClass</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spectra</span> <span class="o">=</span> <span class="n">isla</span><span class="o">.</span><span class="n">get_spectra</span><span class="p">(</span><span class="n">target_name</span><span class="o">=</span><span class="s1">&#39;J011705.1-732636&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="s1">&#39;ibis&#39;</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="s1">&#39;0745_06340000001&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="retrieving-mosaics">
+<h4>8.4. Retrieving mosaics<a class="headerlink" href="#retrieving-mosaics" title="Link to this heading">¶</a></h4>
+<p>Mosaic images corresponding to a specified epoch can be downloaded using this method.
+Users can filter by instrument or energy band and save the resulting image to a file for later use.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.integral</span> <span class="kn">import</span> <span class="n">IntegralClass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isla</span> <span class="o">=</span> <span class="n">IntegralClass</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mosaics</span> <span class="o">=</span> <span class="n">isla</span><span class="o">.</span><span class="n">get_mosaic</span><span class="p">(</span><span class="n">epoch</span><span class="o">=</span><span class="s1">&#39;0727_88601650001&#39;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="s1">&#39;ibis&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="reference-api">
+<h5>Reference/API<a class="headerlink" href="#reference-api" title="Link to this heading">¶</a></h5>
+<section id="module-astroquery.esa.integral">
+<span id="astroquery-esa-integral-package"></span><h6>astroquery.esa.integral Package<a class="headerlink" href="#module-astroquery.esa.integral" title="Link to this heading">¶</a></h6>
+<p>European Space Astronomy Centre (ESAC)
+European Space Agency (ESA)</p>
+<section id="classes">
+<h6 aria-level="7">Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h6>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../api/astroquery.esa.integral.IntegralClass.html#astroquery.esa.integral.IntegralClass" title="astroquery.esa.integral.IntegralClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IntegralClass</span></code></a>([auth_session])</p></td>
+<td><p>Class to init ESA Integral Module and communicate with isla</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../api/astroquery.esa.integral.Conf.html#astroquery.esa.integral.Conf" title="astroquery.esa.integral.Conf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Conf</span></code></a>()</p></td>
+<td><p>Configuration parameters for <a class="reference internal" href="#module-astroquery.esa.integral" title="astroquery.esa.integral"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.esa.integral</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+</section>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">ESA Integral Science Legacy Archive (ISLA) (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.esa.integral</span></code>)</a><ul>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+<li><a class="reference internal" href="#adql-queries-to-isla-tap">1. ADQL Queries to ISLA TAP</a></li>
+<li><a class="reference internal" href="#getting-sources">2. Getting sources</a></li>
+<li><a class="reference internal" href="#getting-metadata-associated-to-sources">3. Getting metadata associated to sources</a></li>
+<li><a class="reference internal" href="#retrieving-observations-from-isla">4. Retrieving observations from ISLA</a></li>
+<li><a class="reference internal" href="#downloading-science-windows">5. Downloading Science Windows</a></li>
+<li><a class="reference internal" href="#timeline-retrieval">6. Timeline retrieval</a></li>
+<li><a class="reference internal" href="#retrieving-epochs">7. Retrieving epochs</a></li>
+<li><a class="reference internal" href="#data-download">8. Data Download</a><ul>
+<li><a class="reference internal" href="#retrieving-long-term-timeseries">8.1. Retrieving Long-Term Timeseries</a></li>
+<li><a class="reference internal" href="#retrieving-short-term-timeseries">8.2. Retrieving Short-Term Timeseries</a></li>
+<li><a class="reference internal" href="#retrieving-spectra">8.3. Retrieving spectra</a></li>
+<li><a class="reference internal" href="#retrieving-mosaics">8.4. Retrieving mosaics</a><ul>
+<li><a class="reference internal" href="#reference-api">Reference/API</a><ul>
+<li><a class="reference internal" href="#module-astroquery.esa.integral">astroquery.esa.integral Package</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="../../_sources/esa/integral/integral.rst.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 02 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>

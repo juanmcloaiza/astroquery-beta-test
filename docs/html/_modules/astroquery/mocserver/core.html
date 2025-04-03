@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astroquery.mocserver.core &#8212; astroquery v0.4.8.dev10177</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    
+    <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../../_static/documentation_options.js?v=51006566"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../../../_static/copybutton.js"></script>
+    <link rel="icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">astroquery v0.4.8.dev10177</a>
+	 &#187;
+      </li>
+      <li><a href="../../index.html" >Module code</a> &#187;</li>
+      <li><a href="../mocserver.html" accesskey="U">astroquery.mocserver</a> &#187;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for astroquery.mocserver.core</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+
+<span class="kn">from</span> <span class="nn">..query</span> <span class="kn">import</span> <span class="n">BaseQuery</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">commons</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">conf</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">NamedTemporaryFile</span>
+
+<span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">astropy.utils</span> <span class="kn">import</span> <span class="n">deprecated</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">mocpy</span> <span class="kn">import</span> <span class="n">MOC</span><span class="p">,</span> <span class="n">TimeMOC</span><span class="p">,</span> <span class="n">STMOC</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&#39;mocpy&#39; is a mandatory dependency for MOCServer. You can install &quot;</span>
+          <span class="s2">&quot;it with &#39;pip install mocpy&#39;.&quot;</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MOCServerClass&quot;</span><span class="p">,</span> <span class="s2">&quot;MOCServer&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="MOCServerClass">
+<a class="viewcode-back" href="../../../api/astroquery.mocserver.MOCServerClass.html#astroquery.mocserver.MOCServerClass">[docs]</a>
+<span class="k">class</span> <span class="nc">MOCServerClass</span><span class="p">(</span><span class="n">BaseQuery</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Query the `CDS MOCServer &lt;http://alasky.unistra.fr/MocServer/query&gt;`_.</span>
+
+<span class="sd">    The `CDS MOCServer &lt;http://alasky.unistra.fr/MocServer/query&gt;`_ allows the user</span>
+<span class="sd">    to retrieve all the datasets (with their meta-data) having sources in a specific</span>
+<span class="sd">    space-time region. This region can be a `regions.CircleSkyRegion`, a</span>
+<span class="sd">    `regions.PolygonSkyRegion`, a `mocpy.MOC`, a `mocpy.TimeMOC`, or a `mocpy.STMOC`</span>
+<span class="sd">    object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">URL</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">server</span>
+    <span class="n">TIMEOUT</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">timeout</span>
+    <span class="n">DEFAULT_FIELDS</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">default_fields</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">return_moc</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="MOCServerClass.query_region">
+<a class="viewcode-back" href="../../../api/astroquery.mocserver.MOCServerClass.html#astroquery.mocserver.MOCServerClass.query_region">[docs]</a>
+    <span class="k">def</span> <span class="nf">query_region</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">criteria</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">intersect</span><span class="o">=</span><span class="s2">&quot;overlaps&quot;</span><span class="p">,</span>
+        <span class="n">return_moc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_norder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_rec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">casesensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">coordinate_system</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">get_query_payload</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query the MOC Server.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        region : `regions.CircleSkyRegion`, `regions.PolygonSkyRegion`, `mocpy.MOC`,</span>
+<span class="sd">            `mocpy.TimeMOC`, or `mocpy.STMOC`</span>
+<span class="sd">            The region to query the MOCServer with. Note that this can also be a</span>
+<span class="sd">            space-time region with the Time-MOCs and Space-Time-MOCs.</span>
+<span class="sd">            Defaults to None, which means that the search will be on the whole sky.</span>
+<span class="sd">        criteria : str</span>
+<span class="sd">            Expression to select the datasets.</span>
+<span class="sd">            Examples of expressions can be found `on the mocserver&#39;s examples page</span>
+<span class="sd">            &lt;http://alasky.unistra.fr/MocServer/example&gt;`_.</span>
+<span class="sd">            Example: &quot;ID=*HST*&quot; will return datasets with HST in their ID column. The</span>
+<span class="sd">            star means any character.</span>
+<span class="sd">        casesensitive : Bool, optional</span>
+<span class="sd">            Whether the search should take the case into account. By default, False.</span>
+<span class="sd">        fields : [str], optional</span>
+<span class="sd">            Specifies which columns to retrieve. Defaults to a pre-defined subset of</span>
+<span class="sd">            fields. The complete list of fields can be obtained with `list_fields`.</span>
+<span class="sd">        coordinate_system : str, optional</span>
+<span class="sd">            This is the space system on which the coordinates are expressed. Can take</span>
+<span class="sd">            the values ``sky``, ``mars``, ``moon``... The extended list can be printed</span>
+<span class="sd">            with `~astroquery.mocserver.MOCServerClass.list_coordinate_systems`.</span>
+<span class="sd">            Default is None, meaning that the results will have mixed frames.</span>
+<span class="sd">        intersect : str, optional</span>
+<span class="sd">            This parameter can take three different values:</span>
+
+<span class="sd">            - ``overlaps`` (default) select datasets overlapping the region</span>
+<span class="sd">            - ``covers`` returned datasets are covering the region.</span>
+<span class="sd">            - ``encloses`` returned datasets are enclosing the region.</span>
+
+<span class="sd">        max_rec : int, optional</span>
+<span class="sd">            Maximum number of data-sets to return. By default, there is no upper limit.</span>
+<span class="sd">        return_moc : bool, optional</span>
+<span class="sd">            Specifies whether the output should be a `mocpy.MOC`. The returned MOC is the</span>
+<span class="sd">            union of the MOCs of all the matching datasets. By default it is False and</span>
+<span class="sd">            this method returns a `astropy.table.Table` object.</span>
+<span class="sd">        max_norder : int, optional</span>
+<span class="sd">            If ``return_moc`` is set to True, this fixes the maximum precision order</span>
+<span class="sd">            of the returned MOC. For one dimensional MOCs (Space-MOCs and Time-MOCs),</span>
+<span class="sd">            the order is given as an integer. For Space-Time MOCs, the order should be a</span>
+<span class="sd">            string with the space and time orders.</span>
+<span class="sd">            Example: &#39;s3 t45&#39;</span>
+<span class="sd">        get_query_payload : bool, optional</span>
+<span class="sd">            If True, returns a dictionary of the query payload instead of the response.</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Whether to show warnings. Defaults to False.</span>
+<span class="sd">        cache: bool, optional</span>
+<span class="sd">            Whether the response should be cached.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        response : `astropy.table.Table`, `mocpy.MOC`, `mocpy.TimeMOC`, or `mocpy.STMOC`</span>
+<span class="sd">            By default, returns a table with the datasets matching the query.</span>
+<span class="sd">            If ``return_moc`` is set to True, it gives a MOC object corresponding to the</span>
+<span class="sd">            union of the MOCs from all the retrieved data-sets.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_async</span><span class="p">(</span>
+            <span class="n">criteria</span><span class="o">=</span><span class="n">criteria</span><span class="p">,</span>
+            <span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span>
+            <span class="n">intersect</span><span class="o">=</span><span class="n">intersect</span><span class="p">,</span>
+            <span class="n">return_moc</span><span class="o">=</span><span class="n">return_moc</span><span class="p">,</span>
+            <span class="n">max_norder</span><span class="o">=</span><span class="n">max_norder</span><span class="p">,</span>
+            <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span>
+            <span class="n">max_rec</span><span class="o">=</span><span class="n">max_rec</span><span class="p">,</span>
+            <span class="n">casesensitive</span><span class="o">=</span><span class="n">casesensitive</span><span class="p">,</span>
+            <span class="n">coordinate_system</span><span class="o">=</span><span class="n">coordinate_system</span><span class="p">,</span>
+            <span class="n">get_query_payload</span><span class="o">=</span><span class="n">get_query_payload</span><span class="p">,</span>
+            <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">get_query_payload</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span>
+        <span class="k">return</span> <span class="n">_parse_result</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">return_moc</span><span class="o">=</span><span class="n">return_moc</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MOCServerClass.query_hips">
+<a class="viewcode-back" href="../../../api/astroquery.mocserver.MOCServerClass.html#astroquery.mocserver.MOCServerClass.query_hips">[docs]</a>
+    <span class="k">def</span> <span class="nf">query_hips</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">criteria</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">region</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">intersect</span><span class="o">=</span><span class="s2">&quot;overlaps&quot;</span><span class="p">,</span>
+        <span class="n">return_moc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_norder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_rec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">casesensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">coordinate_system</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">get_query_payload</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query the MOCServer for HiPS surveys.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        criteria : str</span>
+<span class="sd">            Expression to select the datasets.</span>
+<span class="sd">            Examples of expressions can be found `on the mocserver&#39;s examples page</span>
+<span class="sd">            &lt;http://alasky.unistra.fr/MocServer/example&gt;`_.</span>
+<span class="sd">            Example: &quot;ID=*HST*&quot; will return datasets with HST in their ID column. The</span>
+<span class="sd">            star means any character.</span>
+<span class="sd">        casesensitive : Bool, optional</span>
+<span class="sd">            Wheter the search should take the case into account. By default, False.</span>
+<span class="sd">        fields : [str], optional</span>
+<span class="sd">            Specifies which columns to retrieve. Defaults to a pre-defined subset of</span>
+<span class="sd">            fields. The complete list of fields can be obtained with `list_fields`.</span>
+<span class="sd">        coordinate_system : str, optional</span>
+<span class="sd">            This is the space system on which the coordinates are expressed. Can take</span>
+<span class="sd">            the values ``sky``, ``mars``, ``moon``... The extended list can be printed</span>
+<span class="sd">            with `~astroquery.mocserver.MOCServerClass.list_coordinate_systems`.</span>
+<span class="sd">            Default is None, meaning that the results will have mixed frames.</span>
+<span class="sd">        region : `regions.CircleSkyRegion`, `regions.PolygonSkyRegion`, `mocpy.MOC`,</span>
+<span class="sd">            `mocpy.TimeMOC`, or `mocpy.STMOC`</span>
+<span class="sd">            The region to query the MOCServer with. Note that this can also be a</span>
+<span class="sd">            space-time region with the Time-MOCs and Space-Time-MOCs.</span>
+<span class="sd">        intersect : str, optional</span>
+<span class="sd">            This parameter can take three different values:</span>
+
+<span class="sd">            - ``overlaps`` (default) select datasets overlapping the region</span>
+<span class="sd">            - ``covers`` returned datasets are covering the region.</span>
+<span class="sd">            - ``encloses`` returned datasets are enclosing the region.</span>
+
+<span class="sd">        max_rec : int, optional</span>
+<span class="sd">            Maximum number of data-sets to return. By default, there is no upper limit.</span>
+<span class="sd">        return_moc : bool, optional</span>
+<span class="sd">            Specifies whether the output should be a `mocpy.MOC`. The returned MOC is the</span>
+<span class="sd">            union of the MOCs of all the matching datasets. By default it is False and</span>
+<span class="sd">            this method returns a `astropy.table.Table` object.</span>
+<span class="sd">        max_norder : int, optional</span>
+<span class="sd">            If ``return_moc`` is set to True, this fixes the maximum precision order</span>
+<span class="sd">            of the returned MOC. For one dimensional MOCs (Space-MOCs and Time-MOCs),</span>
+<span class="sd">            the order is given as an integer. For Space-Time MOCs, the order should be a</span>
+<span class="sd">            string with the space and time orders.</span>
+<span class="sd">            Example: &#39;s3 t45&#39;</span>
+<span class="sd">        get_query_payload : bool, optional</span>
+<span class="sd">            If True, returns a dictionary of the query payload instead of the response.</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Whether to show warnings. Defaults to False.</span>
+<span class="sd">        cache: bool, optional</span>
+<span class="sd">            Whether the response should be cached.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        response : `astropy.table.Table`, `mocpy.MOC`, `mocpy.TimeMOC`, or `mocpy.STMOC`</span>
+<span class="sd">            By default, returns a table with the datasets matching the query.</span>
+<span class="sd">            If ``return_moc`` is set to True, it gives a MOC object corresponding to the</span>
+<span class="sd">            union of the MOCs from all the retrieved data-sets.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">criteria</span><span class="p">:</span>
+            <span class="n">criteria</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">criteria</span><span class="si">}</span><span class="s2">)&amp;&amp;hips_frame=*&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">criteria</span> <span class="o">=</span> <span class="s2">&quot;hips_frame=*&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span>
+            <span class="n">criteria</span><span class="o">=</span><span class="n">criteria</span><span class="p">,</span>
+            <span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span>
+            <span class="n">intersect</span><span class="o">=</span><span class="n">intersect</span><span class="p">,</span>
+            <span class="n">return_moc</span><span class="o">=</span><span class="n">return_moc</span><span class="p">,</span>
+            <span class="n">max_norder</span><span class="o">=</span><span class="n">max_norder</span><span class="p">,</span>
+            <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span>
+            <span class="n">max_rec</span><span class="o">=</span><span class="n">max_rec</span><span class="p">,</span>
+            <span class="n">casesensitive</span><span class="o">=</span><span class="n">casesensitive</span><span class="p">,</span>
+            <span class="n">coordinate_system</span><span class="o">=</span><span class="n">coordinate_system</span><span class="p">,</span>
+            <span class="n">get_query_payload</span><span class="o">=</span><span class="n">get_query_payload</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MOCServerClass.find_datasets">
+<a class="viewcode-back" href="../../../api/astroquery.mocserver.MOCServerClass.html#astroquery.mocserver.MOCServerClass.find_datasets">[docs]</a>
+    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">since</span><span class="o">=</span><span class="s2">&quot;v0.4.9&quot;</span><span class="p">,</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;&#39;find_datasets&#39; is replaced by &#39;query_region&#39; which has a new &quot;</span>
+                        <span class="s2">&quot;parameter &#39;criteria&#39; that accepts the expressions that &quot;</span>
+                        <span class="s2">&quot;&#39;meta_data&#39; was accepting.&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">find_datasets</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">meta_data</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">region</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">intersect</span><span class="o">=</span><span class="s2">&quot;overlaps&quot;</span><span class="p">,</span>
+        <span class="n">return_moc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_norder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_rec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">casesensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">coordinate_system</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">get_query_payload</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Query the MOC Server.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        meta_data : str</span>
+<span class="sd">            Expression to select the datasets.</span>
+<span class="sd">            Examples of expressions can be found `on the mocserver&#39;s examples page</span>
+<span class="sd">            &lt;http://alasky.unistra.fr/MocServer/example&gt;`_.</span>
+<span class="sd">            Example: &quot;ID=*HST*&quot; will return datasets with HST in their ID column. The</span>
+<span class="sd">            star means any character.</span>
+<span class="sd">        casesensitive : Bool, optional</span>
+<span class="sd">            Whether the search should take the case into account. By default, False.</span>
+<span class="sd">        fields : [str], optional</span>
+<span class="sd">            Specifies which columns to retrieve. Defaults to a pre-defined subset of</span>
+<span class="sd">            fields. The complete list of fields can be obtained with `list_fields`.</span>
+<span class="sd">        coordinate_system : str, optional</span>
+<span class="sd">            This is the space system on which the coordinates are expressed. Can take</span>
+<span class="sd">            the values ``sky``, ``mars``, ``moon``... The extended list can be printed</span>
+<span class="sd">            with `~astroquery.mocserver.MOCServerClass.list_coordinate_systems`.</span>
+<span class="sd">            Default is None, meaning that the results will have mixed frames.</span>
+<span class="sd">        region : `regions.CircleSkyRegion`, `regions.PolygonSkyRegion`, `mocpy.MOC`,</span>
+<span class="sd">            `mocpy.TimeMOC`, or `mocpy.STMOC`</span>
+<span class="sd">            The region to query the MOCServer with. Note that this can also be a</span>
+<span class="sd">            space-time region with the Time-MOCs and Space-Time-MOCs.</span>
+<span class="sd">        intersect : str, optional</span>
+<span class="sd">            This parameter can take three different values:</span>
+
+<span class="sd">            - ``overlaps`` (default) select datasets overlapping the region</span>
+<span class="sd">            - ``covers`` returned datasets are covering the region.</span>
+<span class="sd">            - ``encloses`` returned datasets are enclosing the region.</span>
+
+<span class="sd">        max_rec : int, optional</span>
+<span class="sd">            Maximum number of data-sets to return. By default, there is no upper limit.</span>
+<span class="sd">        return_moc : bool, optional</span>
+<span class="sd">            Specifies whether the output should be a `mocpy.MOC`. The returned MOC is the</span>
+<span class="sd">            union of the MOCs of all the matching datasets. By default it is False and</span>
+<span class="sd">            this method returns a `astropy.table.Table` object.</span>
+<span class="sd">        max_norder : int, optional</span>
+<span class="sd">            If ``return_moc`` is set to True, this fixes the maximum precision order</span>
+<span class="sd">            of the returned MOC. For one dimensional MOCs (Space-MOCs and Time-MOCs),</span>
+<span class="sd">            the order is given as an integer. For Space-Time MOCs, the order should be a</span>
+<span class="sd">            string with the space and time orders.</span>
+<span class="sd">            Example: &#39;s3 t45&#39;</span>
+<span class="sd">        get_query_payload : bool, optional</span>
+<span class="sd">            If True, returns a dictionary of the query payload instead of the response.</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Whether to show warnings. Defaults to False.</span>
+<span class="sd">        cache: bool, optional</span>
+<span class="sd">            Whether the response should be cached.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        response : `astropy.table.Table`, `mocpy.MOC`, `mocpy.TimeMOC`, or `mocpy.STMOC`</span>
+<span class="sd">            By default, returns a table with the datasets matching the query.</span>
+<span class="sd">            If ``return_moc`` is set to True, it gives a MOC object corresponding to the</span>
+<span class="sd">            union of the MOCs from all the retrieved data-sets.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span>
+            <span class="n">criteria</span><span class="o">=</span><span class="n">meta_data</span><span class="p">,</span>
+            <span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span>
+            <span class="n">intersect</span><span class="o">=</span><span class="n">intersect</span><span class="p">,</span>
+            <span class="n">return_moc</span><span class="o">=</span><span class="n">return_moc</span><span class="p">,</span>
+            <span class="n">max_norder</span><span class="o">=</span><span class="n">max_norder</span><span class="p">,</span>
+            <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span>
+            <span class="n">max_rec</span><span class="o">=</span><span class="n">max_rec</span><span class="p">,</span>
+            <span class="n">casesensitive</span><span class="o">=</span><span class="n">casesensitive</span><span class="p">,</span>
+            <span class="n">coordinate_system</span><span class="o">=</span><span class="n">coordinate_system</span><span class="p">,</span>
+            <span class="n">get_query_payload</span><span class="o">=</span><span class="n">get_query_payload</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MOCServerClass.query_async">
+<a class="viewcode-back" href="../../../api/astroquery.mocserver.MOCServerClass.html#astroquery.mocserver.MOCServerClass.query_async">[docs]</a>
+    <span class="k">def</span> <span class="nf">query_async</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">region</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">criteria</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">return_moc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_norder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_rec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">intersect</span><span class="o">=</span><span class="s2">&quot;overlaps&quot;</span><span class="p">,</span>
+        <span class="n">coordinate_system</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">casesensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">get_query_payload</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the HTTP response rather than the parsed result.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        criteria : str</span>
+<span class="sd">            Expression to select the datasets.</span>
+<span class="sd">            Examples of expressions can be found `on the mocserver&#39;s examples page</span>
+<span class="sd">            &lt;http://alasky.unistra.fr/MocServer/example&gt;`_.</span>
+<span class="sd">            Example: &quot;ID=*HST*&quot; will return datasets with HST in their ID column. The</span>
+<span class="sd">            star means any character.</span>
+<span class="sd">        casesensitive : Bool, optional</span>
+<span class="sd">            Whether the search should take the case into account. By default, False.</span>
+<span class="sd">        fields : [str], optional</span>
+<span class="sd">            Specifies which columns to retrieve. Defaults to a pre-defined subset of</span>
+<span class="sd">            fields. The complete list of fields can be obtained with `list_fields`.</span>
+<span class="sd">        coordinate_system : str, optional</span>
+<span class="sd">            This is the space system on which the coordinates are expressed. Can take</span>
+<span class="sd">            the values ``sky``, ``mars``, ``moon``... The extended list can be printed</span>
+<span class="sd">            with `~astroquery.mocserver.MOCServerClass.list_coordinate_systems`.</span>
+<span class="sd">            Default is None, meaning that the results will have mixed frames.</span>
+<span class="sd">        region : `regions.CircleSkyRegion`, `regions.PolygonSkyRegion`, `mocpy.MOC`,</span>
+<span class="sd">            `mocpy.TimeMOC`, or `mocpy.STMOC`</span>
+<span class="sd">            The region to query the MOCServer with. Note that this can also be a</span>
+<span class="sd">            space-time region with the Time-MOCs and Space-Time-MOCs.</span>
+<span class="sd">        intersect : str, optional</span>
+<span class="sd">            This parameter can take three different values:</span>
+
+<span class="sd">            - ``overlaps`` (default) select datasets overlapping the region</span>
+<span class="sd">            - ``covers`` returned datasets are covering the region.</span>
+<span class="sd">            - ``encloses`` returned datasets are enclosing the region.</span>
+
+<span class="sd">        max_rec : int, optional</span>
+<span class="sd">            Maximum number of data-sets to return. By default, there is no upper limit.</span>
+<span class="sd">        return_moc : bool, optional</span>
+<span class="sd">            Specifies whether the output should be a `mocpy.MOC`. The returned MOC is the</span>
+<span class="sd">            union of the MOCs of all the matching datasets. By default it is False and</span>
+<span class="sd">            this method returns a `astropy.table.Table` object.</span>
+<span class="sd">        max_norder : int, optional</span>
+<span class="sd">            If ``return_moc`` is set to True, this fixes the maximum precision order</span>
+<span class="sd">            of the returned MOC. For one dimensional MOCs (Space-MOCs and Time-MOCs),</span>
+<span class="sd">            the order is given as an integer. For Space-Time MOCs, the order should be a</span>
+<span class="sd">            string with the space and time orders.</span>
+<span class="sd">            Example: &#39;s3 t45&#39;</span>
+<span class="sd">        get_query_payload : bool, optional</span>
+<span class="sd">            If True, returns a dictionary of the query payload instead of the response.</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">        cache: bool, optional</span>
+<span class="sd">            Whether the response should be cached.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        response : `~requests.Response`:</span>
+<span class="sd">            The HTTP response from the</span>
+<span class="sd">            `CDS MOCServer &lt;http://alasky.unistra.fr/MocServer/query&gt;`_.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">request_payload</span> <span class="o">=</span> <span class="n">_args_to_payload</span><span class="p">(</span>
+            <span class="n">criteria</span><span class="o">=</span><span class="n">criteria</span><span class="p">,</span>
+            <span class="n">return_moc</span><span class="o">=</span><span class="n">return_moc</span><span class="p">,</span>
+            <span class="n">max_norder</span><span class="o">=</span><span class="n">max_norder</span><span class="p">,</span>
+            <span class="n">fields</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span>
+            <span class="n">max_rec</span><span class="o">=</span><span class="n">max_rec</span><span class="p">,</span>
+            <span class="n">region</span><span class="o">=</span><span class="n">region</span><span class="p">,</span>
+            <span class="n">intersect</span><span class="o">=</span><span class="n">intersect</span><span class="p">,</span>
+            <span class="n">coordinate_system</span><span class="o">=</span><span class="n">coordinate_system</span><span class="p">,</span>
+            <span class="n">casesensitive</span><span class="o">=</span><span class="n">casesensitive</span><span class="p">,</span>
+            <span class="n">default_fields</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_FIELDS</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">params_d</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">URL</span><span class="p">,</span>
+            <span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">TIMEOUT</span><span class="p">,</span>
+            <span class="s2">&quot;cache&quot;</span><span class="p">:</span> <span class="n">cache</span><span class="p">,</span>
+            <span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="n">request_payload</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">region</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">get_query_payload</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">request_payload</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="p">(</span><span class="n">MOC</span><span class="p">,</span> <span class="n">TimeMOC</span><span class="p">,</span> <span class="n">STMOC</span><span class="p">)):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="o">**</span><span class="n">params_d</span><span class="p">)</span>
+            <span class="c1"># MOCs have to be sent in a multipart request</span>
+            <span class="k">with</span> <span class="n">NamedTemporaryFile</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmp_file</span><span class="p">:</span>
+                <span class="n">region</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">tmp_file</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;fits&quot;</span><span class="p">)</span>
+
+                <span class="n">params_d</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;moc&quot;</span><span class="p">:</span> <span class="n">tmp_file</span><span class="o">.</span><span class="n">read</span><span class="p">()}})</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="o">**</span><span class="n">params_d</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">get_query_payload</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">request_payload</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="o">**</span><span class="n">params_d</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MOCServerClass.list_fields">
+<a class="viewcode-back" href="../../../api/astroquery.mocserver.MOCServerClass.html#astroquery.mocserver.MOCServerClass.list_fields">[docs]</a>
+    <span class="k">def</span> <span class="nf">list_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;List MOC Server fields.</span>
+
+<span class="sd">        In the MOC Server, the fields are free. This means that anyone publishing there</span>
+<span class="sd">        can set a new field. This results in a long set of possible fields, that are</span>
+<span class="sd">        more or less frequent in the database.</span>
+<span class="sd">        This method allows to retrieve all fields currently existing, with their</span>
+<span class="sd">        occurrences and an example.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        keyword : str, optional</span>
+<span class="sd">            A keyword to filter the output for fields that have the keyword in their</span>
+<span class="sd">            name. This is not case-sensitive.</span>
+<span class="sd">            If you don&#39;t give a keyword, you will retrieve all existing fields.</span>
+<span class="sd">        cache: bool, optional</span>
+<span class="sd">            Whether the response should be cached.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        `~astropy.table.Table`</span>
+<span class="sd">            A table containing the field names, heir occurrence (expressed in number</span>
+<span class="sd">            of records), and an example for each field.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from astroquery.mocserver import MOCServer</span>
+<span class="sd">        &gt;&gt;&gt; MOCServer.list_fields(&quot;publisher&quot;)  # doctest: +REMOTE_DATA +IGNORE_OUTPUT</span>
+<span class="sd">        &lt;Table length=3&gt;</span>
+<span class="sd">          field_name   occurrence          example</span>
+<span class="sd">            str27        int64              str70</span>
+<span class="sd">        -------------- ---------- -------------------------</span>
+<span class="sd">          publisher_id      32987                 ivo://CDS</span>
+<span class="sd">         publisher_did       2871 ivo://nasa.heasarc/warps2</span>
+<span class="sd">        hips_publisher         14                       CDS</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fields_descriptions</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">URL</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">TIMEOUT</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
+                          <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;get&quot;</span><span class="p">:</span> <span class="s2">&quot;example&quot;</span><span class="p">,</span> <span class="s2">&quot;fmt&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">occurrences</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">fields_descriptions</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">]</span>
+        <span class="n">field_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fields_descriptions</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">examples</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;ex: &quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">fields_descriptions</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+        <span class="n">list_fields</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">field_names</span><span class="p">,</span> <span class="n">occurrences</span><span class="p">,</span> <span class="n">examples</span><span class="p">],</span>
+            <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;field_name&quot;</span><span class="p">,</span> <span class="s2">&quot;occurrence&quot;</span><span class="p">,</span> <span class="s2">&quot;example&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">list_fields</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;occurrence&quot;</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">keyword</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">list_fields</span><span class="p">[</span>
+                <span class="p">[</span>
+                    <span class="n">keyword</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="ow">in</span> <span class="n">name</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">list_fields</span><span class="p">[</span><span class="s2">&quot;field_name&quot;</span><span class="p">]</span>
+                <span class="p">]</span>
+            <span class="p">]</span>
+        <span class="k">return</span> <span class="n">list_fields</span></div>
+
+
+<div class="viewcode-block" id="MOCServerClass.list_coordinate_systems">
+<a class="viewcode-back" href="../../../api/astroquery.mocserver.MOCServerClass.html#astroquery.mocserver.MOCServerClass.list_coordinate_systems">[docs]</a>
+    <span class="k">def</span> <span class="nf">list_coordinate_systems</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the list of coordinate systems currently available in the MOC Server.</span>
+
+<span class="sd">        This list may be enriched later, as new datasets are added into the MOC Server.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The list of coordinate systems currently available in the MOC Server</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;hips_frame=*&quot;</span><span class="p">,</span>
+                                            <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="s2">&quot;hips_frame&quot;</span><span class="p">],</span>
+                                            <span class="n">coordinate_system</span><span class="o">=</span><span class="kc">None</span><span class="p">)[</span><span class="s2">&quot;hips_frame&quot;</span><span class="p">]))</span>
+        <span class="c1"># `C` is a special case that corresponds to both equatorial and galactic frames</span>
+        <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;sky&quot;</span><span class="p">)</span>
+        <span class="n">frames</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">frames</span></div>
+</div>
+
+
+
+<span class="k">def</span> <span class="nf">_args_to_payload</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">criteria</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">return_moc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_norder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">fields</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_rec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">region</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">intersect</span><span class="o">=</span><span class="s2">&quot;overlaps&quot;</span><span class="p">,</span>
+    <span class="n">coordinate_system</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">casesensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">default_fields</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the parameters of `query_region` and `find_datasets` into a payload.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        The payload that will be submitted to the MOC server.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">request_payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;casesensitive&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">casesensitive</span><span class="p">)</span><span class="o">.</span><span class="n">casefold</span><span class="p">(),</span>
+        <span class="s2">&quot;fmt&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;get&quot;</span><span class="p">:</span> <span class="s2">&quot;record&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="n">_get_fields</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">default_fields</span><span class="p">),</span>
+        <span class="s2">&quot;intersect&quot;</span><span class="p">:</span> <span class="n">intersect</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;encloses&quot;</span><span class="p">,</span> <span class="s2">&quot;enclosed&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;spacesys&quot;</span><span class="p">:</span> <span class="s2">&quot;C&quot;</span> <span class="k">if</span> <span class="n">coordinate_system</span> <span class="o">==</span> <span class="s2">&quot;sky&quot;</span> <span class="k">else</span> <span class="n">coordinate_system</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">region</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="p">(</span><span class="n">MOC</span><span class="p">,</span> <span class="n">STMOC</span><span class="p">,</span> <span class="n">TimeMOC</span><span class="p">)):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">regions</span> <span class="kn">import</span> <span class="n">CircleSkyRegion</span><span class="p">,</span> <span class="n">PolygonSkyRegion</span>
+        <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">&quot;The module &#39;regions&#39; is mandatory to use &quot;</span>
+                <span class="s2">&quot;&#39;query_region&#39; without a MOC. Install it with &quot;</span>
+                <span class="s2">&quot;&#39;pip install regions&#39;&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="n">CircleSkyRegion</span><span class="p">):</span>
+            <span class="c1"># add the cone region payload to the request payload</span>
+            <span class="n">request_payload</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;DEC&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">region</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                    <span class="s2">&quot;RA&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">region</span><span class="o">.</span><span class="n">center</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                    <span class="s2">&quot;SR&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">region</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="n">PolygonSkyRegion</span><span class="p">):</span>
+            <span class="c1"># add the polygon region payload to the request payload</span>
+            <span class="n">polygon_payload</span> <span class="o">=</span> <span class="s2">&quot;Polygon&quot;</span>
+            <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">region</span><span class="o">.</span><span class="n">vertices</span><span class="p">:</span>
+                <span class="n">polygon_payload</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">point</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">point</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">polygon_payload</span><span class="p">)</span>
+            <span class="n">request_payload</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;stc&quot;</span><span class="p">:</span> <span class="n">polygon_payload</span><span class="p">})</span>
+        <span class="c1"># the MOCs have to be sent through the multipart and not through the payload</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># not of any accepted type</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;&#39;region&#39; should be of type: &#39;regions.CircleSkyRegion&#39;,&quot;</span>
+                <span class="s2">&quot; &#39;regions.PolygonSkyRegion&#39;, &#39;mocpy.MOC&#39;, &#39;mocpy.TimeMOC&#39;&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; or &#39;mocpy.STMOC&#39;, but is of type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">region</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">criteria</span><span class="p">:</span>
+        <span class="n">request_payload</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;expr&quot;</span><span class="p">:</span> <span class="n">criteria</span><span class="p">})</span>
+
+    <span class="k">if</span> <span class="n">max_rec</span><span class="p">:</span>
+        <span class="n">request_payload</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;MAXREC&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">max_rec</span><span class="p">)})</span>
+
+    <span class="k">if</span> <span class="n">return_moc</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">return_moc</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="c1"># this is for legacy reasons return_moc used to be a boolean when the MOC</span>
+            <span class="c1"># server could only return space MOCs.</span>
+            <span class="n">return_moc</span> <span class="o">=</span> <span class="s2">&quot;moc&quot;</span>
+        <span class="n">request_payload</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;get&quot;</span><span class="p">:</span> <span class="n">return_moc</span><span class="p">})</span>
+        <span class="n">request_payload</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;fmt&quot;</span><span class="p">:</span> <span class="s2">&quot;ascii&quot;</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">max_norder</span><span class="p">:</span>
+            <span class="n">request_payload</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;order&quot;</span><span class="p">:</span> <span class="n">max_norder</span><span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">request_payload</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;order&quot;</span><span class="p">:</span> <span class="s2">&quot;max&quot;</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">request_payload</span>
+
+
+<span class="k">def</span> <span class="nf">_get_fields</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">default_fields</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the list of fields to be queried.</span>
+
+<span class="sd">    Defaults to the list defined in conf if fields is None.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fields : list[str] or str</span>
+<span class="sd">        The list of columns to be returned.</span>
+<span class="sd">    default_fields : list[str]</span>
+<span class="sd">        The default list of fields.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">fields</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">fields</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;ID&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+            <span class="c1"># ID has to be included for the server to work correctly</span>
+            <span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">)</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">copy</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="n">default_fields</span>
+    <span class="k">return</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_result</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_moc</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse the response returned by the MOCServer.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    response : `~requests.Response`</span>
+<span class="sd">        The HTTP response returned by the MOCServer.</span>
+<span class="sd">    verbose : bool, optional</span>
+<span class="sd">        False by default.</span>
+<span class="sd">    return_moc : str or Bool</span>
+<span class="sd">        Whether the result is a MOC or a Table.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    `astropy.table.Table`, `~mocpy.MOC`, `~mocpy.STMOC`, `~mocpy.TimeMOC`</span>
+<span class="sd">        This returns a table if ``return_moc`` is not specified. Otherwise,</span>
+<span class="sd">        a MOC of the requested kind.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">commons</span><span class="o">.</span><span class="n">suppress_vo_warnings</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">return_moc</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+        <span class="c1"># return_moc==True is there to support the version when there was no choice in</span>
+        <span class="c1"># in the MOC in output and the MOC server would only be able to return SMOCs</span>
+        <span class="k">if</span> <span class="n">return_moc</span> <span class="o">==</span> <span class="s2">&quot;moc&quot;</span> <span class="ow">or</span> <span class="n">return_moc</span> <span class="o">==</span> <span class="s2">&quot;smoc&quot;</span> <span class="ow">or</span> <span class="n">return_moc</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">MOC</span><span class="o">.</span><span class="n">from_str</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_moc</span> <span class="o">==</span> <span class="s2">&quot;tmoc&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">TimeMOC</span><span class="o">.</span><span class="n">from_str</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_moc</span> <span class="o">==</span> <span class="s2">&quot;stmoc&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">STMOC</span><span class="o">.</span><span class="n">from_str</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;&#39;return_moc&#39; can only take the values &#39;moc&#39;, &#39;tmoc&#39;, &#39;smoc&#39;,&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;or &#39;stmoc&#39;. Got &#39;</span><span class="si">{</span><span class="n">return_moc</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="p">)</span>
+    <span class="c1"># return a table with the meta-data, we cast the string values for convenience</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">_cast_to_float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">row</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_cast_to_float</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cast ``value`` to a float if possible.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    value : str</span>
+<span class="sd">        string to cast</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or str</span>
+<span class="sd">        A float if it can be converted to a float. Otherwise the initial string.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="n">MOCServer</span> <span class="o">=</span> <span class="n">MOCServerClass</span><span class="p">()</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 01 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>

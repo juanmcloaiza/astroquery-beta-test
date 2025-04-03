@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>VizieR Queries (astroquery.vizier) &#8212; astroquery v0.4.8.dev10179</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+    
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=1d6242bd"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="VizierClass" href="../api/astroquery.vizier.VizierClass.html" />
+    <link rel="prev" title="Conf" href="../api/astroquery.vamdc.Conf.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="../api/astroquery.vizier.VizierClass.html" title="VizierClass">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../api/astroquery.vamdc.Conf.html" title="Conf">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">astroquery v0.4.8.dev10179</a>
+	 &#187;
+      </li>
+      
+      <li>VizieR Queries (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.vizier</span></code>)</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="vizier-queries-astroquery-vizier">
+<span id="astroquery-vizier"></span><h1>VizieR Queries (<a class="reference internal" href="#module-astroquery.vizier" title="astroquery.vizier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.vizier</span></code></a>)<a class="headerlink" href="#vizier-queries-astroquery-vizier" title="Link to this heading">¶</a></h1>
+<section id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h2>
+<p>This is a python interface for querying the VizieR web service. This supports
+querying an object as well as querying a region around the target. For region
+queries, the region dimensions may be specified either for a box or as a
+radius. Similar to the VizieR web interface, the queries may be further
+constrained by specifying a choice of catalogs, keywords as well as filters on
+individual columns before retrieving the results.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In earlier versions of astroquery (&lt;0.4.8), columns with special characters like
+<code class="docutils literal notranslate"><span class="pre">r'mag</span></code> were renamed into <code class="docutils literal notranslate"><span class="pre">r_mag</span></code> and columns starting with a number like
+<code class="docutils literal notranslate"><span class="pre">2MASS</span></code> were prepended with an underscore <code class="docutils literal notranslate"><span class="pre">_2MASS</span></code>.
+In astroquery &gt;=0.4.8, the column names are the same in VizieR’s webpages and in
+the tables received (for the two examples: you’ll see <code class="docutils literal notranslate"><span class="pre">r'mag</span></code> and <code class="docutils literal notranslate"><span class="pre">2MASS</span></code>).</p>
+</div>
+<section id="catalogs-exploration">
+<h3>Catalogs exploration<a class="headerlink" href="#catalogs-exploration" title="Link to this heading">¶</a></h3>
+<p>If you want to search for a set of tables, e.g. based on author name or other keywords,
+the <a class="reference internal" href="../api/astroquery.vizier.VizierClass.html#astroquery.vizier.VizierClass.find_catalogs" title="astroquery.vizier.VizierClass.find_catalogs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">find_catalogs()</span></code></a> tool can be used:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.vizier</span> <span class="kn">import</span> <span class="n">Vizier</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vizier</span> <span class="o">=</span> <span class="n">Vizier</span><span class="p">()</span> <span class="c1"># this instantiates Vizier with its default parameters</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">catalog_list</span> <span class="o">=</span> <span class="n">vizier</span><span class="o">.</span><span class="n">find_catalogs</span><span class="p">(</span><span class="s1">&#39;hot jupiter exoplanet transit&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">catalog_list</span><span class="o">.</span><span class="n">items</span><span class="p">():</span> 
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+<span class="go">J/A+A/635/A205 : Ultra-hot Jupiter WASP-121b transits (Bourrier+, 2020)</span>
+<span class="go">J/ApJ/788/39 : Hot Jupiter exoplanets host stars EW and abundances (Teske+, 2014)</span>
+<span class="go">J/AJ/157/217 : Transit times of five hot Jupiter WASP exoplanets (Bouma+, 2019)</span>
+<span class="go">J/A+A/635/A122 : CoRoT-30b and CoRoT-31b radial velocity curves (Border+, 2020)</span>
+</pre></div>
+</div>
+<p>From this list, you can either get any catalog completely (all the lines) or make
+sub-selections with <a class="reference internal" href="../api/astroquery.vizier.VizierClass.html#astroquery.vizier.VizierClass.query_region" title="astroquery.vizier.VizierClass.query_region"><code class="xref py py-meth docutils literal notranslate"><span class="pre">query_region()</span></code></a>,
+or with additional criteria.</p>
+</section>
+<section id="get-a-whole-catalog">
+<h3>Get a whole catalog<a class="headerlink" href="#get-a-whole-catalog" title="Link to this heading">¶</a></h3>
+<p>From the result of the precedent example, let’s select <code class="docutils literal notranslate"><span class="pre">J/ApJ/788/39</span></code>.
+We call <a class="reference internal" href="../api/astroquery.vizier.VizierClass.html#astroquery.vizier.VizierClass.get_catalogs" title="astroquery.vizier.VizierClass.get_catalogs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_catalogs()</span></code></a>. Let’s fix the number of
+returned rows to 1 for now, to minimize the amount of data we download and speed up
+exploration, while we inspect the result:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vizier</span><span class="o">.</span><span class="n">ROW_LIMIT</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exoplanets</span> <span class="o">=</span> <span class="n">vizier</span><span class="o">.</span><span class="n">get_catalogs</span><span class="p">(</span><span class="s2">&quot;J/ApJ/788/39&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">exoplanets</span>
+<span class="go">TableList with 2 tables:</span>
+<span class="go">    &#39;0:J/ApJ/788/39/stars&#39; with 7 column(s) and 1 row(s)</span>
+<span class="go">    &#39;1:J/ApJ/788/39/table4&#39; with 48 column(s) and 1 row(s)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">ROW_LIMIT</span></code> is set to 50 per default.</p>
+</div>
+<p>We see that this catalog has two tables. One named <code class="docutils literal notranslate"><span class="pre">J/ApJ/788/39/stars</span></code> and the
+other one is <code class="docutils literal notranslate"><span class="pre">J/ApJ/788/39/table4</span></code>.</p>
+<p>Let’s look at the columns of <code class="docutils literal notranslate"><span class="pre">J/ApJ/788/39/stars</span></code> from the single row that we just
+downloaded:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">exoplanets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">&lt;Table length=1&gt;</span>
+<span class="go">  Name    RAJ2000     DEJ2000     Vmag  Name1  lines Simbad</span>
+<span class="go">                                  mag</span>
+<span class="go">  str9     str11       str11    float32  str8   str5  str6</span>
+<span class="go">------- ----------- ----------- ------- ------ ----- ------</span>
+<span class="go">CoRoT-2 19 27 06.50 +01 23 01.4   12.57 COROT2 lines Simbad</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The coordinates columns often have the information about the frame and epoch in
+their descriptions:</p>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">exoplanets</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;RAJ2000&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">description</span>
+<span class="go">&#39;Simbad Hour of Right Ascension (J2000)&#39;</span>
+</pre></div>
+</div>
+<p>When we’re ready to download the complete table, we can set the row limit to -1 (for
+infinity).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vizier</span><span class="o">.</span><span class="n">ROW_LIMIT</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stars</span> <span class="o">=</span> <span class="n">vizier</span><span class="o">.</span><span class="n">get_catalogs</span><span class="p">(</span><span class="s2">&quot;J/ApJ/788/39/stars&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># stars is a TableList with only one table. Here is its first and only element</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">&lt;Table length=17&gt;</span>
+<span class="go">   Name     RAJ2000     DEJ2000     Vmag   Name1   lines Simbad</span>
+<span class="go">                                    mag</span>
+<span class="go">   str9      str11       str11    float32   str8    str5  str6</span>
+<span class="go">--------- ----------- ----------- ------- -------- ----- ------</span>
+<span class="go">  CoRoT-2 19 27 06.50 +01 23 01.4   12.57   COROT2 lines Simbad</span>
+<span class="go">   TrES-4 17 53 13.06 +37 12 42.4   11.59    TRES4 lines Simbad</span>
+<span class="go">   TrES-2 19 07 14.04 +49 18 59.1   11.25    TRES2 lines Simbad</span>
+<span class="go">   WASP-2 20 30 54.13 +06 25 46.4   11.98    WASP2 lines Simbad</span>
+<span class="go">  WASP-12 06 30 32.79 +29 40 20.3   11.57   WASP12 lines Simbad</span>
+<span class="go">HD 149026 16 30 29.62 +38 20 50.3    8.14 HD149026 lines Simbad</span>
+<span class="go">  HAT-P-1 22 57 46.84 +38 40 30.3   10.40    HATP1 lines Simbad</span>
+<span class="go">    XO-2S 07 48 07.48 +50 13 03.3   11.25     XO2S lines Simbad</span>
+<span class="go">    XO-2N 07 48 06.47 +50 13 33.0   11.25     XO2N lines Simbad</span>
+<span class="go">     XO-1 16 02 11.85 +28 10 10.4   11.25      XO1 lines Simbad</span>
+<span class="go">   TRES-3 17 52 07.02 +37 32 46.2   12.40    TRES3 lines Simbad</span>
+<span class="go">HD 189733 20 00 43.71 +22 42 39.1    7.68 HD189733 lines Simbad</span>
+<span class="go"> HD 80606 09 22 37.58 +50 36 13.4    9.00  HD80606 lines Simbad</span>
+<span class="go">  HAT-P-7 19 28 59.35 +47 58 10.2   10.48    HATP7 lines Simbad</span>
+<span class="go"> HAT-P-13 08 39 31.81 +47 21 07.3   10.42   HATP13 lines Simbad</span>
+<span class="go"> HAT-P-16 00 38 17.56 +42 27 47.2   10.91   HATP16 lines Simbad</span>
+<span class="go">  WASP-32 00 15 50.81 +01 12 01.6   11.26   WASP32 lines Simbad</span>
+</pre></div>
+</div>
+<p>Alternatively, we could have downloaded all the catalogs from the results of
+<a class="reference internal" href="../api/astroquery.vizier.VizierClass.html#astroquery.vizier.VizierClass.find_catalogs" title="astroquery.vizier.VizierClass.find_catalogs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">find_catalogs()</span></code></a>.
+Be careful when doing so, as this might be huge.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vizier</span><span class="o">.</span><span class="n">ROW_LIMIT</span> <span class="o">=</span> <span class="mi">50</span> <span class="c1"># we reset to the default value</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">catalogs</span> <span class="o">=</span> <span class="n">vizier</span><span class="o">.</span><span class="n">get_catalogs</span><span class="p">(</span><span class="n">catalog_list</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">catalogs</span><span class="p">)</span> 
+<span class="go">TableList with 10 tables:</span>
+<span class="go">   &#39;0:J/A+A/635/A205/20140119&#39; with 7 column(s) and 50 row(s)</span>
+<span class="go">   &#39;1:J/A+A/635/A205/20140123&#39; with 7 column(s) and 50 row(s)</span>
+<span class="go">   &#39;2:J/A+A/635/A205/20171231&#39; with 7 column(s) and 50 row(s)</span>
+<span class="go">   &#39;3:J/A+A/635/A205/20180114&#39; with 7 column(s) and 50 row(s)</span>
+<span class="go">   &#39;4:J/A+A/635/A205/ccf-mask&#39; with 3 column(s) and 50 row(s)</span>
+<span class="go">   &#39;5:J/ApJ/788/39/stars&#39; with 7 column(s) and 17 row(s)</span>
+<span class="go">   &#39;6:J/ApJ/788/39/table4&#39; with 48 column(s) and 50 row(s)</span>
+<span class="go">   &#39;7:J/AJ/157/217/transits&#39; with 8 column(s) and 50 row(s)</span>
+<span class="go">   &#39;8:J/A+A/635/A122/table2&#39; with 4 column(s) and 18 row(s)</span>
+<span class="go">   &#39;9:J/A+A/635/A122/table3&#39; with 4 column(s) and 17 row(s)</span>
+</pre></div>
+</div>
+<p>We downloaded the 50 first rows of these 10 tables.</p>
+</section>
+<section id="get-a-catalog-s-associated-metadata">
+<h3>Get a catalog’s associated metadata<a class="headerlink" href="#get-a-catalog-s-associated-metadata" title="Link to this heading">¶</a></h3>
+<p>The method <a class="reference internal" href="../api/astroquery.vizier.VizierClass.html#astroquery.vizier.VizierClass.get_catalog_metadata" title="astroquery.vizier.VizierClass.get_catalog_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_catalog_metadata</span></code></a> retrieves information
+about VizieR’s catalogs. It returns a table with the following columns:</p>
+<ul>
+<li><p>title</p></li>
+<li><p>authors</p></li>
+<li><p>abstract</p></li>
+<li><p>origin_article – the bibcode of the associated article</p></li>
+<li><p>webpage – a link to VizieR, contains more information about the catalog</p></li>
+<li><p>created – date of creation of the catalog <em>in VizieR</em></p></li>
+<li><p>updated – date of the last modification applied to the entry, this is often about
+metadata, with no appearance in the history on the webpage but sometimes it is about
+a data erratum, which will appear in the history tab</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This value can be extra useful to check if you need to download some catalog
+again from VizieR or if you can work safely with a result you saved previously
+on disk. Also note that the VizieR team actively maintains the catalogs but if
+a published erratum was missed we’d gladly receive a notification from you!</p>
+</div>
+</li>
+<li><p>waveband</p></li>
+<li><p>doi – the catalog doi when it exists</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.vizier</span> <span class="kn">import</span> <span class="n">Vizier</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Vizier</span><span class="p">(</span><span class="n">catalog</span><span class="o">=</span><span class="s2">&quot;VII/74A&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get_catalog_metadata</span><span class="p">()</span>
+<span class="go">&lt;Table length=1&gt;</span>
+<span class="go">          title            authors  ... waveband  doi</span>
+<span class="go">          object            object  ...  object  object</span>
+<span class="go">-------------------------- -------- ... -------- ------</span>
+<span class="go">Atlas of Peculiar Galaxies Arp H.C. ...  optical     --</span>
+</pre></div>
+</div>
+</section>
+<section id="query-an-object">
+<h3>Query an object<a class="headerlink" href="#query-an-object" title="Link to this heading">¶</a></h3>
+<p>For instance to query Sirius across all catalogs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.vizier</span> <span class="kn">import</span> <span class="n">Vizier</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vizier</span> <span class="o">=</span> <span class="n">Vizier</span><span class="p">(</span><span class="n">row_limit</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">vizier</span><span class="o">.</span><span class="n">query_object</span><span class="p">(</span><span class="s2">&quot;sirius&quot;</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="go">TableList with ... tables:</span>
+<span class="go">   &#39;0:METAobj&#39; with 5 column(s) and 7 row(s)</span>
+<span class="go">   &#39;1:ReadMeObj&#39; with 5 column(s) and 7 row(s)</span>
+<span class="go">   &#39;2:I/34/greenw2a&#39; with 16 column(s) and 1 row(s)</span>
+<span class="go">   ...</span>
+</pre></div>
+</div>
+<p>All the results are returned as a <a class="reference internal" href="../api/astroquery.utils.TableList.html#astroquery.utils.TableList" title="astroquery.utils.TableList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TableList</span></code></a> object. This
+is a container for <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a> objects. It is basically an
+extension to <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OrderedDict</span></code></a> for storing a <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a>
+against its name.</p>
+<p>To access an individual table from the <a class="reference internal" href="../api/astroquery.utils.TableList.html#astroquery.utils.TableList" title="astroquery.utils.TableList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TableList</span></code></a> object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">interesting_table</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;IX/8/catalog&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">interesting_table</span><span class="p">)</span>
+<span class="go">   2XRS     RAB1950      DEB1950    Xname ... Int   _RA.icrs     _DE.icrs</span>
+<span class="go">                                          ... uJy</span>
+<span class="go">--------- ------------ ------------ ----- ... --- ------------ ------------</span>
+<span class="go">06429-166 06 42 54.000 -16 39 00.00       ...  -- 06 45 08.088 -16 42 11.29</span>
+<span class="go">06429-166 06 42 54.000 -16 39 00.00       ...  -- 06 45 08.088 -16 42 11.29</span>
+</pre></div>
+</div>
+<p>To do some common processing to all the tables in the returned
+<a class="reference internal" href="../api/astroquery.utils.TableList.html#astroquery.utils.TableList" title="astroquery.utils.TableList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TableList</span></code></a> object, do just what you would do for a python
+dictionary:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="n">table</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">table_name</span><span class="p">]</span>
+<span class="gp">... </span>    <span class="c1"># table is now an `astropy.table.Table` object</span>
+<span class="gp">... </span>    <span class="c1"># some code to apply on table</span>
+</pre></div>
+</div>
+</section>
+<section id="query-a-region">
+<h3>Query a region<a class="headerlink" href="#query-a-region" title="Link to this heading">¶</a></h3>
+<p>To query a region either the coordinates or the object name around which to
+query should be specified along with the value for the radius (or height/width
+for a box) of the region. For instance to query a large region around the
+quasar 3C 273:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.vizier</span> <span class="kn">import</span> <span class="n">Vizier</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">Angle</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vizier</span> <span class="o">=</span> <span class="n">Vizier</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">vizier</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="s2">&quot;3C 273&quot;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">Angle</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="s2">&quot;deg&quot;</span><span class="p">),</span> <span class="n">catalog</span><span class="o">=</span><span class="s1">&#39;GSC&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that the radius may also be specified as a string in the format
+expected by <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.Angle.html#astropy.coordinates.Angle" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Angle</span></code></a>. So the above query may also
+be written as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">vizier</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="s2">&quot;3C 273&quot;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="s2">&quot;0d6m0s&quot;</span><span class="p">,</span> <span class="n">catalog</span><span class="o">=</span><span class="s1">&#39;GSC&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or using angular units and quantities from <a class="reference external" href="https://docs.astropy.org/en/stable/units/ref_api.html#module-astropy.units" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astropy.units</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">vizier</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="s2">&quot;3C 273&quot;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span> <span class="n">catalog</span><span class="o">=</span><span class="s1">&#39;GSC&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To see the result:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="go">TableList with 5 tables:</span>
+<span class="go">   &#39;0:I/254/out&#39; with 10 column(s) and 17 row(s)</span>
+<span class="go">   &#39;1:I/255/out&#39; with 9 column(s) and 17 row(s)</span>
+<span class="go">   &#39;2:I/271/out&#39; with 11 column(s) and 50 row(s)</span>
+<span class="go">   &#39;3:I/305/out&#39; with 11 column(s) and 50 row(s)</span>
+<span class="go">   &#39;4:I/353/gsc242&#39; with 35 column(s) and 50 row(s)</span>
+</pre></div>
+</div>
+<p>As mentioned earlier, the region may also be mentioned by specifying the height
+and width of a box. If only one of the height or width is mentioned, then the
+region is treated to be a square having sides equal to the specified
+dimension.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.vizier</span> <span class="kn">import</span> <span class="n">Vizier</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">astropy.coordinates</span> <span class="k">as</span> <span class="nn">coord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vizier</span> <span class="o">=</span> <span class="n">Vizier</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">vizier</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">coord</span><span class="o">.</span><span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="mf">299.590</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="mf">35.201</span><span class="p">,</span>
+<span class="gp">... </span>                                            <span class="n">unit</span><span class="o">=</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">),</span>
+<span class="gp">... </span>                                            <span class="n">frame</span><span class="o">=</span><span class="s1">&#39;icrs&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                        <span class="n">width</span><span class="o">=</span><span class="s2">&quot;30m&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                        <span class="n">catalog</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;NOMAD&quot;</span><span class="p">,</span> <span class="s2">&quot;UCAC&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="go">TableList with 3 tables:</span>
+<span class="go">   &#39;0:I/297/out&#39; with 19 column(s) and 50 row(s)</span>
+<span class="go">   &#39;1:I/322A/out&#39; with 24 column(s) and 50 row(s)</span>
+<span class="go">   &#39;2:I/340/ucac5&#39; with 20 column(s) and 50 row(s)</span>
+</pre></div>
+</div>
+<p>One more thing to note in the above example is that the coordinates may be
+specified by using the appropriate coordinate object from
+<a class="reference external" href="https://docs.astropy.org/en/stable/coordinates/ref_api.html#module-astropy.coordinates" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astropy.coordinates</span></code></a>. Especially for ICRS coordinates, some support
+also exists for directly passing a properly formatted string as the
+coordinate. Finally the <code class="docutils literal notranslate"><span class="pre">catalog</span></code> keyword argument may be passed in either
+<a class="reference internal" href="../api/astroquery.vizier.VizierClass.html#astroquery.vizier.VizierClass.query_object" title="astroquery.vizier.VizierClass.query_object"><code class="xref py py-meth docutils literal notranslate"><span class="pre">query_object()</span></code></a> or
+<a class="reference internal" href="../api/astroquery.vizier.VizierClass.html#astroquery.vizier.VizierClass.query_region" title="astroquery.vizier.VizierClass.query_region"><code class="xref py py-meth docutils literal notranslate"><span class="pre">query_region()</span></code></a> methods. This may be a string
+(if only a single catalog) or a list of strings otherwise.</p>
+<p>Last but not least, <a class="reference internal" href="../api/astroquery.vizier.VizierClass.html#astroquery.vizier.VizierClass.query_region" title="astroquery.vizier.VizierClass.query_region"><code class="xref py py-meth docutils literal notranslate"><span class="pre">query_region()</span></code></a> also supports
+constraints on the columns of the returned tables by mean of the <code class="docutils literal notranslate"><span class="pre">column_filters</span></code> keyword.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.vizier</span> <span class="kn">import</span> <span class="n">Vizier</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vizier</span> <span class="o">=</span> <span class="n">Vizier</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">vizier</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">SkyCoord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s1">&#39;M81&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                             <span class="n">radius</span><span class="o">=</span><span class="mi">10</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">,</span>
+<span class="gp">... </span>                             <span class="n">catalog</span><span class="o">=</span><span class="s1">&#39;I/345/gaia2&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                             <span class="n">column_filters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Gmag&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;19&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;Gmag&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="go">18.9508</span>
+</pre></div>
+</div>
+</section>
+<section id="specifying-keywords-output-columns-and-constraints-on-columns">
+<h3>Specifying keywords, output columns and constraints on columns<a class="headerlink" href="#specifying-keywords-output-columns-and-constraints-on-columns" title="Link to this heading">¶</a></h3>
+<p>To specify keywords on which to search as well as conditions on the output
+columns, an instance of the <a class="reference internal" href="../api/astroquery.vizier.VizierClass.html#astroquery.vizier.VizierClass" title="astroquery.vizier.VizierClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VizierClass</span></code></a> class specifying these must be first
+created. All further queries may then be performed on this instance rather than
+on the Vizier class.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vizier</span> <span class="o">=</span> <span class="n">Vizier</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;_RAJ2000&#39;</span><span class="p">,</span> <span class="s1">&#39;_DEJ2000&#39;</span><span class="p">,</span><span class="s1">&#39;B-V&#39;</span><span class="p">,</span> <span class="s1">&#39;Vmag&#39;</span><span class="p">,</span> <span class="s1">&#39;Plx&#39;</span><span class="p">],</span>
+<span class="gp">... </span>           <span class="n">column_filters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Vmag&quot;</span><span class="p">:</span><span class="s2">&quot;&gt;10&quot;</span><span class="p">},</span> <span class="n">keywords</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;optical&quot;</span><span class="p">,</span> <span class="s2">&quot;xry&quot;</span><span class="p">])</span>  
+</pre></div>
+</div>
+<p>Note that whenever an unknown keyword is specified (here <code class="docutils literal notranslate"><span class="pre">xry</span></code>) a warning is emitted and
+that keyword is discarded from further consideration. The behavior for
+searching with these keywords is the same as defined for the web
+interface (<a class="reference external" href="https://vizier.cds.unistra.fr/vizier/vizHelp/1.htx">for details see here</a>). Now we call the different query methods on
+this Vizier instance:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vizier</span> <span class="o">=</span> <span class="n">Vizier</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;_RAJ2000&#39;</span><span class="p">,</span> <span class="s1">&#39;_DEJ2000&#39;</span><span class="p">,</span><span class="s1">&#39;B-V&#39;</span><span class="p">,</span> <span class="s1">&#39;Vmag&#39;</span><span class="p">,</span> <span class="s1">&#39;Plx&#39;</span><span class="p">],</span>
+<span class="gp">... </span>           <span class="n">column_filters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Vmag&quot;</span><span class="p">:</span><span class="s2">&quot;&gt;10&quot;</span><span class="p">},</span> <span class="n">keywords</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;optical&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">vizier</span><span class="o">.</span><span class="n">query_object</span><span class="p">(</span><span class="s2">&quot;HD 226868&quot;</span><span class="p">,</span> <span class="n">catalog</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;NOMAD&quot;</span><span class="p">,</span> <span class="s2">&quot;UCAC&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="go">TableList with 3 tables:</span>
+<span class="go">   &#39;0:I/297/out&#39; with 3 column(s) and 50 row(s)</span>
+<span class="go">   &#39;1:I/322A/out&#39; with 3 column(s) and 10 row(s)</span>
+<span class="go">   &#39;2:I/340/ucac5&#39; with 2 column(s) and 26 row(s)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;I/322A/out&#39;</span><span class="p">])</span> 
+<span class="go">   _RAJ2000      _DEJ2000    Vmag</span>
+<span class="go">     deg           deg       mag</span>
+<span class="go">------------- ------------- ------</span>
+<span class="go">299.572418900  35.194234200 15.986</span>
+<span class="go">299.580291200  35.176888900 13.274</span>
+<span class="go">299.582571200  35.185225300 14.863</span>
+<span class="go">299.594171800  35.179994800 14.690</span>
+<span class="go">299.601402100  35.198107800 14.644</span>
+<span class="go">299.617668600  35.186998700 14.394</span>
+<span class="go">299.561497700  35.201692800 15.687</span>
+<span class="go">299.570216500  35.225663400 14.878</span>
+<span class="go">299.601080600  35.233337800 13.170</span>
+<span class="go">299.617995000  35.205863700 13.946</span>
+</pre></div>
+</div>
+<p>When specifying the columns of the query, sorting of the returned table can be
+requested by adding <code class="docutils literal notranslate"><span class="pre">+</span></code> (or <code class="docutils literal notranslate"><span class="pre">-</span></code> for reverse sorting order) in front of the column
+name. In the following example, the standard (<code class="docutils literal notranslate"><span class="pre">&quot;*&quot;</span></code>) columns and the calculated
+distance column (<code class="docutils literal notranslate"><span class="pre">&quot;_r&quot;</span></code>) of the 2MASS catalog (II/246) are queried, 20 arcsec
+around HD 226868. The result is sorted in increasing distance, as requested with
+the <code class="docutils literal notranslate"><span class="pre">&quot;+&quot;</span></code> in front of <code class="docutils literal notranslate"><span class="pre">&quot;_r&quot;</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vizier</span> <span class="o">=</span> <span class="n">Vizier</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;+_r&quot;</span><span class="p">],</span> <span class="n">catalog</span><span class="o">=</span><span class="s2">&quot;II/246&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">vizier</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="s2">&quot;HD 226868&quot;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="s2">&quot;20s&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">  _r    RAJ2000    DEJ2000        2MASS        Jmag  ... Bflg Cflg Xflg Aflg</span>
+<span class="go">          deg        deg                       mag   ...</span>
+<span class="go">------ ---------- ---------- ---------------- ------ ... ---- ---- ---- ----</span>
+<span class="go"> 0.134 299.590280  35.201599 19582166+3512057  6.872 ...  111  000    0    0</span>
+<span class="go">10.135 299.587491  35.203217 19582099+3512115 10.285 ...  111  c00    0    0</span>
+<span class="go">11.167 299.588599  35.198849 19582126+3511558 13.111 ...    2  00c    0    0</span>
+<span class="go">12.288 299.586356  35.200542 19582072+3512019 14.553 ...  111  ccc    0    0</span>
+<span class="go">17.691 299.586254  35.197994 19582070+3511527 16.413 ...  100  c00    0    0</span>
+</pre></div>
+</div>
+<p>Note: The special column <code class="docutils literal notranslate"><span class="pre">&quot;*&quot;</span></code> requests just the default columns of a
+catalog; <code class="docutils literal notranslate"><span class="pre">&quot;**&quot;</span></code> would request all the columns.</p>
+</section>
+<section id="query-with-table">
+<h3>Query with table<a class="headerlink" href="#query-with-table" title="Link to this heading">¶</a></h3>
+<p>A <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a> can also be used to specify the coordinates in a
+region query <em>if</em> it contains the columns <code class="docutils literal notranslate"><span class="pre">_RAJ2000</span></code> and <code class="docutils literal notranslate"><span class="pre">_DEJ2000</span></code>. The
+following example starts by looking for AGNs in the Veron &amp; Cety catalog with a
+<code class="docutils literal notranslate"><span class="pre">Vmag</span></code> between 10.0 and 11.0. Based on the result of this first query, guide
+stars with a <code class="docutils literal notranslate"><span class="pre">Kmag</span></code> brighter than 9.0 are looked for, with a separation
+between 2 and 30 arcsec. The column <code class="docutils literal notranslate"><span class="pre">_q</span></code> in the <code class="docutils literal notranslate"><span class="pre">guide</span></code> table is a 1-based
+index to the <code class="docutils literal notranslate"><span class="pre">agn</span></code> table (not the 0-based python convention).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">agn</span> <span class="o">=</span> <span class="n">Vizier</span><span class="p">(</span><span class="n">catalog</span><span class="o">=</span><span class="s2">&quot;VII/258/vv10&quot;</span><span class="p">,</span>
+<span class="gp">... </span>             <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;_RAJ2000&#39;</span><span class="p">,</span> <span class="s1">&#39;_DEJ2000&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">query_constraints</span><span class="p">(</span><span class="n">Vmag</span><span class="o">=</span><span class="s2">&quot;10.0..11.0&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">agn</span><span class="p">)</span>
+<span class="go"> _RAJ2000   _DEJ2000   Cl  nR      Name     ...  Sp  n_Vmag  Vmag  B-V  r_z</span>
+<span class="go">   deg        deg                           ...              mag   mag</span>
+<span class="go">---------- ---------- --- --- ------------- ... ---- ------ ----- ----- ----</span>
+<span class="go"> 10.684583  41.269444   Q              M 31 ...   S2        10.57  1.08 1936</span>
+<span class="go"> 60.277917 -16.110833   Q     NPM1G-16.0168 ...           R 10.16    --  988</span>
+<span class="go"> 27.238750   5.906667   A   *      NGC  676 ...   S2        10.50    -- 1034</span>
+<span class="go"> 40.669583  -0.013056   A          NGC 1068 ...  S1h        10.83  0.87   58</span>
+<span class="go">139.759583  26.269722   A          NGC 2824 ...   S?        10.88    -- 2528</span>
+<span class="go">147.592083  72.279167   A          NGC 2985 ... S1.9        10.61  0.76 1033</span>
+<span class="go">173.144167  53.067778   A          NGC 3718 ...  S3b        10.61  0.74 1033</span>
+<span class="go">184.960833  29.613889   A         UGC  7377 ...   S3        10.47  0.99 2500</span>
+<span class="go">185.028750  29.280833   A          NGC 4278 ...  S3b        10.87  0.98 1033</span>
+<span class="go">186.453750  33.546667   A          NGC 4395 ... S1.8        10.27  0.53 1033</span>
+<span class="go">192.719583  41.119444   A          NGC 4736 ...    S        10.85  0.85 1032</span>
+<span class="go">208.361250  40.283056   A          NGC 5353 ...   S?      R 10.91    --  368</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">guide</span> <span class="o">=</span> <span class="n">Vizier</span><span class="p">(</span><span class="n">catalog</span><span class="o">=</span><span class="s2">&quot;II/246&quot;</span><span class="p">,</span> <span class="n">column_filters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Kmag&quot;</span><span class="p">:</span><span class="s2">&quot;&lt;9.0&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">agn</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="s2">&quot;30s&quot;</span><span class="p">,</span> <span class="n">inner_radius</span><span class="o">=</span><span class="s2">&quot;2s&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">guide</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+<span class="go"> _q  RAJ2000    DEJ2000        2MASS        Jmag  ... Rflg Bflg Cflg Xflg Aflg</span>
+<span class="go">       deg        deg                       mag   ...</span>
+<span class="go">--- ---------- ---------- ---------------- ------ ... ---- ---- ---- ---- ----</span>
+<span class="go">  1  10.686015  41.269630 00424464+4116106  9.399 ...   20   20  0c0    2    0</span>
+<span class="go">  1  10.685657  41.269550 00424455+4116103 10.773 ...  200  200  c00    2    0</span>
+<span class="go">  1  10.685837  41.270599 00424460+4116141  9.880 ...   20   20  0c0    2    0</span>
+<span class="go">  1  10.683263  41.267456 00424398+4116028 12.136 ...  200  100  c00    2    0</span>
+<span class="go">  1  10.683465  41.269676 00424403+4116108 11.507 ...  200  100  c00    2    0</span>
+<span class="go">  3  27.238636   5.906066 01485727+0554218  8.961 ...  112  111  000    0    0</span>
+<span class="go">  4  40.669277  -0.014225 02424062-0000512 11.795 ...  200  100  c00    2    0</span>
+<span class="go">  4  40.668802  -0.013064 02424051-0000470 11.849 ...  200  100  c00    2    0</span>
+<span class="go">  4  40.669219  -0.012236 02424061-0000440 12.276 ...  200  100  c00    2    0</span>
+<span class="go">  4  40.670761  -0.012208 02424098-0000439 12.119 ...  200  100  c00    2    0</span>
+<span class="go">  4  40.670177  -0.012830 02424084-0000461 11.381 ...  200  100  c00    2    0</span>
+<span class="go"> 11 192.721982  41.121040 12505327+4107157 10.822 ...  200  100  c00    2    0</span>
+<span class="go"> 11 192.721179  41.120201 12505308+4107127  9.306 ...  222  111  000    2    0</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<p>If you are repeatedly getting failed queries, or bad/out-of-date results, try clearing your cache:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.vizier</span> <span class="kn">import</span> <span class="n">Vizier</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Vizier</span><span class="o">.</span><span class="n">clear_cache</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If this function is unavailable, upgrade your version of astroquery.
+The <code class="docutils literal notranslate"><span class="pre">clear_cache</span></code> function was introduced in version 0.4.7.dev8479.</p>
+</section>
+<section id="reference-api">
+<h2>Reference/API<a class="headerlink" href="#reference-api" title="Link to this heading">¶</a></h2>
+<section id="module-astroquery.vizier">
+<span id="astroquery-vizier-package"></span><h3>astroquery.vizier Package<a class="headerlink" href="#module-astroquery.vizier" title="Link to this heading">¶</a></h3>
+<section id="vizier-query-tool">
+<h4>VizieR Query Tool<a class="headerlink" href="#vizier-query-tool" title="Link to this heading">¶</a></h4>
+<p>This package is for querying the VizieR service, primarily hosted at:
+<a class="reference external" href="https://vizier.cds.unistra.fr">https://vizier.cds.unistra.fr</a></p>
+<p>Note: If the access to catalogues with VizieR was helpful for your research
+work, the following acknowledgment would be appreciated:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">This</span> <span class="n">research</span> <span class="n">has</span> <span class="n">made</span> <span class="n">use</span> <span class="n">of</span> <span class="n">the</span> <span class="n">VizieR</span> <span class="n">catalogue</span> <span class="n">access</span> <span class="n">tool</span><span class="p">,</span> <span class="n">CDS</span><span class="p">,</span>
+<span class="n">Strasbourg</span><span class="p">,</span> <span class="n">France</span><span class="o">.</span>  <span class="n">The</span> <span class="n">original</span> <span class="n">description</span> <span class="n">of</span> <span class="n">the</span> <span class="n">VizieR</span> <span class="n">service</span> <span class="n">was</span>
+<span class="n">published</span> <span class="ow">in</span> <span class="n">A</span><span class="o">&amp;</span><span class="n">AS</span> <span class="mi">143</span><span class="p">,</span> <span class="mi">23</span>
+</pre></div>
+</div>
+</section>
+<section id="classes">
+<h4>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h4>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/astroquery.vizier.VizierClass.html#astroquery.vizier.VizierClass" title="astroquery.vizier.VizierClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VizierClass</span></code></a>(*[, columns, column_filters, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/astroquery.vizier.Conf.html#astroquery.vizier.Conf" title="astroquery.vizier.Conf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Conf</span></code></a>()</p></td>
+<td><p>Configuration parameters for <a class="reference internal" href="#module-astroquery.vizier" title="astroquery.vizier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.vizier</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">VizieR Queries (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.vizier</span></code>)</a><ul>
+<li><a class="reference internal" href="#getting-started">Getting started</a><ul>
+<li><a class="reference internal" href="#catalogs-exploration">Catalogs exploration</a></li>
+<li><a class="reference internal" href="#get-a-whole-catalog">Get a whole catalog</a></li>
+<li><a class="reference internal" href="#get-a-catalog-s-associated-metadata">Get a catalog’s associated metadata</a></li>
+<li><a class="reference internal" href="#query-an-object">Query an object</a></li>
+<li><a class="reference internal" href="#query-a-region">Query a region</a></li>
+<li><a class="reference internal" href="#specifying-keywords-output-columns-and-constraints-on-columns">Specifying keywords, output columns and constraints on columns</a></li>
+<li><a class="reference internal" href="#query-with-table">Query with table</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li><a class="reference internal" href="#reference-api">Reference/API</a><ul>
+<li><a class="reference internal" href="#module-astroquery.vizier">astroquery.vizier Package</a><ul>
+<li><a class="reference internal" href="#vizier-query-tool">VizieR Query Tool</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="../_sources/vizier/vizier.rst.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 02 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>

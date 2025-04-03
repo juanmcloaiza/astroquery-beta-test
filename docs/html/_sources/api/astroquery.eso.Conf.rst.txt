@@ -1,0 +1,21 @@
+Conf
+====
+
+.. currentmodule:: astroquery.eso
+
+.. autoclass:: Conf
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~Conf.row_limit
+      ~Conf.tap_url
+      ~Conf.username
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: row_limit
+   .. autoattribute:: tap_url
+   .. autoattribute:: username

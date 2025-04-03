@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astroquery.mast.missions &#8212; astroquery v0.4.8.dev10177</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    
+    <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../../_static/documentation_options.js?v=51006566"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../../../_static/copybutton.js"></script>
+    <link rel="icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">astroquery v0.4.8.dev10177</a>
+	 &#187;
+      </li>
+      <li><a href="../../index.html" >Module code</a> &#187;</li>
+      <li><a href="../mast.html" accesskey="U">astroquery.mast</a> &#187;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for astroquery.mast.missions</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">MAST Missions</span>
+<span class="sd">=================</span>
+
+<span class="sd">This module contains methods for searching MAST missions.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">difflib</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">json</span> <span class="kn">import</span> <span class="n">JSONDecodeError</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">quote</span>
+
+<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="kn">import</span> <span class="nn">astropy.coordinates</span> <span class="k">as</span> <span class="nn">coord</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Row</span><span class="p">,</span> <span class="n">Column</span><span class="p">,</span> <span class="n">vstack</span>
+<span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">HTTPError</span><span class="p">,</span> <span class="n">RequestException</span>
+
+<span class="kn">from</span> <span class="nn">astroquery</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">astroquery.utils</span> <span class="kn">import</span> <span class="n">commons</span><span class="p">,</span> <span class="n">async_to_sync</span>
+<span class="kn">from</span> <span class="nn">astroquery.utils.class_or_instance</span> <span class="kn">import</span> <span class="n">class_or_instance</span>
+<span class="kn">from</span> <span class="nn">astropy.utils.console</span> <span class="kn">import</span> <span class="n">ProgressBarOrSpinner</span>
+<span class="kn">from</span> <span class="nn">astroquery.exceptions</span> <span class="kn">import</span> <span class="n">InvalidQueryError</span><span class="p">,</span> <span class="n">MaxResultsWarning</span><span class="p">,</span> <span class="n">InputWarning</span><span class="p">,</span> <span class="n">NoResultsWarning</span>
+
+<span class="kn">from</span> <span class="nn">astroquery.mast</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">astroquery.mast.core</span> <span class="kn">import</span> <span class="n">MastQueryWithLogin</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">conf</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;MastMissionsClass&#39;</span><span class="p">,</span> <span class="s1">&#39;MastMissions&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="MastMissionsClass">
+<a class="viewcode-back" href="../../../api/astroquery.mast.MastMissionsClass.html#astroquery.mast.MastMissionsClass">[docs]</a>
+<span class="nd">@async_to_sync</span>
+<span class="k">class</span> <span class="nc">MastMissionsClass</span><span class="p">(</span><span class="n">MastQueryWithLogin</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    MastMissions search class.</span>
+<span class="sd">    Class that allows direct programmatic access to retrieve metadata via the MAST search API for a given mission.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Static class variables</span>
+    <span class="n">_search</span> <span class="o">=</span> <span class="s1">&#39;search&#39;</span>
+    <span class="n">_list_products</span> <span class="o">=</span> <span class="s1">&#39;post_list_products&#39;</span>
+
+    <span class="c1"># Workaround so that observation_id is returned in ULLYSES queries that do not specify columns</span>
+    <span class="n">_default_ullyses_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;target_name_ulysses&#39;</span><span class="p">,</span> <span class="s1">&#39;target_classification&#39;</span><span class="p">,</span> <span class="s1">&#39;targ_ra&#39;</span><span class="p">,</span> <span class="s1">&#39;targ_dec&#39;</span><span class="p">,</span> <span class="s1">&#39;host_galaxy_name&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;spectral_type&#39;</span><span class="p">,</span> <span class="s1">&#39;bmv0_mag&#39;</span><span class="p">,</span> <span class="s1">&#39;u_mag&#39;</span><span class="p">,</span> <span class="s1">&#39;b_mag&#39;</span><span class="p">,</span> <span class="s1">&#39;v_mag&#39;</span><span class="p">,</span> <span class="s1">&#39;gaia_g_mean_mag&#39;</span><span class="p">,</span> <span class="s1">&#39;star_mass&#39;</span><span class="p">,</span>
+                             <span class="s1">&#39;instrument&#39;</span><span class="p">,</span> <span class="s1">&#39;grating&#39;</span><span class="p">,</span> <span class="s1">&#39;filter&#39;</span><span class="p">,</span> <span class="s1">&#39;observation_id&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mission</span><span class="o">=</span><span class="s1">&#39;hst&#39;</span><span class="p">,</span> <span class="n">mast_token</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">mast_token</span><span class="o">=</span><span class="n">mast_token</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset_kwds</span> <span class="o">=</span> <span class="p">{</span>  <span class="c1"># column keywords corresponding to dataset ID</span>
+            <span class="s1">&#39;hst&#39;</span><span class="p">:</span> <span class="s1">&#39;sci_data_set_name&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;jwst&#39;</span><span class="p">:</span> <span class="s1">&#39;fileSetName&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;classy&#39;</span><span class="p">:</span> <span class="s1">&#39;Target&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ullyses&#39;</span><span class="p">:</span> <span class="s1">&#39;observation_id&#39;</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Service attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span>  <span class="c1"># current API service</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service_dict</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">},</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">_list_products</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_list_products</span><span class="p">}}</span>
+
+        <span class="c1"># Search attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_search_option_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;limit&#39;</span><span class="p">,</span> <span class="s1">&#39;offset&#39;</span><span class="p">,</span> <span class="s1">&#39;sort_by&#39;</span><span class="p">,</span> <span class="s1">&#39;search_key&#39;</span><span class="p">,</span> <span class="s1">&#39;sort_desc&#39;</span><span class="p">,</span> <span class="s1">&#39;select_cols&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;skip_count&#39;</span><span class="p">,</span> <span class="s1">&#39;user_fields&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mission</span> <span class="o">=</span> <span class="n">mission</span>  <span class="c1"># current mission</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="mi">5000</span>  <span class="c1"># maximum number of results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># columns configuration for each mission</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mission</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mission</span>
+
+    <span class="nd">@mission</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">mission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="c1"># Setter that updates the service parameters if the mission is changed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mission</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>  <span class="c1"># case-insensitive</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_service_api_connection</span><span class="o">.</span><span class="n">set_service_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">service_dict</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;search/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mission</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_parse_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>  <span class="c1"># Used by the async_to_sync decorator functionality</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse the results of a `~requests.Response` objects and return an `~astropy.table.Table` of results.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        response : `~requests.Response`</span>
+<span class="sd">            `~requests.Response` objects.</span>
+<span class="sd">        verbose : bool</span>
+<span class="sd">            (presently does nothing - there is no output with verbose set to</span>
+<span class="sd">            True or False)</span>
+<span class="sd">            Default False. Setting to True provides more extensive output.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        response : `~astropy.table.Table`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span><span class="p">:</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_api_connection</span><span class="o">.</span><span class="n">_parse_result</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">data_key</span><span class="o">=</span><span class="s1">&#39;results&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Warn if maximum results are returned</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Maximum results returned, may not include all sources within radius.&quot;</span><span class="p">,</span>
+                              <span class="n">MaxResultsWarning</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_list_products</span><span class="p">:</span>
+            <span class="c1"># Results from post_list_products endpoint need to be handled differently</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>  <span class="c1"># multiple async responses from batching</span>
+                <span class="n">combined_products</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">resp</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+                    <span class="n">combined_products</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;products&#39;</span><span class="p">,</span> <span class="p">[]))</span>
+                <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">combined_products</span><span class="p">)</span>
+
+            <span class="n">results</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;products&#39;</span><span class="p">])</span>  <span class="c1"># single async response</span>
+
+        <span class="k">return</span> <span class="n">results</span>
+
+    <span class="k">def</span> <span class="nf">_validate_criteria</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">criteria</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check that criteria keyword arguments are valid column names for the mission.</span>
+<span class="sd">        Raises InvalidQueryError if a criteria argument is invalid.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        **criteria</span>
+<span class="sd">            Keyword arguments representing criteria filters to apply.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        -------</span>
+<span class="sd">        InvalidQueryError</span>
+<span class="sd">            If a keyword does not match any valid column names, an error is raised that suggests the closest</span>
+<span class="sd">            matching column name, if available.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Ensure that self.columns is populated</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_column_list</span><span class="p">()</span>
+
+        <span class="c1"># Check each criteria argument for validity</span>
+        <span class="n">valid_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mission</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_option_fields</span>
+        <span class="k">for</span> <span class="n">kwd</span> <span class="ow">in</span> <span class="n">criteria</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">valid_cols</span> <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="n">kwd</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">col</span><span class="p">:</span>
+                <span class="n">closest_match</span> <span class="o">=</span> <span class="n">difflib</span><span class="o">.</span><span class="n">get_close_matches</span><span class="p">(</span><span class="n">kwd</span><span class="p">,</span> <span class="n">valid_cols</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">error_msg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Filter &#39;</span><span class="si">{</span><span class="n">kwd</span><span class="si">}</span><span class="s2">&#39; does not exist. Did you mean &#39;</span><span class="si">{</span><span class="n">closest_match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&#39;?&quot;</span>
+                    <span class="k">if</span> <span class="n">closest_match</span>
+                    <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;Filter &#39;</span><span class="si">{</span><span class="n">kwd</span><span class="si">}</span><span class="s2">&#39; does not exist.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">InvalidQueryError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MastMissionsClass.query_region_async">
+<a class="viewcode-back" href="../../../api/astroquery.mast.MastMissionsClass.html#astroquery.mast.MastMissionsClass.query_region_async">[docs]</a>
+    <span class="nd">@class_or_instance</span>
+    <span class="k">def</span> <span class="nf">query_region_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coordinates</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">3</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                           <span class="n">select_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">criteria</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given a sky position and radius, returns a list of matching dataset IDs.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        coordinates : str or `~astropy.coordinates` object</span>
+<span class="sd">            The target around which to search. It may be specified as a</span>
+<span class="sd">            string or as the appropriate `~astropy.coordinates` object.</span>
+<span class="sd">        radius : str or `~astropy.units.Quantity` object, optional</span>
+<span class="sd">            Default 3 degrees.</span>
+<span class="sd">            The string must be parsable by `~astropy.coordinates.Angle`. The</span>
+<span class="sd">            appropriate `~astropy.units.Quantity` object from</span>
+<span class="sd">            `~astropy.units` may also be used. Defaults to 3 arcminutes.</span>
+<span class="sd">        limit : int</span>
+<span class="sd">            Optional and default is 5000.</span>
+<span class="sd">            the maximum number of dataset IDs in the results.</span>
+<span class="sd">        offset : int</span>
+<span class="sd">            Optional and default is 0</span>
+<span class="sd">            the number of records you wish to skip before selecting records.</span>
+<span class="sd">        select_cols: list, None</span>
+<span class="sd">            Default None. Names of columns that will be included in the astropy table</span>
+<span class="sd">        **criteria</span>
+<span class="sd">            Other mission-specific criteria arguments.</span>
+<span class="sd">            All valid filters can be found using `~astroquery.mast.missions.MastMissionsClass.get_column_list`</span>
+<span class="sd">            function.</span>
+<span class="sd">            For example, one can specify the output columns(select_cols) or use other filters(conditions).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        response : list of `~requests.Response`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="n">limit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span>
+
+        <span class="c1"># Check that criteria arguments are valid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_criteria</span><span class="p">(</span><span class="o">**</span><span class="n">criteria</span><span class="p">)</span>
+
+        <span class="c1"># Put coordinates and radius into consistent format</span>
+        <span class="n">coordinates</span> <span class="o">=</span> <span class="n">commons</span><span class="o">.</span><span class="n">parse_coordinates</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span>
+
+        <span class="c1"># if radius is just a number we assume degrees</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">Angle</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+
+        <span class="c1"># Dataset ID column should always be returned</span>
+        <span class="k">if</span> <span class="n">select_cols</span><span class="p">:</span>
+            <span class="n">select_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mission</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission</span> <span class="o">==</span> <span class="s1">&#39;ullyses&#39;</span><span class="p">:</span>
+            <span class="n">select_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_ullyses_cols</span>
+
+        <span class="c1"># basic params</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">coordinates</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">deg</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">coordinates</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">deg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span>
+                  <span class="s1">&#39;radius&#39;</span><span class="p">:</span> <span class="n">radius</span><span class="o">.</span><span class="n">arcsec</span><span class="p">,</span>
+                  <span class="s1">&#39;radius_units&#39;</span><span class="p">:</span> <span class="s1">&#39;arcseconds&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;limit&#39;</span><span class="p">:</span> <span class="n">limit</span><span class="p">,</span>
+                  <span class="s1">&#39;offset&#39;</span><span class="p">:</span> <span class="n">offset</span><span class="p">,</span>
+                  <span class="s1">&#39;select_cols&#39;</span><span class="p">:</span> <span class="n">select_cols</span><span class="p">}</span>
+
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;conditions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># adding additional user specified parameters</span>
+        <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">criteria</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">prop</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_option_fields</span><span class="p">:</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;conditions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">prop</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">params</span><span class="p">[</span><span class="n">prop</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_api_connection</span><span class="o">.</span><span class="n">missions_request_async</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MastMissionsClass.query_criteria_async">
+<a class="viewcode-back" href="../../../api/astroquery.mast.MastMissionsClass.html#astroquery.mast.MastMissionsClass.query_criteria_async">[docs]</a>
+    <span class="nd">@class_or_instance</span>
+    <span class="k">def</span> <span class="nf">query_criteria_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">coordinates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">objectname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">3</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">,</span>
+                             <span class="n">limit</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">select_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">criteria</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given a set of search criteria, returns a list of mission metadata.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        coordinates : str or `~astropy.coordinates` object</span>
+<span class="sd">            The target around which to search. It may be specified as a</span>
+<span class="sd">            string or as the appropriate `~astropy.coordinates` object.</span>
+<span class="sd">        objectname : str</span>
+<span class="sd">            The name of the target around which to search.</span>
+<span class="sd">        radius : str or `~astropy.units.Quantity` object, optional</span>
+<span class="sd">            Default 3 degrees.</span>
+<span class="sd">            The string must be parsable by `~astropy.coordinates.Angle`. The</span>
+<span class="sd">            appropriate `~astropy.units.Quantity` object from</span>
+<span class="sd">            `~astropy.units` may also be used. Defaults to 3 arcminutes.</span>
+<span class="sd">        limit : int</span>
+<span class="sd">            Optional and default is 5000.</span>
+<span class="sd">            the maximum number of dataset IDs in the results.</span>
+<span class="sd">        offset : int</span>
+<span class="sd">            Optional and default is 0.</span>
+<span class="sd">            the number of records you wish to skip before selecting records.</span>
+<span class="sd">        select_cols: list, None</span>
+<span class="sd">            Default None. Names of columns that will be included in the astropy table</span>
+<span class="sd">        **criteria</span>
+<span class="sd">            Criteria to apply. At least one non-positional criterion must be supplied.</span>
+<span class="sd">            Valid criteria are coordinates, objectname, radius (as in</span>
+<span class="sd">            `~astroquery.mast.missions.MastMissionsClass.query_region` and</span>
+<span class="sd">            `~astroquery.mast.missions.MastMissionsClass.query_object` functions),</span>
+<span class="sd">            and all fields listed in the column documentation for the mission being queried.</span>
+<span class="sd">            List of all valid fields that can be used to match results on criteria can be retrieved by calling</span>
+<span class="sd">            `~astroquery.mast.missions.MastMissionsClass.get_column_list` function.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        response : list of `~requests.Response`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="n">limit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search</span>
+
+        <span class="c1"># Check that criteria arguments are valid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_criteria</span><span class="p">(</span><span class="o">**</span><span class="n">criteria</span><span class="p">)</span>
+
+        <span class="c1"># Parse user input location</span>
+        <span class="k">if</span> <span class="n">objectname</span> <span class="ow">or</span> <span class="n">coordinates</span><span class="p">:</span>
+            <span class="n">coordinates</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">parse_input_location</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">objectname</span><span class="p">)</span>
+
+        <span class="c1"># if radius is just a number we assume degrees</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">Angle</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">)</span>
+
+        <span class="c1"># Dataset ID column should always be returned</span>
+        <span class="k">if</span> <span class="n">select_cols</span><span class="p">:</span>
+            <span class="n">select_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mission</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission</span> <span class="o">==</span> <span class="s1">&#39;ullyses&#39;</span><span class="p">:</span>
+            <span class="n">select_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_ullyses_cols</span>
+
+        <span class="c1"># build query</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="p">,</span> <span class="s2">&quot;offset&quot;</span><span class="p">:</span> <span class="n">offset</span><span class="p">,</span> <span class="s1">&#39;select_cols&#39;</span><span class="p">:</span> <span class="n">select_cols</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">coordinates</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">coordinates</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">deg</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">coordinates</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">deg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;radius&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">radius</span><span class="o">.</span><span class="n">arcsec</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;radius_units&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;arcseconds&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_api_connection</span><span class="o">.</span><span class="n">check_catalogs_criteria_params</span><span class="p">(</span><span class="n">criteria</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InvalidQueryError</span><span class="p">(</span><span class="s2">&quot;At least one non-positional criterion must be supplied.&quot;</span><span class="p">)</span>
+
+        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;conditions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">criteria</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">prop</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_option_fields</span><span class="p">:</span>
+                <span class="n">params</span><span class="p">[</span><span class="s1">&#39;conditions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">prop</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">params</span><span class="p">[</span><span class="n">prop</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_api_connection</span><span class="o">.</span><span class="n">missions_request_async</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MastMissionsClass.query_object_async">
+<a class="viewcode-back" href="../../../api/astroquery.mast.MastMissionsClass.html#astroquery.mast.MastMissionsClass.query_object_async">[docs]</a>
+    <span class="nd">@class_or_instance</span>
+    <span class="k">def</span> <span class="nf">query_object_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objectname</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">3</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                           <span class="n">select_cols</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">criteria</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given an object name, returns a list of matching rows.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        objectname : str</span>
+<span class="sd">            The name of the target around which to search.</span>
+<span class="sd">        radius : str or `~astropy.units.Quantity` object, optional</span>
+<span class="sd">            Default 3 arcmin.</span>
+<span class="sd">            The string must be parsable by `~astropy.coordinates.Angle`.</span>
+<span class="sd">            The appropriate `~astropy.units.Quantity` object from</span>
+<span class="sd">            `~astropy.units` may also be used. Defaults to 3 arcminutes.</span>
+<span class="sd">        limit : int</span>
+<span class="sd">            Optional and default is 5000.</span>
+<span class="sd">            the maximum number of dataset IDs in the results.</span>
+<span class="sd">        offset : int</span>
+<span class="sd">            Optional and default is 0.</span>
+<span class="sd">            the number of records you wish to skip before selecting records.</span>
+<span class="sd">        select_cols: list, None</span>
+<span class="sd">            Default None. Names of columns that will be included in the astropy table</span>
+<span class="sd">        **criteria</span>
+<span class="sd">            Other mission-specific criteria arguments.</span>
+<span class="sd">            All valid filters can be found using `~astroquery.mast.missions.MastMissionsClass.get_column_list`</span>
+<span class="sd">            function.</span>
+<span class="sd">            For example, one can specify the output columns(select_cols) or use other filters(conditions).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        response : list of `~requests.Response`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">coordinates</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">resolve_object</span><span class="p">(</span><span class="n">objectname</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_region_async</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">offset</span><span class="p">,</span>
+                                       <span class="n">select_cols</span><span class="o">=</span><span class="n">select_cols</span><span class="p">,</span> <span class="o">**</span><span class="n">criteria</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MastMissionsClass.get_product_list_async">
+<a class="viewcode-back" href="../../../api/astroquery.mast.MastMissionsClass.html#astroquery.mast.MastMissionsClass.get_product_list_async">[docs]</a>
+    <span class="nd">@class_or_instance</span>
+    <span class="k">def</span> <span class="nf">get_product_list_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datasets</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given a dataset ID or list of dataset IDs, returns a list of associated data products.</span>
+
+<span class="sd">        To return unique data products, use ``MastMissions.get_unique_product_list``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        datasets : str, list, `~astropy.table.Row`, `~astropy.table.Column`, `~astropy.table.Table`</span>
+<span class="sd">            Row/Table of MastMissions query results (e.g. output from `query_object`)</span>
+<span class="sd">            or single/list of dataset ID(s).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        response : list of `~requests.Response`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">service</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_list_products</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span> <span class="n">Table</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span> <span class="n">Row</span><span class="p">):</span>
+            <span class="n">dataset_kwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dataset_kwd</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">dataset_kwd</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Please input dataset IDs as a string, list of strings, or `~astropy.table.Column`.&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># Extract dataset IDs based on input type and mission</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span> <span class="n">Table</span><span class="p">):</span>
+            <span class="n">datasets</span> <span class="o">=</span> <span class="n">datasets</span><span class="p">[</span><span class="n">dataset_kwd</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span> <span class="n">Row</span><span class="p">):</span>
+            <span class="n">datasets</span> <span class="o">=</span> <span class="p">[</span><span class="n">datasets</span><span class="p">[</span><span class="n">dataset_kwd</span><span class="p">]]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span> <span class="n">Column</span><span class="p">):</span>
+            <span class="n">datasets</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">datasets</span> <span class="o">=</span> <span class="p">[</span><span class="n">datasets</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Unsupported data type for `datasets`. Expected string, &#39;</span>
+                            <span class="s1">&#39;list of strings, Astropy Row, Astropy Column, or Astropy Table.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Filter out empty strings from IDs</span>
+        <span class="n">datasets</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">datasets</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">datasets</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidQueryError</span><span class="p">(</span><span class="s2">&quot;Dataset list is empty, no associated products.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Filter out duplicates</span>
+        <span class="n">datasets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">datasets</span><span class="p">))</span>
+
+        <span class="c1"># Batch API calls if number of datasets exceeds maximum</span>
+        <span class="n">max_batch</span> <span class="o">=</span> <span class="mi">1000</span>
+        <span class="n">num_datasets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_datasets</span> <span class="o">&gt;</span> <span class="n">max_batch</span><span class="p">:</span>
+            <span class="c1"># Split datasets into chunks</span>
+            <span class="n">dataset_chunks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">split_list_into_chunks</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span> <span class="n">max_batch</span><span class="p">))</span>
+
+            <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># list to store responses from each batch</span>
+            <span class="k">with</span> <span class="n">ProgressBarOrSpinner</span><span class="p">(</span><span class="n">num_datasets</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Fetching products for </span><span class="si">{</span><span class="n">num_datasets</span><span class="si">}</span><span class="s1"> unique datasets &#39;</span>
+                                      <span class="sa">f</span><span class="s1">&#39;in </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset_chunks</span><span class="p">)</span><span class="si">}</span><span class="s1"> batches ...&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pb</span><span class="p">:</span>
+                <span class="n">datasets_fetched</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">pb</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">dataset_chunks</span><span class="p">:</span>
+                    <span class="c1"># Send request for each chunk and add response to list</span>
+                    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dataset_ids&#39;</span><span class="p">:</span> <span class="n">chunk</span><span class="p">}</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_service_api_connection</span><span class="o">.</span><span class="n">missions_request_async</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="n">params</span><span class="p">))</span>
+
+                    <span class="c1"># Update progress bar with the number of datasets that have had products fetched</span>
+                    <span class="n">datasets_fetched</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+                    <span class="n">pb</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">datasets_fetched</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">results</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Single batch request</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dataset_ids&#39;</span><span class="p">:</span> <span class="n">datasets</span><span class="p">}</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_api_connection</span><span class="o">.</span><span class="n">missions_request_async</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">service</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MastMissionsClass.get_unique_product_list">
+<a class="viewcode-back" href="../../../api/astroquery.mast.MastMissionsClass.html#astroquery.mast.MastMissionsClass.get_unique_product_list">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_unique_product_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datasets</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given a dataset ID or list of dataset IDs, returns a list of associated data products with unique</span>
+<span class="sd">        filenames.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        datasets : str, list, `~astropy.table.Row`, `~astropy.table.Column`, `~astropy.table.Table`</span>
+<span class="sd">            Row/Table of MastMissions query results (e.g. output from `query_object`)</span>
+<span class="sd">            or single/list of dataset ID(s).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        unique_products : `~astropy.table.Table`</span>
+<span class="sd">            Table containing products with unique URIs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">products</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_product_list</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span>
+        <span class="n">unique_products</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">remove_duplicate_products</span><span class="p">(</span><span class="n">products</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_products</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">products</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;To return all products, use `MastMissions.get_product_list`&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">unique_products</span></div>
+
+
+<div class="viewcode-block" id="MastMissionsClass.filter_products">
+<a class="viewcode-back" href="../../../api/astroquery.mast.MastMissionsClass.html#astroquery.mast.MastMissionsClass.filter_products">[docs]</a>
+    <span class="k">def</span> <span class="nf">filter_products</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">products</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Filters an `~astropy.table.Table` of mission data products based on given filters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        products : `~astropy.table.Table`</span>
+<span class="sd">            Table containing data products to be filtered.</span>
+<span class="sd">        extension : string or array, optional</span>
+<span class="sd">            Default is None. Filters by file extension(s), matching any specified extensions.</span>
+<span class="sd">        **filters :</span>
+<span class="sd">            Column-based filters to be applied.</span>
+<span class="sd">            Each keyword corresponds to a column name in the table, with the argument being one or more</span>
+<span class="sd">            acceptable values for that column. AND logic is applied between filters, OR logic within</span>
+<span class="sd">            each filter set.</span>
+<span class="sd">            For example: type=&quot;science&quot;, extension=[&quot;fits&quot;,&quot;jpg&quot;]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        response : `~astropy.table.Table`</span>
+<span class="sd">            Filtered Table of data products.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Start with a mask of True for all entries</span>
+        <span class="n">filter_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">products</span><span class="p">),</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="c1"># Filter by file extension, if provided</span>
+        <span class="k">if</span> <span class="n">extension</span><span class="p">:</span>
+            <span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span><span class="n">extension</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extension</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">extension</span>
+            <span class="n">ext_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                <span class="p">[</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">MaskedConstant</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span> <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">extensions</span><span class="p">)</span>
+                 <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">products</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]],</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span>
+            <span class="p">)</span>
+            <span class="n">filter_mask</span> <span class="o">&amp;=</span> <span class="n">ext_mask</span>
+
+        <span class="c1"># Applying column-based filters</span>
+        <span class="k">for</span> <span class="n">colname</span><span class="p">,</span> <span class="n">vals</span> <span class="ow">in</span> <span class="n">filters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">colname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">products</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">colname</span><span class="si">}</span><span class="s2">&#39; not found in product table.&quot;</span><span class="p">,</span> <span class="n">InputWarning</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">vals</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">vals</span>
+            <span class="n">col_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">products</span><span class="p">[</span><span class="n">colname</span><span class="p">],</span> <span class="n">vals</span><span class="p">)</span>
+            <span class="n">filter_mask</span> <span class="o">&amp;=</span> <span class="n">col_mask</span>
+
+        <span class="c1"># Return filtered products</span>
+        <span class="k">return</span> <span class="n">products</span><span class="p">[</span><span class="n">filter_mask</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="MastMissionsClass.download_file">
+<a class="viewcode-back" href="../../../api/astroquery.mast.MastMissionsClass.html#astroquery.mast.MastMissionsClass.download_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">local_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Downloads a single file based on the data URI.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        uri : str</span>
+<span class="sd">            The product dataURI</span>
+<span class="sd">        local_path : str</span>
+<span class="sd">            Directory or filename to which the file will be downloaded.  Defaults to current working directory.</span>
+<span class="sd">        cache : bool</span>
+<span class="sd">            Default is True. If file is found on disk, it will not be downloaded again.</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Default is True. Whether to show download progress in the console.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        status: str</span>
+<span class="sd">            Download status message.  Either COMPLETE, SKIPPED, or ERROR.</span>
+<span class="sd">        msg : str</span>
+<span class="sd">            An error status message, if any.</span>
+<span class="sd">        url : str</span>
+<span class="sd">            The full URL download path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Construct the full data URL based on mission</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;hst&#39;</span><span class="p">,</span> <span class="s1">&#39;jwst&#39;</span><span class="p">]:</span>
+            <span class="c1"># HST and JWST have a dedicated endpoint for retrieving products</span>
+            <span class="n">base_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_api_connection</span><span class="o">.</span><span class="n">MISSIONS_DOWNLOAD_URL</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission</span> <span class="o">+</span> <span class="s1">&#39;/api/v0.1/retrieve_product&#39;</span>
+            <span class="n">keyword</span> <span class="o">=</span> <span class="s1">&#39;product_name&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># HLSPs use MAST download URL</span>
+            <span class="n">base_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service_api_connection</span><span class="o">.</span><span class="n">MAST_DOWNLOAD_URL</span>
+            <span class="n">keyword</span> <span class="o">=</span> <span class="s1">&#39;uri&#39;</span>
+        <span class="n">data_url</span> <span class="o">=</span> <span class="n">base_url</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;?</span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s1">=&#39;</span> <span class="o">+</span> <span class="n">uri</span>
+        <span class="n">escaped_url</span> <span class="o">=</span> <span class="n">base_url</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;?</span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s1">=&#39;</span> <span class="o">+</span> <span class="n">quote</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">safe</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Determine local file path. Use current directory as default.</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">local_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">local_path</span> <span class="ow">or</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">local_path</span><span class="o">.</span><span class="n">suffix</span><span class="p">:</span>  <span class="c1"># Append filename if local path is directory</span>
+            <span class="n">local_path</span> <span class="o">=</span> <span class="n">local_path</span> <span class="o">/</span> <span class="n">filename</span>
+            <span class="n">local_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;COMPLETE&#39;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Attempt file download</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_download_file</span><span class="p">(</span><span class="n">escaped_url</span><span class="p">,</span> <span class="n">local_path</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+            <span class="c1"># Check if file exists</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">local_path</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="n">status</span> <span class="o">!=</span> <span class="s1">&#39;SKIPPED&#39;</span><span class="p">:</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;ERROR&#39;</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;File was not downloaded&#39;</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">data_url</span>
+
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">err</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">401</span><span class="p">:</span>
+                <span class="n">no_auth_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;You are not authorized to download from </span><span class="si">{</span><span class="n">data_url</span><span class="si">}</span><span class="s1">.&#39;</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_authenticated</span><span class="p">:</span>
+                    <span class="n">no_auth_msg</span> <span class="o">+=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">You do not have access to download this data, or your authentication &#39;</span>
+                                    <span class="s1">&#39;token may be expired. You can generate a new token at &#39;</span>
+                                    <span class="s1">&#39;https://auth.mast.stsci.edu/token?suggested_name=Astroquery&amp;&#39;</span>
+                                    <span class="s1">&#39;suggested_scope=mast:exclusive_access&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">no_auth_msg</span> <span class="o">+=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Please authenticate yourself using the `~astroquery.mast.MastMissions.login` &#39;</span>
+                                    <span class="s1">&#39;function or initialize `~astroquery.mast.MastMissions` with an authentication &#39;</span>
+                                    <span class="s1">&#39;token.&#39;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">no_auth_msg</span><span class="p">)</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;ERROR&#39;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;HTTPError: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="n">data_url</span>
+
+        <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">url</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_download_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">products</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Downloads files listed in an `~astropy.table.Table` of data products to a specified directory.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        products : `~astropy.table.Table`</span>
+<span class="sd">            Table containing products to be downloaded.</span>
+<span class="sd">        base_dir : str</span>
+<span class="sd">            Directory in which files will be downloaded.</span>
+<span class="sd">        flat : bool</span>
+<span class="sd">            Default is False.  If True, all files are downloaded directly to `base_dir`, and no subdirectories</span>
+<span class="sd">            will be created.</span>
+<span class="sd">        cache : bool</span>
+<span class="sd">            Default is True. If file is found on disk, it will not be downloaded again.</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Default is True. Whether to show download progress in the console.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        response : `~astropy.table.Table`</span>
+<span class="sd">            Table containing download results for each data product file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">manifest_entries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">base_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">base_dir</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">data_product</span> <span class="ow">in</span> <span class="n">products</span><span class="p">:</span>
+            <span class="c1"># Determine local path for each file</span>
+            <span class="n">local_path</span> <span class="o">=</span> <span class="n">base_dir</span> <span class="o">/</span> <span class="n">data_product</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">flat</span> <span class="k">else</span> <span class="n">base_dir</span>
+            <span class="n">local_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">local_file_path</span> <span class="o">=</span> <span class="n">local_path</span> <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="n">data_product</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">name</span>
+
+            <span class="c1"># Download files and record status</span>
+            <span class="n">status</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span><span class="n">data_product</span><span class="p">[</span><span class="s1">&#39;uri&#39;</span><span class="p">],</span>
+                                                  <span class="n">local_path</span><span class="o">=</span><span class="n">local_file_path</span><span class="p">,</span>
+                                                  <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
+                                                  <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="n">manifest_entries</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">local_file_path</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">url</span><span class="p">])</span>
+
+        <span class="c1"># Return manifest as Astropy Table</span>
+        <span class="n">manifest</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="n">manifest_entries</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;Local Path&#39;</span><span class="p">,</span> <span class="s1">&#39;Status&#39;</span><span class="p">,</span> <span class="s1">&#39;Message&#39;</span><span class="p">,</span> <span class="s1">&#39;URL&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">manifest</span>
+
+<div class="viewcode-block" id="MastMissionsClass.download_products">
+<a class="viewcode-back" href="../../../api/astroquery.mast.MastMissionsClass.html#astroquery.mast.MastMissionsClass.download_products">[docs]</a>
+    <span class="k">def</span> <span class="nf">download_products</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">products</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">download_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                          <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Download specified data products.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        products : str, list, `~astropy.table.Table`</span>
+<span class="sd">            Either a single or list of dataset IDs (e.g., as input for `get_product_list`),</span>
+<span class="sd">            or a Table of products (e.g., as output from `get_product_list`)</span>
+<span class="sd">        download_dir : str or Path, optional</span>
+<span class="sd">            Directory for file downloads.  Defaults to current directory.</span>
+<span class="sd">        flat : bool, optional</span>
+<span class="sd">            Default is False. If False, puts files into the standard</span>
+<span class="sd">            directory structure of &quot;mastDownload/&lt;mission&gt;/&lt;dataset ID&gt;/&quot;.</span>
+<span class="sd">            If True, places files directly in ``download_dir`` without subdirectories.</span>
+<span class="sd">        cache : bool, optional</span>
+<span class="sd">            Default is True. If file is found on disc, it will not be downloaded again.</span>
+<span class="sd">        extension : string or list, optional</span>
+<span class="sd">            Default is None. Filter by file extension.</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Default is True. Whether to show download progress in the console.</span>
+<span class="sd">        **filters :</span>
+<span class="sd">            Column-based filters to be applied.</span>
+<span class="sd">            Each keyword corresponds to a column name in the table, with the argument being one or more</span>
+<span class="sd">            acceptable values for that column. AND logic is applied between filters, OR logic within</span>
+<span class="sd">            each filter set.</span>
+<span class="sd">            For example: type=&quot;science&quot;, extension=[&quot;fits&quot;,&quot;jpg&quot;]</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        manifest : `~astropy.table.Table`</span>
+<span class="sd">            A table manifest showing downloaded file locations and statuses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Ensure `products` is a Table, collecting products if necessary</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">products</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="n">products</span> <span class="o">=</span> <span class="p">[</span><span class="n">products</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">products</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">products</span>
+            <span class="n">products</span> <span class="o">=</span> <span class="n">vstack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">get_product_list</span><span class="p">(</span><span class="n">oid</span><span class="p">)</span> <span class="k">for</span> <span class="n">oid</span> <span class="ow">in</span> <span class="n">products</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">products</span><span class="p">,</span> <span class="n">Row</span><span class="p">):</span>
+            <span class="n">products</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">products</span><span class="p">,</span> <span class="n">masked</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Apply filters</span>
+        <span class="n">products</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_products</span><span class="p">(</span><span class="n">products</span><span class="p">,</span> <span class="n">extension</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span> <span class="o">**</span><span class="n">filters</span><span class="p">)</span>
+
+        <span class="c1"># Remove duplicates</span>
+        <span class="n">products</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">remove_duplicate_products</span><span class="p">(</span><span class="n">products</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">products</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;No products to download.&quot;</span><span class="p">,</span> <span class="n">NoResultsWarning</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Set up base directory for downloads</span>
+        <span class="n">download_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">download_dir</span> <span class="ow">or</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="n">base_dir</span> <span class="o">=</span> <span class="n">download_dir</span> <span class="k">if</span> <span class="n">flat</span> <span class="k">else</span> <span class="n">download_dir</span> <span class="o">/</span> <span class="s1">&#39;mastDownload&#39;</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission</span>
+
+        <span class="c1"># Download files</span>
+        <span class="n">manifest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_files</span><span class="p">(</span><span class="n">products</span><span class="p">,</span>
+                                        <span class="n">base_dir</span><span class="o">=</span><span class="n">base_dir</span><span class="p">,</span>
+                                        <span class="n">flat</span><span class="o">=</span><span class="n">flat</span><span class="p">,</span>
+                                        <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span>
+                                        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">manifest</span></div>
+
+
+<div class="viewcode-block" id="MastMissionsClass.get_column_list">
+<a class="viewcode-back" href="../../../api/astroquery.mast.MastMissionsClass.html#astroquery.mast.MastMissionsClass.get_column_list">[docs]</a>
+    <span class="nd">@class_or_instance</span>
+    <span class="k">def</span> <span class="nf">get_column_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        For a mission, return a list of all searchable columns and their descriptions</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        response : `~astropy.table.Table` that contains columns names, types, and descriptions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mission</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Send server request to get column list for current mission</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;mission&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission</span><span class="p">}</span>
+                <span class="n">resp</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">_simple_request</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">conf</span><span class="o">.</span><span class="n">server</span><span class="si">}</span><span class="s1">/search/util/api/v0.1/column_list&#39;</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+                <span class="c1"># Parse JSON and extract necessary info</span>
+                <span class="n">results</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+                <span class="n">rows</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;column_name&#39;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;qual_type&#39;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">])</span>
+                    <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span>
+                <span class="p">]</span>
+
+                <span class="c1"># Create Table with parsed data</span>
+                <span class="n">col_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">rows</span><span class="o">=</span><span class="n">rows</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;data_type&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mission</span><span class="p">]</span> <span class="o">=</span> <span class="n">col_table</span>
+            <span class="k">except</span> <span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">JSONDecodeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Failed to decode JSON response while attempting to get column list&#39;</span>
+                                      <span class="sa">f</span><span class="s1">&#39; for mission </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mission</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">RequestException</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Failed to connect to the server while attempting to get column list&#39;</span>
+                                      <span class="sa">f</span><span class="s1">&#39; for mission </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mission</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Expected key not found in response data while attempting to get column list&#39;</span>
+                               <span class="sa">f</span><span class="s1">&#39; for mission </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mission</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;An unexpected error occurred while attempting to get column list&#39;</span>
+                                   <span class="sa">f</span><span class="s1">&#39; for mission </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mission</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mission</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="MastMissionsClass.get_dataset_kwd">
+<a class="viewcode-back" href="../../../api/astroquery.mast.MastMissionsClass.html#astroquery.mast.MastMissionsClass.get_dataset_kwd">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_dataset_kwd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the Dataset ID keyword for the selected mission. If the keyword is unknown, returns None.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        keyword : str or None</span>
+<span class="sd">            Dataset ID keyword or None if unknown.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset_kwds</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;The mission &quot;</span><span class="si">%s</span><span class="s1">&quot; does not have a known dataset ID keyword.&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mission</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset_kwds</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mission</span><span class="p">]</span></div>
+</div>
+
+
+
+<span class="n">MastMissions</span> <span class="o">=</span> <span class="n">MastMissionsClass</span><span class="p">()</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 01 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>

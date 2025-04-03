@@ -1,0 +1,55 @@
+HeasarcClass
+============
+
+.. currentmodule:: astroquery.heasarc
+
+.. autoclass:: HeasarcClass
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~HeasarcClass.S3_BUCKET
+      ~HeasarcClass.TAR_URL
+      ~HeasarcClass.VO_URL
+      ~HeasarcClass.tap
+      ~HeasarcClass.timeout
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~HeasarcClass.download_data
+      ~HeasarcClass.enable_cloud
+      ~HeasarcClass.get_default_radius
+      ~HeasarcClass.list_catalogs
+      ~HeasarcClass.list_columns
+      ~HeasarcClass.locate_data
+      ~HeasarcClass.query_mission_cols
+      ~HeasarcClass.query_mission_list
+      ~HeasarcClass.query_object
+      ~HeasarcClass.query_region
+      ~HeasarcClass.query_tap
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: S3_BUCKET
+   .. autoattribute:: TAR_URL
+   .. autoattribute:: VO_URL
+   .. autoattribute:: tap
+   .. autoattribute:: timeout
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: download_data
+   .. automethod:: enable_cloud
+   .. automethod:: get_default_radius
+   .. automethod:: list_catalogs
+   .. automethod:: list_columns
+   .. automethod:: locate_data
+   .. automethod:: query_mission_cols
+   .. automethod:: query_mission_list
+   .. automethod:: query_object
+   .. automethod:: query_region
+   .. automethod:: query_tap

@@ -1,0 +1,57 @@
+EuclidClass
+===========
+
+.. currentmodule:: astroquery.esa.euclid
+
+.. autoclass:: EuclidClass
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~EuclidClass.EUCLID_MESSAGES
+      ~EuclidClass.ROW_LIMIT
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~EuclidClass.cone_search
+      ~EuclidClass.get_cutout
+      ~EuclidClass.get_datalinks
+      ~EuclidClass.get_observation_products
+      ~EuclidClass.get_product
+      ~EuclidClass.get_product_list
+      ~EuclidClass.get_spectrum
+      ~EuclidClass.get_status_messages
+      ~EuclidClass.is_gz_file
+      ~EuclidClass.launch_job
+      ~EuclidClass.launch_job_async
+      ~EuclidClass.login
+      ~EuclidClass.login_gui
+      ~EuclidClass.logout
+      ~EuclidClass.query_object
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: EUCLID_MESSAGES
+   .. autoattribute:: ROW_LIMIT
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: cone_search
+   .. automethod:: get_cutout
+   .. automethod:: get_datalinks
+   .. automethod:: get_observation_products
+   .. automethod:: get_product
+   .. automethod:: get_product_list
+   .. automethod:: get_spectrum
+   .. automethod:: get_status_messages
+   .. automethod:: is_gz_file
+   .. automethod:: launch_job
+   .. automethod:: launch_job_async
+   .. automethod:: login
+   .. automethod:: login_gui
+   .. automethod:: logout
+   .. automethod:: query_object

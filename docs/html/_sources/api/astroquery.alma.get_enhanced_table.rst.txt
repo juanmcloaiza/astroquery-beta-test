@@ -1,0 +1,6 @@
+get_enhanced_table
+==================
+
+.. currentmodule:: astroquery.alma
+
+.. autofunction:: get_enhanced_table

@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>SimbadClass &#8212; astroquery v0.4.8.dev10179</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+    
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=1d6242bd"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Conf" href="astroquery.simbad.Conf.html" />
+    <link rel="prev" title="Simbad module evolutions" href="../simbad/simbad_evolution.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astroquery.simbad.Conf.html" title="Conf">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../simbad/simbad_evolution.html" title="Simbad module evolutions">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">astroquery v0.4.8.dev10179</a>
+	 &#187;
+      </li>
+      <li><a href="../simbad/simbad.html" accesskey="U">SIMBAD Queries (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.simbad</span></code>)</a> &#187;</li>
+      
+      <li>SimbadClass</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="simbadclass">
+<h1>SimbadClass<a class="headerlink" href="#simbadclass" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">astroquery.simbad.</span></span><span class="sig-name descname"><span class="pre">SimbadClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ROW_LIMIT</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astroquery.query.BaseVOQuery.html#astroquery.query.BaseVOQuery" title="astroquery.query.BaseVOQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseVOQuery</span></code></a></p>
+<p>The class for querying the SIMBAD web service.</p>
+<p>Note that SIMBAD suggests submitting no more than 6 queries per second; if
+you submit more than that, your IP may be temporarily blacklisted
+(<a class="reference external" href="https://simbad.cds.unistra.fr/guide/sim-url.htx">https://simbad.cds.unistra.fr/guide/sim-url.htx</a>)</p>
+<p class="rubric">Attributes Summary</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.ROW_LIMIT" title="astroquery.simbad.SimbadClass.ROW_LIMIT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ROW_LIMIT</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.SIMBAD_URL" title="astroquery.simbad.SimbadClass.SIMBAD_URL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SIMBAD_URL</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.columns_in_output" title="astroquery.simbad.SimbadClass.columns_in_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">columns_in_output</span></code></a></p></td>
+<td><p>A list of _Column.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.hardlimit" title="astroquery.simbad.SimbadClass.hardlimit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardlimit</span></code></a></p></td>
+<td><p>The maximum number of lines for SIMBAD's output.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.server" title="astroquery.simbad.SimbadClass.server"><code class="xref py py-obj docutils literal notranslate"><span class="pre">server</span></code></a></p></td>
+<td><p>The SIMBAD mirror to use.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.tap" title="astroquery.simbad.SimbadClass.tap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tap</span></code></a></p></td>
+<td><p>A <a class="reference external" href="https://pyvo.readthedocs.io/en/stable/api/pyvo.dal.TAPService.html#pyvo.dal.TAPService" title="(in pyvo v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TAPService</span></code></a> service for SIMBAD.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.uploadlimit" title="astroquery.simbad.SimbadClass.uploadlimit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uploadlimit</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.add_votable_fields" title="astroquery.simbad.SimbadClass.add_votable_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_votable_fields</span></code></a>(*args)</p></td>
+<td><p>Add columns to the output of a SIMBAD query.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.clear_cache" title="astroquery.simbad.SimbadClass.clear_cache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_cache</span></code></a>()</p></td>
+<td><p>Clear the cache of SIMBAD.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.get_field_description" title="astroquery.simbad.SimbadClass.get_field_description"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_field_description</span></code></a>(field_name)</p></td>
+<td><p>Displays a description of the VOTable field.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.get_votable_fields" title="astroquery.simbad.SimbadClass.get_votable_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_votable_fields</span></code></a>()</p></td>
+<td><p>Display votable fields.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.list_columns" title="astroquery.simbad.SimbadClass.list_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_columns</span></code></a>(*tables[, keyword, ...])</p></td>
+<td><p>Get the list of SIMBAD columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.list_linked_tables" title="astroquery.simbad.SimbadClass.list_linked_tables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_linked_tables</span></code></a>(table, *[, get_query_payload])</p></td>
+<td><p>Expose the tables that can be non-obviously linked with the given table.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.list_tables" title="astroquery.simbad.SimbadClass.list_tables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_tables</span></code></a>(*[, get_query_payload])</p></td>
+<td><p>List the names and descriptions of the tables in SIMBAD.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.list_votable_fields" title="astroquery.simbad.SimbadClass.list_votable_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_votable_fields</span></code></a>()</p></td>
+<td><p>List all options to add columns to SIMBAD's output.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.list_wildcards" title="astroquery.simbad.SimbadClass.list_wildcards"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_wildcards</span></code></a>()</p></td>
+<td><p>Displays the available wildcards that may be used in SIMBAD queries and their usage.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_bibcode" title="astroquery.simbad.SimbadClass.query_bibcode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_bibcode</span></code></a>(bibcode, *[, wildcard, ...])</p></td>
+<td><p>Query the references corresponding to a given bibcode.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_bibobj" title="astroquery.simbad.SimbadClass.query_bibobj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_bibobj</span></code></a>(bibcode, *[, criteria, ...])</p></td>
+<td><p>Query all the objects mentioned in an article.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_catalog" title="astroquery.simbad.SimbadClass.query_catalog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_catalog</span></code></a>(catalog, *[, criteria, ...])</p></td>
+<td><p>Query a whole catalog.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_criteria" title="astroquery.simbad.SimbadClass.query_criteria"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_criteria</span></code></a>(*args[, get_query_payload])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_hierarchy" title="astroquery.simbad.SimbadClass.query_hierarchy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_hierarchy</span></code></a>(name, hierarchy, *[, ...])</p></td>
+<td><p>Query either the parents or the children of the object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_object" title="astroquery.simbad.SimbadClass.query_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_object</span></code></a>(object_name, *[, wildcard, ...])</p></td>
+<td><p>Query SIMBAD for the given object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_objectids" title="astroquery.simbad.SimbadClass.query_objectids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_objectids</span></code></a>(object_name, *[, verbose, ...])</p></td>
+<td><p>Query SIMBAD with an object name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_objects" title="astroquery.simbad.SimbadClass.query_objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_objects</span></code></a>(object_names, *[, wildcard, ...])</p></td>
+<td><p>Query SIMBAD for the specified list of objects.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_region" title="astroquery.simbad.SimbadClass.query_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_region</span></code></a>(coordinates[, radius, ...])</p></td>
+<td><p>Query SIMBAD in a cone around the specified coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_tap" title="astroquery.simbad.SimbadClass.query_tap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_tap</span></code></a>(query, *[, maxrec, get_query_payload])</p></td>
+<td><p>Query SIMBAD TAP service.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.reset_votable_fields" title="astroquery.simbad.SimbadClass.reset_votable_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_votable_fields</span></code></a>()</p></td>
+<td><p>Reset the output of the query_*** methods to default.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.ROW_LIMIT">
+<span class="sig-name descname"><span class="pre">ROW_LIMIT</span></span><a class="headerlink" href="#astroquery.simbad.SimbadClass.ROW_LIMIT" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.SIMBAD_URL">
+<span class="sig-name descname"><span class="pre">SIMBAD_URL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://simbad.cds.unistra.fr/simbad/sim-script'</span></em><a class="headerlink" href="#astroquery.simbad.SimbadClass.SIMBAD_URL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.columns_in_output">
+<span class="sig-name descname"><span class="pre">columns_in_output</span></span><a class="headerlink" href="#astroquery.simbad.SimbadClass.columns_in_output" title="Link to this definition">¶</a></dt>
+<dd><p>A list of _Column.</p>
+<p>They will be included in the output of the following methods:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_object" title="astroquery.simbad.SimbadClass.query_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_object</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_objects" title="astroquery.simbad.SimbadClass.query_objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_objects</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_region" title="astroquery.simbad.SimbadClass.query_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_region</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_catalog" title="astroquery.simbad.SimbadClass.query_catalog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_catalog</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_hierarchy" title="astroquery.simbad.SimbadClass.query_hierarchy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_hierarchy</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_bibobj" title="astroquery.simbad.SimbadClass.query_bibobj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_bibobj</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_criteria" title="astroquery.simbad.SimbadClass.query_criteria"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_criteria</span></code></a>.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.hardlimit">
+<span class="sig-name descname"><span class="pre">hardlimit</span></span><a class="headerlink" href="#astroquery.simbad.SimbadClass.hardlimit" title="Link to this definition">¶</a></dt>
+<dd><p>The maximum number of lines for SIMBAD’s output.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.server">
+<span class="sig-name descname"><span class="pre">server</span></span><a class="headerlink" href="#astroquery.simbad.SimbadClass.server" title="Link to this definition">¶</a></dt>
+<dd><p>The SIMBAD mirror to use.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.tap">
+<span class="sig-name descname"><span class="pre">tap</span></span><a class="headerlink" href="#astroquery.simbad.SimbadClass.tap" title="Link to this definition">¶</a></dt>
+<dd><p>A <a class="reference external" href="https://pyvo.readthedocs.io/en/stable/api/pyvo.dal.TAPService.html#pyvo.dal.TAPService" title="(in pyvo v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TAPService</span></code></a> service for SIMBAD.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.uploadlimit">
+<span class="sig-name descname"><span class="pre">uploadlimit</span></span><a class="headerlink" href="#astroquery.simbad.SimbadClass.uploadlimit" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.add_votable_fields">
+<span class="sig-name descname"><span class="pre">add_votable_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.add_votable_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.add_votable_fields" title="Link to this definition">¶</a></dt>
+<dd><p>Add columns to the output of a SIMBAD query.</p>
+<p>The list of possible arguments and their description for this method
+can be printed with <a class="reference internal" href="#astroquery.simbad.SimbadClass.list_votable_fields" title="astroquery.simbad.SimbadClass.list_votable_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_votable_fields</span></code></a>.</p>
+<p>The methods affected by this:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_object" title="astroquery.simbad.SimbadClass.query_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_object</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_objects" title="astroquery.simbad.SimbadClass.query_objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_objects</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_region" title="astroquery.simbad.SimbadClass.query_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_region</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_catalog" title="astroquery.simbad.SimbadClass.query_catalog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_catalog</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_hierarchy" title="astroquery.simbad.SimbadClass.query_hierarchy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_hierarchy</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_bibobj" title="astroquery.simbad.SimbadClass.query_bibobj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_bibobj</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_criteria" title="astroquery.simbad.SimbadClass.query_criteria"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_criteria</span></code></a>.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>args</strong><span class="classifier">str</span></dt><dd><p>The arguments to be added.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">add_votable_fields</span><span class="p">(</span><span class="s1">&#39;sp_type&#39;</span><span class="p">,</span> <span class="s1">&#39;sp_qual&#39;</span><span class="p">,</span> <span class="s1">&#39;sp_bibcode&#39;</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">get_votable_fields</span><span class="p">()</span> 
+<span class="go">[&#39;basic.main_id&#39;, &#39;basic.ra&#39;, &#39;basic.dec&#39;, &#39;basic.coo_err_maj&#39;, &#39;basic.coo_err_min&#39;, ...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.clear_cache">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">clear_cache</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.clear_cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.clear_cache" title="Link to this definition">¶</a></dt>
+<dd><p>Clear the cache of SIMBAD.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.get_field_description">
+<span class="sig-name descname"><span class="pre">get_field_description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.get_field_description"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.get_field_description" title="Link to this definition">¶</a></dt>
+<dd><p>Displays a description of the VOTable field.</p>
+<p>This can be replaced by the output of <a class="reference internal" href="#astroquery.simbad.SimbadClass.list_votable_fields" title="astroquery.simbad.SimbadClass.list_votable_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_votable_fields</span></code></a>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">options</span> <span class="o">=</span> <span class="n">Simbad</span><span class="o">.</span><span class="n">list_votable_fields</span><span class="p">()</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">description_dimensions</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;dimensions&quot;</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">description_dimensions</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+<span class="go">&#39;all fields related to object dimensions&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.get_votable_fields">
+<span class="sig-name descname"><span class="pre">get_votable_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.get_votable_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.get_votable_fields" title="Link to this definition">¶</a></dt>
+<dd><p>Display votable fields.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.list_columns">
+<span class="sig-name descname"><span class="pre">list_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">tables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_query_payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.list_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.list_columns" title="Link to this definition">¶</a></dt>
+<dd><p>Get the list of SIMBAD columns.</p>
+<p>Add tables names to restrict to some tables. Call the function without
+any parameter to get all columns names from all tables. The keyword argument
+looks for columns in the selected SIMBAD tables that contain the
+given keyword. The keyword search is not case-sensitive.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>*tables</strong><span class="classifier">str, optional</span></dt><dd><p>Add tables names as strings to restrict to these tables columns.
+This is not case-sensitive.</p>
+</dd>
+<dt><strong>keyword</strong><span class="classifier">str, optional</span></dt><dd><p>A keyword to look for in column names, table names, or descriptions.</p>
+</dd>
+<dt><strong>get_query_payload</strong><span class="classifier">bool, optional</span></dt><dd><p>When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the method returns the HTTP request parameters without
+querying SIMBAD. The ADQL string is in the ‘QUERY’ key of the payload.
+Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+</dd>
+<dt><strong>get_adql</strong><span class="classifier">bool, optional</span></dt><dd><p>Deprecated since ‘0.4.8’. This is replaced by get_query_payload that contain
+more information than just the ADQL string</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">list_columns</span><span class="p">(</span><span class="s2">&quot;ids&quot;</span><span class="p">,</span> <span class="s2">&quot;ident&quot;</span><span class="p">)</span> 
+<span class="go">&lt;Table length=4&gt;</span>
+<span class="go">table_name column_name datatype ...  unit    ucd</span>
+<span class="go">  object      object    object  ... object  object</span>
+<span class="go">---------- ----------- -------- ... ------ -------</span>
+<span class="go">     ident          id  VARCHAR ...        meta.id</span>
+<span class="go">     ident      oidref   BIGINT ...</span>
+<span class="go">       ids         ids  VARCHAR ...        meta.id</span>
+<span class="go">       ids      oidref   BIGINT ...</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">list_columns</span><span class="p">(</span><span class="n">keyword</span><span class="o">=</span><span class="s2">&quot;filter&quot;</span><span class="p">)</span> 
+<span class="go">&lt;Table length=5&gt;</span>
+<span class="go"> table_name column_name   datatype  ...  unit           ucd</span>
+<span class="go">   object      object      object   ... object         object</span>
+<span class="go">----------- ----------- ----------- ... ------ ----------------------</span>
+<span class="go">     filter description UNICODECHAR ...        meta.note;instr.filter</span>
+<span class="go">     filter  filtername     VARCHAR ...                  instr.filter</span>
+<span class="go">     filter        unit     VARCHAR ...                     meta.unit</span>
+<span class="go">       flux      filter     VARCHAR ...                  instr.filter</span>
+<span class="go">mesDiameter      filter        CHAR ...                  instr.filter</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">list_columns</span><span class="p">(</span><span class="s2">&quot;basic&quot;</span><span class="p">,</span> <span class="n">keyword</span><span class="o">=</span><span class="s2">&quot;object&quot;</span><span class="p">)</span> 
+<span class="go">&lt;Table length=4&gt;</span>
+<span class="go">table_name column_name datatype ...  unit          ucd</span>
+<span class="go">  object      object    object  ... object        object</span>
+<span class="go">---------- ----------- -------- ... ------ -------------------</span>
+<span class="go">     basic     main_id  VARCHAR ...          meta.id;meta.main</span>
+<span class="go">     basic   otype_txt  VARCHAR ...                  src.class</span>
+<span class="go">     basic         oid   BIGINT ...        meta.record;meta.id</span>
+<span class="go">     basic       otype  VARCHAR ...                  src.class</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.list_linked_tables">
+<span class="sig-name descname"><span class="pre">list_linked_tables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_query_payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.list_linked_tables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.list_linked_tables" title="Link to this definition">¶</a></dt>
+<dd><p>Expose the tables that can be non-obviously linked with the given table.</p>
+<p>This list contains only the links where the column names are not the same in the
+two tables. For example every <code class="docutils literal notranslate"><span class="pre">oidref</span></code> column of any table can be joined with
+any other <code class="docutils literal notranslate"><span class="pre">oidref</span></code>. The same goes for every <code class="docutils literal notranslate"><span class="pre">otype</span></code> column even if this is not
+returned by this method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>table</strong><span class="classifier">str</span></dt><dd><p>One of SIMBAD’s tables name</p>
+</dd>
+<dt><strong>get_query_payload</strong><span class="classifier">bool, optional</span></dt><dd><p>When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the method returns the HTTP request parameters without
+querying SIMBAD. The ADQL string is in the ‘QUERY’ key of the payload.
+Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a></dt><dd><p>The information necessary to join the given table to an other.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">list_linked_tables</span><span class="p">(</span><span class="s2">&quot;otypes&quot;</span><span class="p">)</span> 
+<span class="go">&lt;Table length=2&gt;</span>
+<span class="go">from_table from_column target_table target_column</span>
+<span class="go">  object      object      object        object</span>
+<span class="go">---------- ----------- ------------ -------------</span>
+<span class="go">  otypedef       otype       otypes         otype</span>
+<span class="go">    otypes      oidref        basic           oid</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.list_tables">
+<span class="sig-name descname"><span class="pre">list_tables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_query_payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.list_tables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.list_tables" title="Link to this definition">¶</a></dt>
+<dd><p>List the names and descriptions of the tables in SIMBAD.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>get_query_payload</strong><span class="classifier">bool, optional</span></dt><dd><p>When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the method returns the HTTP request parameters without
+querying SIMBAD. The ADQL string is in the ‘QUERY’ key of the payload.
+Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+</dd>
+<dt><strong>get_adql</strong><span class="classifier">bool, optional</span></dt><dd><p>Deprecated since ‘0.4.8’. This is replaced by get_query_payload that contain
+more information than just the ADQL string</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.list_votable_fields">
+<span class="sig-name descname"><span class="pre">list_votable_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.list_votable_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.list_votable_fields" title="Link to this definition">¶</a></dt>
+<dd><p>List all options to add columns to SIMBAD’s output.</p>
+<p>They are of four types:</p>
+<ul class="simple">
+<li><p>“column of basic”: a column of the basic table. There fields can also be explored with
+<a class="reference internal" href="#astroquery.simbad.SimbadClass.list_columns" title="astroquery.simbad.SimbadClass.list_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_columns</span></code></a>.</p></li>
+<li><p>“table”: a table other than basic that has a declared direct join</p></li>
+<li><p>“bundle of basic columns”: a pre-selected bundle of columns of basic. Ex: “parallax” will add all
+columns relevant to parallax</p></li>
+<li><p>“filter name”: an optical filter name</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">options</span> <span class="o">=</span> <span class="n">Simbad</span><span class="o">.</span><span class="n">list_votable_fields</span><span class="p">()</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># to print only the available bundles of columns</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">options</span><span class="p">[</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;bundle of basic columns&quot;</span><span class="p">][[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">]]</span> 
+<span class="go">&lt;Table length=9&gt;</span>
+<span class="go">     name                           description</span>
+<span class="go">    object                             object</span>
+<span class="go">------------- -------------------------------------------------------</span>
+<span class="go">  coordinates                     all fields related with coordinates</span>
+<span class="go">          dim             major and minor axis, angle and inclination</span>
+<span class="go">   dimensions                 all fields related to object dimensions</span>
+<span class="go">    morphtype            all fields related to the morphological type</span>
+<span class="go">     parallax                        all fields related to parallaxes</span>
+<span class="go">propermotions              all fields related with the proper motions</span>
+<span class="go">           sp               all fields related with the spectral type</span>
+<span class="go">     velocity    all fields related with radial velocity and redshift</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.list_wildcards">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_wildcards</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.list_wildcards"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.list_wildcards" title="Link to this definition">¶</a></dt>
+<dd><p>Displays the available wildcards that may be used in SIMBAD queries and
+their usage.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">list_wildcards</span><span class="p">()</span>
+<span class="go">*: Any string of characters (including an empty one)</span>
+<span class="go">?: Any character (exactly one character)</span>
+<span class="go">[abc]: Exactly one character taken in the list. Can also be defined by a range of characters: [A-Z]</span>
+<span class="go">[^0-9]: Any (one) character not in the list.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.query_bibcode">
+<span class="sig-name descname"><span class="pre">query_bibcode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bibcode</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wildcard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abstract</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_query_payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criteria</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.query_bibcode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.query_bibcode" title="Link to this definition">¶</a></dt>
+<dd><p>Query the references corresponding to a given bibcode.</p>
+<p>Wildcards may be used to specify bibcodes.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>bibcode</strong><span class="classifier">str</span></dt><dd><p>The bibcode of the article to be queried</p>
+</dd>
+<dt><strong>wildcard</strong><span class="classifier">bool, defaults to False</span></dt><dd><p>When it is set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> it implies that the object is specified
+with wildcards.</p>
+</dd>
+<dt><strong>abstract</strong><span class="classifier">bool, defaults to False</span></dt><dd><p>When this is set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, the abstract of the article is also included
+to the result.</p>
+</dd>
+<dt><strong>criteria</strong><span class="classifier">str</span></dt><dd><p>Criteria to be applied to the query. These should be written in the ADQL
+syntax in a single string. See example.</p>
+</dd>
+<dt><strong>get_query_payload</strong><span class="classifier">bool, optional</span></dt><dd><p>When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the method returns the HTTP request parameters without
+querying SIMBAD. The ADQL string is in the ‘QUERY’ key of the payload.
+Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+</dd>
+<dt><strong>cache</strong><span class="classifier">Deprecated since 0.4.8. The cache is now automatically emptied at the</span></dt><dd><p>end of the python session. It can also be emptied manually with
+<a class="reference internal" href="#astroquery.simbad.SimbadClass.clear_cache" title="astroquery.simbad.SimbadClass.clear_cache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_cache</span></code></a> but cannot be deactivated.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><strong>table</strong><span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a></span></dt><dd><p>Query results table</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">ROW_LIMIT</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">query_bibcode</span><span class="p">(</span><span class="s2">&quot;2016PhRvL.*&quot;</span><span class="p">,</span> <span class="n">wildcard</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">... </span>                     <span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;title LIKE &#39;</span><span class="si">%g</span><span class="s2">ravitational wave</span><span class="si">%c</span><span class="s2">oalescence.&#39;&quot;</span><span class="p">)</span> 
+<span class="go">&lt;Table length=1&gt;</span>
+<span class="go">      bibcode                    doi               journal ... volume  year</span>
+<span class="go">       object                   object              object ... int32  int16</span>
+<span class="go">------------------- ------------------------------ ------- ... ------ -----</span>
+<span class="go">2016PhRvL.116x1103A 10.1103/PhysRevLett.116.241103   PhRvL ...    116  2016</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.query_bibobj">
+<span class="sig-name descname"><span class="pre">query_bibobj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bibcode</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criteria</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_query_payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.query_bibobj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.query_bibobj" title="Link to this definition">¶</a></dt>
+<dd><p>Query all the objects mentioned in an article.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>bibcode</strong><span class="classifier">str</span></dt><dd><p>the bibcode of the article</p>
+</dd>
+<dt><strong>get_query_payload</strong><span class="classifier">bool, optional</span></dt><dd><p>When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the method returns the HTTP request parameters without
+querying SIMBAD. The ADQL string is in the ‘QUERY’ key of the payload.
+Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><strong>table</strong><span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a></span></dt><dd><p>Query results table</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.query_catalog">
+<span class="sig-name descname"><span class="pre">query_catalog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">catalog</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criteria</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_query_payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.query_catalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.query_catalog" title="Link to this definition">¶</a></dt>
+<dd><p>Query a whole catalog.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>catalog</strong><span class="classifier">str</span></dt><dd><p>The name of the catalog. This is case-dependant.</p>
+</dd>
+<dt><strong>criteria</strong><span class="classifier">str</span></dt><dd><p>Criteria to be applied to the query. These should be written in the ADQL
+syntax in a single string. See example.</p>
+</dd>
+<dt><strong>get_query_payload</strong><span class="classifier">bool, optional</span></dt><dd><p>When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the method returns the HTTP request parameters without
+querying SIMBAD. The ADQL string is in the ‘QUERY’ key of the payload.
+Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+</dd>
+<dt><strong>cache</strong><span class="classifier">Deprecated since 0.4.8. The cache is now automatically emptied at the</span></dt><dd><p>end of the python session. It can also be emptied manually with
+<a class="reference internal" href="#astroquery.simbad.SimbadClass.clear_cache" title="astroquery.simbad.SimbadClass.clear_cache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_cache</span></code></a> but cannot be deactivated.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><strong>table</strong><span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a></span></dt><dd><p>The result of the query to SIMBAD.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Catalogs can be very large. Configuring <code class="docutils literal notranslate"><span class="pre">SimbadClass.ROW_LIMIT</span></code> allows to
+restrict the output.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">ROW_LIMIT</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">query_catalog</span><span class="p">(</span><span class="s2">&quot;GSC&quot;</span><span class="p">,</span> <span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;pmra &gt; 50 and pmra &lt; 100&quot;</span><span class="p">)</span> 
+<span class="go">&lt;Table length=5&gt;</span>
+<span class="go">    main_id            ra       ...     coo_bibcode        catalog_id</span>
+<span class="go">                      deg       ...</span>
+<span class="go">     object         float64     ...        object            object</span>
+<span class="go">--------------- --------------- ... ------------------- ---------------</span>
+<span class="go">      HD  26053  61.84326890626 ... 2020yCat.1350....0G GSC 04725-00973</span>
+<span class="go">TYC 8454-1081-1 345.11163189562 ... 2020yCat.1350....0G GSC 08454-01081</span>
+<span class="go">      HD  10158  24.86286094434 ... 2020yCat.1350....0G GSC 00624-00340</span>
+<span class="go">    CD-22  1862  73.17988827324 ... 2020yCat.1350....0G GSC 05911-00222</span>
+<span class="go">    BD+02  4434 327.90220788982 ... 2020yCat.1350....0G GSC 00548-00194</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.query_criteria">
+<span class="sig-name descname"><span class="pre">query_criteria</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_query_payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.query_criteria"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.query_criteria" title="Link to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version v0.4.8: </span>‘query_criteria’ is deprecated. It uses the former sim-script (SIMBAD specific) syntax (see <a class="reference external" href="https://simbad.cds.unistra.fr/simbad/sim-fsam">https://simbad.cds.unistra.fr/simbad/sim-fsam</a>). Possible replacements are the ‘criteria’ argument in the other query methods or custom ‘query_tap’ queries. These two replacements use the standard ADQL syntax.</p>
+</div>
+<p>Query SIMBAD based on any criteria [deprecated].</p>
+<blockquote>
+<div><p>This method is deprecated as it uses the former SIMBAD-specific sim-script syntax.
+There are two possible replacements that have been added with astroquery v0.4.8
+and that use the standard ADQL syntax. See the examples section.</p>
+</div></blockquote>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>args:</strong></dt><dd><p>String arguments passed directly to SIMBAD’s script
+(e.g., ‘region(box, GAL, 10.5 -10.5, 0.5d 0.5d)’)</p>
+</dd>
+<dt><strong>get_query_payload</strong><span class="classifier">bool, optional</span></dt><dd><p>When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the method returns the HTTP request parameters without
+querying SIMBAD. The ADQL string is in the ‘QUERY’ key of the payload.
+Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+</dd>
+<dt><strong>kwargs:</strong></dt><dd><p>Keyword / value pairs passed to SIMBAD’s script engine
+(e.g., {‘otype’=’SNR’} will be rendered as otype=SNR)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><strong>table</strong><span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a></span></dt><dd><p>Query results table</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Can be replaced by the <code class="docutils literal notranslate"><span class="pre">criteria</span></code> argument that was added in the
+other query_*** methods</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="p">(</span><span class="n">ROW_LIMIT</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="s1">&#39;M1&#39;</span><span class="p">,</span> <span class="s1">&#39;2d&#39;</span><span class="p">,</span> <span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;otype=&#39;G..&#39;&quot;</span><span class="p">)</span> 
+<span class="go">&lt;Table length=5&gt;</span>
+<span class="go">  main_id            ra        ... coo_wavelength     coo_bibcode</span>
+<span class="go">                    deg        ...</span>
+<span class="go">   object         float64      ...      str1             object</span>
+<span class="go">------------ ----------------- ... -------------- -------------------</span>
+<span class="go">LEDA  136099 85.48166666666667 ...                1996A&amp;AS..117....1S</span>
+<span class="go">LEDA  136047 83.66958333333332 ...                1996A&amp;AS..117....1S</span>
+<span class="go">LEDA  136057 84.64499999999998 ...                1996A&amp;AS..117....1S</span>
+<span class="go">LEDA 1630996 83.99208333333333 ...              O 2003A&amp;A...412...45P</span>
+<span class="go">  2MFGC 4574 84.37534166666669 ...              I 2006AJ....131.1163S</span>
+</pre></div>
+</div>
+<p>Or by custom-written ADQL queries</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="s2">&quot;SELECT TOP 5 main_id, sp_type&quot;</span>
+<span class="gp">... </span>                 <span class="s2">&quot; FROM basic WHERE sp_type &lt; &#39;F3&#39;&quot;</span><span class="p">)</span> 
+<span class="go">&lt;Table length=5&gt;</span>
+<span class="go">  main_id   sp_type</span>
+<span class="go">   object    object</span>
+<span class="go">----------- -------</span>
+<span class="go"> HD  24033B     (A)</span>
+<span class="go"> HD  70218B     (A)</span>
+<span class="go"> HD 128284B   (A/F)</span>
+<span class="go">CD-34  5319   (A/F)</span>
+<span class="go">  HD  80593   (A0)V</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.query_hierarchy">
+<span class="sig-name descname"><span class="pre">query_hierarchy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hierarchy</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detailed_hierarchy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criteria</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_query_payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.query_hierarchy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.query_hierarchy" title="Link to this definition">¶</a></dt>
+<dd><p>Query either the parents or the children of the object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>name</strong><span class="classifier">str</span></dt><dd><p>name of the object</p>
+</dd>
+<dt><strong>hierarchy</strong><span class="classifier">str</span></dt><dd><p>Can take the values “parents” to return the parents of the object (ex: a
+galaxy cluster is a parent of a galaxy), the value “children” to return
+the children of an object (ex: stars can be children of a globular cluster),
+or the value “siblings” to return the object that share a parent with the
+given one (ex: the stars of an open cluster are all siblings).</p>
+</dd>
+<dt><strong>detailed_hierarchy</strong><span class="classifier">bool</span></dt><dd><p>Whether to add the two extra columns ‘hierarchy_bibcode’ that gives the
+article in which the hierarchy link is mentioned, and
+‘membership_certainty’. membership_certainty is an integer that reflects the
+certainty of the hierarchy link according to the authors. Ranges between 0
+and 100 where 100 means that the authors were certain of the classification.
+Defaults to False.</p>
+</dd>
+<dt><strong>criteria</strong><span class="classifier">str</span></dt><dd><p>Criteria to be applied to the query. These should be written in the ADQL
+syntax in a single string. See example.</p>
+</dd>
+<dt><strong>get_query_payload</strong><span class="classifier">bool, optional</span></dt><dd><p>When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the method returns the HTTP request parameters without
+querying SIMBAD. The ADQL string is in the ‘QUERY’ key of the payload.
+Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><strong>table</strong><span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a></span></dt><dd><p>Query results table</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parent</span> <span class="o">=</span> <span class="n">Simbad</span><span class="o">.</span><span class="n">query_hierarchy</span><span class="p">(</span><span class="s2">&quot;2MASS J18511048-0615470&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                                <span class="n">detailed_hierarchy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="gp">... </span>                                <span class="n">hierarchy</span><span class="o">=</span><span class="s2">&quot;parents&quot;</span><span class="p">)</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parent</span><span class="p">[[</span><span class="s2">&quot;main_id&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">]]</span> 
+<span class="go">&lt;Table length=1&gt;</span>
+<span class="go"> main_id     ra     dec</span>
+<span class="go">            deg     deg</span>
+<span class="go">  object  float64 float64</span>
+<span class="go">--------- ------- -------</span>
+<span class="go">NGC  6705 282.766  -6.272</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.query_object">
+<span class="sig-name descname"><span class="pre">query_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wildcard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criteria</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_query_payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.query_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.query_object" title="Link to this definition">¶</a></dt>
+<dd><p>Query SIMBAD for the given object.</p>
+<p>Object names may also be specified with wildcards. See examples below.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>object_name</strong><span class="classifier">str</span></dt><dd><p>name of object to be queried.</p>
+</dd>
+<dt><strong>wildcard</strong><span class="classifier">boolean, optional</span></dt><dd><p>When it is set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> it implies that the object is specified
+with wildcards. This parameter will render the query case-sensitive.
+Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+</dd>
+<dt><strong>criteria</strong><span class="classifier">str</span></dt><dd><p>Criteria to be applied to the query. These should be written in the ADQL
+syntax in a single string. See example.</p>
+</dd>
+<dt><strong>get_query_payload</strong><span class="classifier">bool, optional</span></dt><dd><p>When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the method returns the HTTP request parameters without
+querying SIMBAD. The ADQL string is in the ‘QUERY’ key of the payload.
+Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><strong>table</strong><span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a></span></dt><dd><p>The result of the query to SIMBAD.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Get the dimensions of a specific galaxy</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">add_votable_fields</span><span class="p">(</span><span class="s2">&quot;dim&quot;</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">simbad</span><span class="o">.</span><span class="n">query_object</span><span class="p">(</span><span class="s2">&quot;m101&quot;</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;main_id&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">,</span> <span class="s2">&quot;galdim_majaxis&quot;</span><span class="p">,</span> <span class="s2">&quot;galdim_minaxis&quot;</span><span class="p">,</span> <span class="s2">&quot;galdim_bibcode&quot;</span><span class="p">]</span> 
+<span class="go">&lt;Table length=1&gt;</span>
+<span class="go">main_id         ra           dec    ... galdim_minaxis    galdim_bibcode</span>
+<span class="go">               deg           deg    ...     arcmin</span>
+<span class="go"> object      float64       float64  ...    float32            object</span>
+<span class="go">------- ------------------ -------- ... -------------- -------------------</span>
+<span class="go">  M 101 210.80242916666668 54.34875 ...          20.89 2003A&amp;A...412...45P</span>
+</pre></div>
+</div>
+<p>Get 5 NGC objects that are clusters of stars</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">ROW_LIMIT</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ngc_clusters</span> <span class="o">=</span> <span class="n">simbad</span><span class="o">.</span><span class="n">query_object</span><span class="p">(</span><span class="s2">&quot;NGC*&quot;</span><span class="p">,</span> <span class="n">wildcard</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;otype=&#39;Cl*..&#39;&quot;</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ngc_clusters</span>  
+<span class="go">&lt;Table length=5&gt;</span>
+<span class="go"> main_id          ra        ...     coo_bibcode     matched_id</span>
+<span class="go">                 deg        ...</span>
+<span class="go">  object       float64      ...        object         object</span>
+<span class="go">--------- ----------------- ... ------------------- ----------</span>
+<span class="go">NGC  2024 85.42916666666667 ... 2003A&amp;A...397..177B  NGC  2024</span>
+<span class="go">NGC  1826 76.39174999999999 ... 2011AJ....142...48W  NGC  1826</span>
+<span class="go">NGC  2121 87.05495833333332 ... 2011AJ....142...48W  NGC  2121</span>
+<span class="go">NGC  2019 82.98533333333333 ... 1999AcA....49..521P  NGC  2019</span>
+<span class="go">NGC  1777             73.95 ... 2008MNRAS.389..678B  NGC  1777</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.query_objectids">
+<span class="sig-name descname"><span class="pre">query_objectids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_query_payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criteria</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.query_objectids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.query_objectids" title="Link to this definition">¶</a></dt>
+<dd><p>Query SIMBAD with an object name.</p>
+<p>This returns a table of all names associated with that object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>object_name</strong><span class="classifier">str</span></dt><dd><p>name of object to be queried</p>
+</dd>
+<dt><strong>criteria</strong><span class="classifier">str</span></dt><dd><p>an additional criteria to constrain the result. As the output of this
+method has only one column, these criteria can only be imposed on
+the column <code class="docutils literal notranslate"><span class="pre">ident.id</span></code>.</p>
+</dd>
+<dt><strong>get_query_payload</strong><span class="classifier">bool, optional</span></dt><dd><p>When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the method returns the HTTP request parameters without
+querying SIMBAD. The ADQL string is in the ‘QUERY’ key of the payload.
+Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+</dd>
+<dt><strong>cache</strong><span class="classifier">Deprecated since 0.4.8. The cache is now automatically emptied at the</span></dt><dd><p>end of the python session. It can also be emptied manually with
+<a class="reference internal" href="#astroquery.simbad.SimbadClass.clear_cache" title="astroquery.simbad.SimbadClass.clear_cache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_cache</span></code></a> but cannot be deactivated.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><strong>table</strong><span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a></span></dt><dd><p>The result of the query to SIMBAD.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Get all the names of the Bubble Nebula</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_objectids</span><span class="p">(</span><span class="s2">&quot;bubble nebula&quot;</span><span class="p">)</span> 
+<span class="go">&lt;Table length=8&gt;</span>
+<span class="go">              id</span>
+<span class="go">            object</span>
+<span class="go">------------------------------</span>
+<span class="go">[ABB2014] WISE G112.212+00.229</span>
+<span class="go">                     LBN   548</span>
+<span class="go">                     NGC  7635</span>
+<span class="go">                     SH  2-162</span>
+<span class="go">          [KC97c] G112.2+00.2b</span>
+<span class="go">         [L89b] 112.237+00.226</span>
+<span class="go">            GRS G112.22 +00.22</span>
+<span class="go">            NAME Bubble Nebula</span>
+</pre></div>
+</div>
+<p>Get the NGC name of M101</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_objectids</span><span class="p">(</span><span class="s2">&quot;m101&quot;</span><span class="p">,</span> <span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;ident.id LIKE &#39;NGC%&#39;&quot;</span><span class="p">)</span> 
+<span class="go">&lt;Table length=1&gt;</span>
+<span class="go">    id</span>
+<span class="go">  object</span>
+<span class="go">---------</span>
+<span class="go">NGC  5457</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.query_objects">
+<span class="sig-name descname"><span class="pre">query_objects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object_names</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wildcard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criteria</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_query_payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.query_objects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.query_objects" title="Link to this definition">¶</a></dt>
+<dd><p>Query SIMBAD for the specified list of objects.</p>
+<p>Object names may be specified with wildcards.
+If one of the <code class="docutils literal notranslate"><span class="pre">object_names</span></code> is not found in SIMBAD, the corresponding line is
+returned empty in the output (see <code class="docutils literal notranslate"><span class="pre">Giga</span> <span class="pre">Cluster</span></code> in the example).
+In the output, the column <code class="docutils literal notranslate"><span class="pre">user_specified_id</span></code> is the input object name.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>object_names</strong><span class="classifier">sequence of strs</span></dt><dd><p>names of objects to be queried</p>
+</dd>
+<dt><strong>wildcard</strong><span class="classifier">boolean, optional</span></dt><dd><p>When <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, the names may have wildcards in them. Defaults to
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+</dd>
+<dt><strong>criteria</strong><span class="classifier">str</span></dt><dd><p>Criteria to be applied to the query. These should be written in the ADQL
+syntax in a single string. See example.</p>
+</dd>
+<dt><strong>get_query_payload</strong><span class="classifier">bool, optional</span></dt><dd><p>When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the method returns the HTTP request parameters without
+querying SIMBAD. The ADQL string is in the ‘QUERY’ key of the payload.
+Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+</dd>
+<dt><strong>cache</strong><span class="classifier">Deprecated since 0.4.8. The cache is now automatically emptied at the</span></dt><dd><p>end of the python session. It can also be emptied manually with
+<a class="reference internal" href="#astroquery.simbad.SimbadClass.clear_cache" title="astroquery.simbad.SimbadClass.clear_cache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_cache</span></code></a> but cannot be deactivated.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><strong>table</strong><span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a></span></dt><dd><p>The result of the query to SIMBAD.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clusters</span> <span class="o">=</span> <span class="n">Simbad</span><span class="o">.</span><span class="n">query_objects</span><span class="p">([</span><span class="s2">&quot;Boss Great Wall&quot;</span><span class="p">,</span> <span class="s2">&quot;Great Attractor&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                                 <span class="s2">&quot;Giga Cluster&quot;</span><span class="p">,</span> <span class="s2">&quot;Coma Supercluster&quot;</span><span class="p">])</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clusters</span><span class="p">[[</span><span class="s2">&quot;main_id&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">,</span> <span class="s2">&quot;user_specified_id&quot;</span><span class="p">]]</span> 
+<span class="go">&lt;Table length=4&gt;</span>
+<span class="go">       main_id            ra     dec   user_specified_id</span>
+<span class="go">                         deg     deg</span>
+<span class="go">        object         float64 float64       object</span>
+<span class="go">---------------------- ------- ------- -----------------</span>
+<span class="go">  NAME Boss Great Wall   163.0    52.0   Boss Great Wall</span>
+<span class="go">  NAME Great Attractor   158.0   -46.0   Great Attractor</span>
+<span class="go">                            --      --      Giga Cluster</span>
+<span class="go">NAME Coma Supercluster  170.75    23.9 Coma Supercluster</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.query_region">
+<span class="sig-name descname"><span class="pre">query_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coordinates</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius=&lt;Quantity</span> <span class="pre">2.</span> <span class="pre">arcmin&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criteria=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_query_payload=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equinox=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.query_region"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.query_region" title="Link to this definition">¶</a></dt>
+<dd><p>Query SIMBAD in a cone around the specified coordinates.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>coordinates</strong><span class="classifier">str or <a class="reference external" href="https://docs.astropy.org/en/stable/coordinates/ref_api.html#module-astropy.coordinates" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astropy.coordinates</span></code></a> object</span></dt><dd><p>The identifier or coordinates around which to query.</p>
+</dd>
+<dt><strong>radius</strong><span class="classifier">str or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Quantity</span></code></a></span></dt><dd><p>the radius of the region.  Defaults to 2 arcmin.</p>
+</dd>
+<dt><strong>criteria</strong><span class="classifier">str</span></dt><dd><p>Criteria to be applied to the query. These should be written in the ADQL
+syntax in a single string.</p>
+</dd>
+<dt><strong>get_query_payload</strong><span class="classifier">bool, optional</span></dt><dd><p>When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the method returns the HTTP request parameters without
+querying SIMBAD. The ADQL string is in the ‘QUERY’ key of the payload.
+Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+</dd>
+<dt><strong>cache</strong><span class="classifier">Deprecated since 0.4.8. The cache is now automatically emptied at the</span></dt><dd><p>end of the python session. It can also be emptied manually with
+<a class="reference internal" href="#astroquery.simbad.SimbadClass.clear_cache" title="astroquery.simbad.SimbadClass.clear_cache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_cache</span></code></a> but cannot be deactivated.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl>
+<dt><strong>table</strong><span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a></span></dt><dd><p>The result of the query to SIMBAD.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>It is very inefficient to call this within a loop. Creating an <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SkyCoord</span></code></a>
+object with a list of coordinates will be way faster.</p>
+<p class="rubric">Examples</p>
+<p>Look for largest galaxies in two cones</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">ROW_LIMIT</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">add_votable_fields</span><span class="p">(</span><span class="s2">&quot;otype&quot;</span><span class="p">,</span> <span class="s2">&quot;dim&quot;</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">coordinates</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">([</span><span class="n">SkyCoord</span><span class="p">(</span><span class="mf">186.6</span><span class="p">,</span> <span class="mf">12.7</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;deg&quot;</span><span class="p">,</span> <span class="s2">&quot;deg&quot;</span><span class="p">)),</span>
+<span class="gp">... </span>                        <span class="n">SkyCoord</span><span class="p">(</span><span class="mf">170.75</span><span class="p">,</span> <span class="mf">23.9</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;deg&quot;</span><span class="p">,</span> <span class="s2">&quot;deg&quot;</span><span class="p">))])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">simbad</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="s2">&quot;2d5m&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                             <span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;otype = &#39;Galaxy..&#39; AND galdim_majaxis&gt;8.5&quot;</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;galdim_majaxis&quot;</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;main_id&quot;</span><span class="p">,</span> <span class="s2">&quot;otype&quot;</span><span class="p">,</span> <span class="s2">&quot;galdim_majaxis&quot;</span><span class="p">]</span> 
+<span class="go">&lt;Table length=5&gt;</span>
+<span class="go">  main_id    otype  galdim_majaxis</span>
+<span class="go">                        arcmin</span>
+<span class="go">   object    object    float32</span>
+<span class="go">------------ ------ --------------</span>
+<span class="go">LEDA   41362    GiC           11.0</span>
+<span class="go">       M  86    GiG          10.47</span>
+<span class="go">LEDA   40917    AG?           10.3</span>
+<span class="go">       M  87    AGN           9.12</span>
+<span class="go">   NGC  4438    LIN           8.91</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.query_tap">
+<span class="sig-name descname"><span class="pre">query_tap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxrec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_query_payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">uploads</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.query_tap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.query_tap" title="Link to this definition">¶</a></dt>
+<dd><p>Query SIMBAD TAP service.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>query</strong><span class="classifier">str</span></dt><dd><p>A string containing the query written in the
+Astronomical Data Query Language (ADQL).</p>
+</dd>
+<dt><strong>maxrec</strong><span class="classifier">int, default: 10000</span></dt><dd><p>The number of records to be returned. Its maximum value is given by
+<a class="reference internal" href="#astroquery.simbad.SimbadClass.hardlimit" title="astroquery.simbad.SimbadClass.hardlimit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardlimit</span></code></a>.</p>
+</dd>
+<dt><strong>uploads</strong><span class="classifier"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a> | <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.io.votable.tree.VOTableFile.html#astropy.io.votable.tree.VOTableFile" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VOTableFile</span></code></a> | <a class="reference external" href="https://pyvo.readthedocs.io/en/stable/api/pyvo.dal.DALResults.html#pyvo.dal.DALResults" title="(in pyvo v1.6.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DALResults</span></code></a></span></dt><dd><p>Any number of local tables to be used in the <em>query</em>. In the <em>query</em>, these tables
+are referred as <em>TAP_UPLOAD.table_alias</em> where <em>TAP_UPLOAD</em> is imposed and <em>table_alias</em>
+is the keyword name you chose. The maximum number of lines for the uploaded tables is 200000.</p>
+</dd>
+<dt><strong>get_query_payload</strong><span class="classifier">bool, optional</span></dt><dd><p>When set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the method returns the HTTP request parameters without
+querying SIMBAD. The ADQL string is in the ‘QUERY’ key of the payload.
+Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a></dt><dd><p>The response returned by Simbad.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="#astroquery.simbad.SimbadClass.list_tables" title="astroquery.simbad.SimbadClass.list_tables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_tables</span></code></a></dt><dd><p>The list of SIMBAD’s tables.</p>
+</dd>
+<dt><a class="reference internal" href="#astroquery.simbad.SimbadClass.list_columns" title="astroquery.simbad.SimbadClass.list_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_columns</span></code></a></dt><dd><p>SIMBAD’s columns list, can be restricted to some tables and some keyword.</p>
+</dd>
+<dt><a class="reference internal" href="#astroquery.simbad.SimbadClass.list_linked_tables" title="astroquery.simbad.SimbadClass.list_linked_tables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_linked_tables</span></code></a></dt><dd><p>Given a table, expose non-obvious possible joins with other tables.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>A TAP (Table Access Protocol) service allows to query data tables with
+queries written in ADQL (Astronomical Data Query Language), a flavor
+of the more general SQL (Structured Query Language).
+For more documentation about writing ADQL queries, you can read its official
+documentation (<a class="reference external" href="https://ivoa.net/documents/ADQL/index.html">ADQL documentation</a>)
+or the <a class="reference external" href="http://simbad.cds.unistra.fr/simbad/tap/help/adqlHelp.html">Simbad ADQL cheat sheet</a>.
+See also: a <a class="reference external" href="http://simbad.cds.unistra.fr/simbad/tap/tapsearch.html">graphic representation of Simbad’s tables and their relations</a>.</p>
+<p class="rubric">Examples</p>
+<p>To see the five oldest papers referenced in SIMBAD</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="s2">&quot;SELECT top 5 bibcode, title &quot;</span>
+<span class="gp">... </span>                 <span class="s2">&quot;FROM ref ORDER BY bibcode&quot;</span><span class="p">)</span> 
+<span class="go">&lt;Table length=5&gt;</span>
+<span class="go">      bibcode       ...</span>
+<span class="go">       object       ...</span>
+<span class="go">------------------- ...</span>
+<span class="go">1850CDT..1784..227M ...</span>
+<span class="go">1857AN.....45...89S ...</span>
+<span class="go">1861MNRAS..21...68B ...</span>
+<span class="go">1874MNRAS..34...75S ...</span>
+<span class="go">1877AN.....89...13W ...</span>
+</pre></div>
+</div>
+<p>Get the type for a list of objects</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="s2">&quot;SELECT main_id, otype&quot;</span>
+<span class="gp">... </span>                 <span class="s2">&quot; FROM basic WHERE main_id IN (&#39;m10&#39;, &#39;m13&#39;)&quot;</span><span class="p">)</span> 
+<span class="go">&lt;Table length=2&gt;</span>
+<span class="go">main_id otype</span>
+<span class="go"> object object</span>
+<span class="go">------- ------</span>
+<span class="go">  M  10    GlC</span>
+<span class="go">  M  13    GlC</span>
+</pre></div>
+</div>
+<p>Upload a table to use in a query</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">letters_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">]],</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;alphabet&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="s2">&quot;SELECT TAP_UPLOAD.my_table_name.* from TAP_UPLOAD.my_table_name&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                 <span class="n">my_table_name</span><span class="o">=</span><span class="n">letters_table</span><span class="p">)</span> 
+<span class="go">&lt;Table length=3&gt;</span>
+<span class="go">alphabet</span>
+<span class="go">  str1</span>
+<span class="go">--------</span>
+<span class="go">       a</span>
+<span class="go">       b</span>
+<span class="go">       c</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.simbad.SimbadClass.reset_votable_fields">
+<span class="sig-name descname"><span class="pre">reset_votable_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/simbad/core.html#SimbadClass.reset_votable_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.simbad.SimbadClass.reset_votable_fields" title="Link to this definition">¶</a></dt>
+<dd><p>Reset the output of the query_*** methods to default.</p>
+<p>They will be included in the output of the following methods:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_object" title="astroquery.simbad.SimbadClass.query_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_object</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_objects" title="astroquery.simbad.SimbadClass.query_objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_objects</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_region" title="astroquery.simbad.SimbadClass.query_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_region</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_catalog" title="astroquery.simbad.SimbadClass.query_catalog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_catalog</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_hierarchy" title="astroquery.simbad.SimbadClass.query_hierarchy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_hierarchy</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_bibobj" title="astroquery.simbad.SimbadClass.query_bibobj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_bibobj</span></code></a>,</p></li>
+<li><p><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_criteria" title="astroquery.simbad.SimbadClass.query_criteria"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_criteria</span></code></a>.</p></li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">SimbadClass</a><ul>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass"><code class="docutils literal notranslate"><span class="pre">SimbadClass</span></code></a><ul>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.ROW_LIMIT"><code class="docutils literal notranslate"><span class="pre">SimbadClass.ROW_LIMIT</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.SIMBAD_URL"><code class="docutils literal notranslate"><span class="pre">SimbadClass.SIMBAD_URL</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.columns_in_output"><code class="docutils literal notranslate"><span class="pre">SimbadClass.columns_in_output</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.hardlimit"><code class="docutils literal notranslate"><span class="pre">SimbadClass.hardlimit</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.server"><code class="docutils literal notranslate"><span class="pre">SimbadClass.server</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.tap"><code class="docutils literal notranslate"><span class="pre">SimbadClass.tap</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.uploadlimit"><code class="docutils literal notranslate"><span class="pre">SimbadClass.uploadlimit</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.add_votable_fields"><code class="docutils literal notranslate"><span class="pre">SimbadClass.add_votable_fields()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.clear_cache"><code class="docutils literal notranslate"><span class="pre">SimbadClass.clear_cache()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.get_field_description"><code class="docutils literal notranslate"><span class="pre">SimbadClass.get_field_description()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.get_votable_fields"><code class="docutils literal notranslate"><span class="pre">SimbadClass.get_votable_fields()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.list_columns"><code class="docutils literal notranslate"><span class="pre">SimbadClass.list_columns()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.list_linked_tables"><code class="docutils literal notranslate"><span class="pre">SimbadClass.list_linked_tables()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.list_tables"><code class="docutils literal notranslate"><span class="pre">SimbadClass.list_tables()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.list_votable_fields"><code class="docutils literal notranslate"><span class="pre">SimbadClass.list_votable_fields()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.list_wildcards"><code class="docutils literal notranslate"><span class="pre">SimbadClass.list_wildcards()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_bibcode"><code class="docutils literal notranslate"><span class="pre">SimbadClass.query_bibcode()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_bibobj"><code class="docutils literal notranslate"><span class="pre">SimbadClass.query_bibobj()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_catalog"><code class="docutils literal notranslate"><span class="pre">SimbadClass.query_catalog()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_criteria"><code class="docutils literal notranslate"><span class="pre">SimbadClass.query_criteria()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_hierarchy"><code class="docutils literal notranslate"><span class="pre">SimbadClass.query_hierarchy()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_object"><code class="docutils literal notranslate"><span class="pre">SimbadClass.query_object()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_objectids"><code class="docutils literal notranslate"><span class="pre">SimbadClass.query_objectids()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_objects"><code class="docutils literal notranslate"><span class="pre">SimbadClass.query_objects()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_region"><code class="docutils literal notranslate"><span class="pre">SimbadClass.query_region()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.query_tap"><code class="docutils literal notranslate"><span class="pre">SimbadClass.query_tap()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.simbad.SimbadClass.reset_votable_fields"><code class="docutils literal notranslate"><span class="pre">SimbadClass.reset_votable_fields()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="../_sources/api/astroquery.simbad.SimbadClass.rst.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 02 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>

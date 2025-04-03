@@ -1,0 +1,29 @@
+Conf
+====
+
+.. currentmodule:: astroquery.ipac.irsa
+
+.. autoclass:: Conf
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~Conf.most_interface_url
+      ~Conf.most_server
+      ~Conf.row_limit
+      ~Conf.sia_url
+      ~Conf.ssa_url
+      ~Conf.tap_url
+      ~Conf.timeout
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: most_interface_url
+   .. autoattribute:: most_server
+   .. autoattribute:: row_limit
+   .. autoattribute:: sia_url
+   .. autoattribute:: ssa_url
+   .. autoattribute:: tap_url
+   .. autoattribute:: timeout

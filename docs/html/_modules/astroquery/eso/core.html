@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astroquery.eso.core &#8212; astroquery v0.4.8.dev10179</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css?v=7f9a90b1" />
+    
+    <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../../_static/documentation_options.js?v=1d6242bd"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../../../_static/copybutton.js"></script>
+    <link rel="icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">astroquery v0.4.8.dev10179</a>
+	 &#187;
+      </li>
+      <li><a href="../../index.html" >Module code</a> &#187;</li>
+      <li><a href="../eso.html" accesskey="U">astroquery.eso</a> &#187;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for astroquery.eso.core</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">=====================</span>
+<span class="sd">ESO Astroquery Module</span>
+<span class="sd">=====================</span>
+<span class="sd">European Southern Observatory (ESO)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">email</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">astropy.table</span>
+<span class="kn">import</span> <span class="nn">astropy.utils.data</span>
+<span class="kn">import</span> <span class="nn">keyring</span>
+<span class="kn">import</span> <span class="nn">requests.exceptions</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Column</span>
+<span class="kn">from</span> <span class="nn">astropy.utils.decorators</span> <span class="kn">import</span> <span class="n">deprecated_renamed_argument</span>
+<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+<span class="kn">from</span> <span class="nn">pyvo.dal</span> <span class="kn">import</span> <span class="n">TAPService</span>
+<span class="kn">import</span> <span class="nn">pyvo.dal.exceptions</span> <span class="k">as</span> <span class="nn">pde</span>
+
+<span class="kn">from</span> <span class="nn">astroquery</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">conf</span>
+<span class="kn">from</span> <span class="nn">..exceptions</span> <span class="kn">import</span> <span class="n">RemoteServiceError</span><span class="p">,</span> <span class="n">LoginError</span><span class="p">,</span> \
+    <span class="n">NoResultsWarning</span><span class="p">,</span> <span class="n">MaxResultsWarning</span>
+<span class="kn">from</span> <span class="nn">..query</span> <span class="kn">import</span> <span class="n">QueryWithLogin</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">schema</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">py2adql</span><span class="p">,</span> <span class="n">_split_str_as_list_of_str</span><span class="p">,</span> \
+    <span class="n">adql_sanitize_val</span><span class="p">,</span> <span class="n">are_coords_valid</span>
+
+<span class="n">__doctest_skip__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;EsoClass.*&#39;</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">CalSelectorError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised on failure to parse CalSelector&#39;s response.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">AuthInfo</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">token</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expiration_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_exp_time_from_token</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_exp_time_from_token</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="c1"># &quot;manual&quot; decoding since jwt is not installed</span>
+        <span class="n">decoded_token</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;==&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">decoded_token</span><span class="p">)[</span><span class="s1">&#39;exp&#39;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">expired</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="c1"># we anticipate the expiration time by 10 minutes to avoid issues</span>
+        <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">expiration_time</span> <span class="o">-</span> <span class="mi">600</span>
+
+
+<span class="k">class</span> <span class="nc">EsoNames</span><span class="p">:</span>
+    <span class="n">raw_table</span> <span class="o">=</span> <span class="s2">&quot;dbo.raw&quot;</span>
+    <span class="n">phase3_table</span> <span class="o">=</span> <span class="s2">&quot;ivoa.ObsCore&quot;</span>
+    <span class="n">raw_instruments_column</span> <span class="o">=</span> <span class="s2">&quot;instrument&quot;</span>
+    <span class="n">phase3_surveys_column</span> <span class="o">=</span> <span class="s2">&quot;obs_collection&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">ist_table</span><span class="p">(</span><span class="n">instrument_name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;ist.</span><span class="si">{</span><span class="n">instrument_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">unlimited_max_rec</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    decorator to overwrite maxrec for specific queries</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">EsoClass</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expecting EsoClass, found </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">tmpvar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxrec</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">maxrec</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">maxrec</span> <span class="o">=</span> <span class="n">tmpvar</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+
+<div class="viewcode-block" id="EsoClass">
+<a class="viewcode-back" href="../../../api/astroquery.eso.EsoClass.html#astroquery.eso.EsoClass">[docs]</a>
+<span class="k">class</span> <span class="nc">EsoClass</span><span class="p">(</span><span class="n">QueryWithLogin</span><span class="p">):</span>
+    <span class="n">USERNAME</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">username</span>
+    <span class="n">CALSELECTOR_URL</span> <span class="o">=</span> <span class="s2">&quot;https://archive.eso.org/calselector/v1/associations&quot;</span>
+    <span class="n">DOWNLOAD_URL</span> <span class="o">=</span> <span class="s2">&quot;https://dataportal.eso.org/dataPortal/file/&quot;</span>
+    <span class="n">AUTH_URL</span> <span class="o">=</span> <span class="s2">&quot;https://www.eso.org/sso/oidc/token&quot;</span>
+    <span class="n">GUNZIP</span> <span class="o">=</span> <span class="s2">&quot;gunzip&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_auth_info</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AuthInfo</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hash</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maxrec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxrec</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">row_limit</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">maxrec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxrec</span>
+
+    <span class="nd">@maxrec</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">maxrec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">mr</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span>
+        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">mr</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maxrec</span> <span class="o">=</span> <span class="n">mr</span>
+
+    <span class="k">def</span> <span class="nf">_tap_url</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ESO_TAP_URL&#39;</span><span class="p">,</span> <span class="n">conf</span><span class="o">.</span><span class="n">tap_url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">url</span>
+
+    <span class="k">def</span> <span class="nf">_authenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the access token from ESO SSO provider</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_auth_info</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">url_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;response_type&quot;</span><span class="p">:</span> <span class="s2">&quot;id_token token&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;grant_type&quot;</span><span class="p">:</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;client_id&quot;</span><span class="p">:</span> <span class="s2">&quot;clientid&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;client_secret&quot;</span><span class="p">:</span> <span class="s2">&quot;clientSecret&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+                      <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">password</span><span class="p">}</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Authenticating </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2"> on &#39;www.eso.org&#39; ...&quot;</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">AUTH_URL</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">url_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="s1">&#39;id_token&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_auth_info</span> <span class="o">=</span> <span class="n">AuthInfo</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Authentication successful!&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Authentication failed!&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_get_auth_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">store_password</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                       <span class="n">reenter_password</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the auth info (user, password) for use in another function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">username</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">USERNAME</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">LoginError</span><span class="p">(</span><span class="s2">&quot;If you do not pass a username to login(), &quot;</span>
+                                 <span class="s2">&quot;you should configure a default one!&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">username</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">USERNAME</span>
+
+        <span class="n">service_name</span> <span class="o">=</span> <span class="s2">&quot;astroquery:www.eso.org&quot;</span>
+        <span class="c1"># Get password from keyring or prompt</span>
+        <span class="n">password</span><span class="p">,</span> <span class="n">password_from_keyring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_password</span><span class="p">(</span>
+            <span class="n">service_name</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">reenter</span><span class="o">=</span><span class="n">reenter_password</span><span class="p">)</span>
+
+        <span class="c1"># When authenticated, save password in keyring if needed</span>
+        <span class="k">if</span> <span class="n">password_from_keyring</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">store_password</span><span class="p">:</span>
+            <span class="n">keyring</span><span class="o">.</span><span class="n">set_password</span><span class="p">(</span><span class="n">service_name</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span>
+
+    <span class="k">def</span> <span class="nf">_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">store_password</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+               <span class="n">reenter_password</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Login to the ESO User Portal.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        username : str, optional</span>
+<span class="sd">            Username to the ESO Public Portal. If not given, it should be</span>
+<span class="sd">            specified in the config file.</span>
+<span class="sd">        store_password : bool, optional</span>
+<span class="sd">            Stores the password securely in your keyring. Default is `False`.</span>
+<span class="sd">        reenter_password : bool, optional</span>
+<span class="sd">            Asks for the password even if it is already stored in the</span>
+<span class="sd">            keyring. This is the way to overwrite an already stored passwork</span>
+<span class="sd">            on the keyring. Default is `False`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">username</span><span class="p">,</span> <span class="n">password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth_info</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
+                                                 <span class="n">store_password</span><span class="o">=</span><span class="n">store_password</span><span class="p">,</span>
+                                                 <span class="n">reenter_password</span><span class="o">=</span><span class="n">reenter_password</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_authenticate</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_auth_header</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auth_info</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auth_info</span><span class="o">.</span><span class="n">expired</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">LoginError</span><span class="p">(</span>
+                <span class="s2">&quot;Authentication token has expired! Please log in again.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auth_info</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auth_info</span><span class="o">.</span><span class="n">expired</span><span class="p">():</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="s1">&#39;Bearer &#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auth_info</span><span class="o">.</span><span class="n">token</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">_maybe_warn_about_table_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Issues a warning when a table is empty or when the</span>
+<span class="sd">        results are truncated</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">table</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Query returned no results&quot;</span><span class="p">,</span> <span class="n">NoResultsWarning</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">table</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxrec</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Results truncated to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">maxrec</span><span class="si">}</span><span class="s2">. &quot;</span>
+                          <span class="s2">&quot;To retrieve all the records set to None the maxrec attribute&quot;</span><span class="p">,</span>
+                          <span class="n">MaxResultsWarning</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_try_download_pyvo_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                 <span class="n">query_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                 <span class="n">tap</span><span class="p">:</span> <span class="n">TAPService</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">astropy</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">Table</span><span class="p">]:</span>
+        <span class="n">table_to_return</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">def</span> <span class="nf">message</span><span class="p">(</span><span class="n">query_str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error executing the following query:</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">query_str</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;See examples here: https://archive.eso.org/tap_obs/examples</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">table_to_return</span> <span class="o">=</span> <span class="n">tap</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">query_str</span><span class="p">,</span> <span class="n">maxrec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maxrec</span><span class="p">)</span><span class="o">.</span><span class="n">to_table</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">pde</span><span class="o">.</span><span class="n">DALQueryError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pde</span><span class="o">.</span><span class="n">DALQueryError</span><span class="p">(</span><span class="n">message</span><span class="p">(</span><span class="n">query_str</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="n">pde</span><span class="o">.</span><span class="n">DALFormatError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pde</span><span class="o">.</span><span class="n">DALFormatError</span><span class="p">(</span><span class="n">message</span><span class="p">(</span><span class="n">query_str</span><span class="p">)</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;cause: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">cause</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unhandled exception </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">message</span><span class="p">(</span><span class="n">query_str</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span>
+
+        <span class="k">return</span> <span class="n">table_to_return</span>
+
+    <span class="k">def</span> <span class="nf">_tap_service</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">authenticated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TAPService</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">authenticated</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">authenticated</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">LoginError</span><span class="p">(</span>
+                <span class="s2">&quot;It seems you are trying to issue an authenticated query without &quot;</span>
+                <span class="s2">&quot;being authenticated. Possible solutions:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;1. Set the query function argument authenticated=False&quot;</span>
+                <span class="s2">&quot; OR</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;2. Login with your username and password: &quot;</span>
+                <span class="s2">&quot;&lt;eso_class_instance&gt;.login(username=&lt;your_username&gt;&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">authenticated</span><span class="p">:</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth_header</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="o">**</span><span class="n">h</span><span class="p">}</span>
+            <span class="n">tap_service</span> <span class="o">=</span> <span class="n">TAPService</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tap_url</span><span class="p">(),</span> <span class="n">session</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tap_service</span> <span class="o">=</span> <span class="n">TAPService</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tap_url</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">tap_service</span>
+
+<div class="viewcode-block" id="EsoClass.query_tap_service">
+<a class="viewcode-back" href="../../../api/astroquery.eso.EsoClass.html#astroquery.eso.EsoClass.query_tap_service">[docs]</a>
+    <span class="k">def</span> <span class="nf">query_tap_service</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                          <span class="n">query_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                          <span class="n">authenticated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                          <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">astropy</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">Table</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Query the ESO TAP service using a free ADQL string.</span>
+
+<span class="sd">        :param query_str: The ADQL query string to be executed.</span>
+<span class="sd">        :type query_str: str</span>
+
+<span class="sd">        :param authenticated: If `True`, the query is run as an authenticated user.</span>
+<span class="sd">            Authentication must be done beforehand via :meth:`~astroquery.eso.EsoClass.login`.</span>
+<span class="sd">            Note that authenticated queries are slower. Default is `False`.</span>
+<span class="sd">        :type authenticated: bool</span>
+
+<span class="sd">        :returns: The query results in an `~astropy.table.Table`, or `None` if no data is found.</span>
+<span class="sd">        :rtype: Optional[`~astropy.table.Table`]</span>
+
+<span class="sd">        **Example usage**::</span>
+
+<span class="sd">            eso_instance = Eso()</span>
+
+<span class="sd">            eso_instance.query_tap_service(&quot;SELECT * FROM ivoa.ObsCore&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">table_to_return</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">tap_service</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tap_service</span><span class="p">(</span><span class="n">authenticated</span><span class="p">)</span>
+        <span class="n">table_to_return</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_try_download_pyvo_table</span><span class="p">(</span><span class="n">query_str</span><span class="p">,</span> <span class="n">tap_service</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maybe_warn_about_table_length</span><span class="p">(</span><span class="n">table_to_return</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">table_to_return</span></div>
+
+
+<div class="viewcode-block" id="EsoClass.list_instruments">
+<a class="viewcode-back" href="../../../api/astroquery.eso.EsoClass.html#astroquery.eso.EsoClass.list_instruments">[docs]</a>
+    <span class="nd">@unlimited_max_rec</span>
+    <span class="nd">@deprecated_renamed_argument</span><span class="p">(</span><span class="s1">&#39;cache&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">since</span><span class="o">=</span><span class="s1">&#39;0.4.11&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">list_instruments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List all the available instrument-specific queries offered by the ESO archive.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        instrument_list : list of strings</span>
+<span class="sd">        cache : bool</span>
+<span class="sd">            Deprecated - unused.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">cache</span>  <span class="c1"># We&#39;re aware about disregarding the argument</span>
+        <span class="n">query_str</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;select table_name from TAP_SCHEMA.tables &quot;</span>
+                     <span class="s2">&quot;where schema_name=&#39;ist&#39; order by table_name&quot;</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_tap_service</span><span class="p">(</span><span class="n">query_str</span><span class="p">)[</span><span class="s2">&quot;table_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">l_res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="n">res</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">l_res</span></div>
+
+
+<div class="viewcode-block" id="EsoClass.list_surveys">
+<a class="viewcode-back" href="../../../api/astroquery.eso.EsoClass.html#astroquery.eso.EsoClass.list_surveys">[docs]</a>
+    <span class="nd">@unlimited_max_rec</span>
+    <span class="nd">@deprecated_renamed_argument</span><span class="p">(</span><span class="s1">&#39;cache&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">since</span><span class="o">=</span><span class="s1">&#39;0.4.11&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">list_surveys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List all the available surveys (phase 3) in the ESO archive.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        collection_list : list of strings</span>
+<span class="sd">        cache : bool</span>
+<span class="sd">            Deprecated - unused.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">cache</span>  <span class="c1"># We&#39;re aware about disregarding the argument</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">EsoNames</span><span class="o">.</span><span class="n">phase3_table</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">EsoNames</span><span class="o">.</span><span class="n">phase3_surveys_column</span>
+        <span class="n">query_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;select distinct </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query_tap_service</span><span class="p">(</span><span class="n">query_str</span><span class="p">)[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+
+    <span class="nd">@unlimited_max_rec</span>
+    <span class="k">def</span> <span class="nf">_print_table_help</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prints the columns contained in a given table</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">help_query</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;select column_name, datatype, xtype, unit &quot;</span>
+            <span class="c1"># f&quot;, description &quot;  ## TODO: The column description renders output unmanageable</span>
+            <span class="sa">f</span><span class="s2">&quot;from TAP_SCHEMA.columns &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;where table_name = &#39;</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+        <span class="n">available_cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_tap_service</span><span class="p">(</span><span class="n">help_query</span><span class="p">)</span>
+
+        <span class="n">count_query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;select count(*) from </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">num_records</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query_tap_service</span><span class="p">(</span><span class="n">count_query</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># All this block is to print nicely...</span>
+        <span class="c1"># This whole function should be better written and the output</span>
+        <span class="c1"># shown tidier</span>
+        <span class="n">nlines</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">available_cols</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span>
+        <span class="n">n_</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">max_lines</span>
+        <span class="n">m_</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">max_width</span>
+        <span class="n">astropy</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">max_lines</span> <span class="o">=</span> <span class="n">nlines</span>
+        <span class="n">astropy</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">max_width</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Columns present in the table </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{</span><span class="n">available_cols</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                 <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Number of records present in the table </span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="si">{</span><span class="n">num_records</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">astropy</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">max_lines</span> <span class="o">=</span> <span class="n">n_</span>
+        <span class="n">astropy</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">max_width</span> <span class="o">=</span> <span class="n">m_</span>
+
+    <span class="k">def</span> <span class="nf">_query_on_allowed_values</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">allowed_values</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">ra</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">top</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">count_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">query_str_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">print_help</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">authenticated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">astropy</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">Table</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Query instrument- or collection-specific data contained in the ESO archive.</span>
+<span class="sd">         - instrument-specific data is raw</span>
+<span class="sd">         - collection-specific data is processed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="n">filters</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)}</span>
+
+        <span class="k">if</span> <span class="n">print_help</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_print_table_help</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;box&#39;</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;coord1&#39;</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;coord2&#39;</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">)):</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;box, coord1 and coord2 are deprecated; use ra, dec and radius instead&#39;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">are_coords_valid</span><span class="p">(</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Either all three (ra, dec, radius) must be present or none of them.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Values provided: ra = </span><span class="si">{</span><span class="n">ra</span><span class="si">}</span><span class="s2">, dec = </span><span class="si">{</span><span class="n">dec</span><span class="si">}</span><span class="s2">, radius = </span><span class="si">{</span><span class="n">radius</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+        <span class="n">where_allowed_vals_strlist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">allowed_values</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">allowed_values</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">allowed_values</span> <span class="o">=</span> <span class="n">_split_str_as_list_of_str</span><span class="p">(</span><span class="n">allowed_values</span><span class="p">)</span>
+
+            <span class="n">allowed_values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span> <span class="n">allowed_values</span><span class="p">))</span>
+            <span class="n">where_allowed_vals_strlist</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">column_name</span><span class="si">}</span><span class="s2"> in (&quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">allowed_values</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">]</span>
+
+        <span class="n">where_constraints_strlist</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">adql_sanitize_val</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">filters</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+        <span class="n">where_constraints</span> <span class="o">=</span> <span class="n">where_allowed_vals_strlist</span> <span class="o">+</span> <span class="n">where_constraints_strlist</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">py2adql</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
+                        <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span>
+                        <span class="n">where_constraints</span><span class="o">=</span><span class="n">where_constraints</span><span class="p">,</span>
+                        <span class="n">count_only</span><span class="o">=</span><span class="n">count_only</span><span class="p">,</span>
+                        <span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">query_str_only</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">query</span>  <span class="c1"># string</span>
+
+        <span class="n">retval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_tap_service</span><span class="p">(</span><span class="n">query_str</span><span class="o">=</span><span class="n">query</span><span class="p">,</span>
+                                        <span class="n">authenticated</span><span class="o">=</span><span class="n">authenticated</span><span class="p">)</span>  <span class="c1"># table</span>
+        <span class="k">if</span> <span class="n">count_only</span><span class="p">:</span>
+            <span class="n">retval</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">retval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># int</span>
+
+        <span class="k">return</span> <span class="n">retval</span>
+
+<div class="viewcode-block" id="EsoClass.query_surveys">
+<a class="viewcode-back" href="../../../api/astroquery.eso.EsoClass.html#astroquery.eso.EsoClass.query_surveys">[docs]</a>
+    <span class="nd">@deprecated_renamed_argument</span><span class="p">((</span><span class="s1">&#39;open_form&#39;</span><span class="p">,</span> <span class="s1">&#39;cache&#39;</span><span class="p">),</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                                 <span class="n">since</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0.4.11&#39;</span><span class="p">,</span> <span class="s1">&#39;0.4.11&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">query_surveys</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">surveys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">ra</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">top</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">count_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">query_str_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">help</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">authenticated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">column_filters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">open_form</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">astropy</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">Table</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Query survey Phase 3 data contained in the ESO archive.</span>
+
+<span class="sd">        :param surveys: Name of the survey(s) to query. Should be one or more of the</span>
+<span class="sd">            names returned by :meth:`~astroquery.eso.EsoClass.list_surveys`. If specified</span>
+<span class="sd">            as a string, it should be a comma-separated list of survey names.</span>
+<span class="sd">            If not specified, returns records relative to all surveys. Default is `None`.</span>
+<span class="sd">        :type surveys: str or list</span>
+
+<span class="sd">        :param ra: Cone Search Center - Right Ascension in degrees.</span>
+<span class="sd">        :type ra: float</span>
+
+<span class="sd">        :param dec: Cone Search Center - Declination in degrees.</span>
+<span class="sd">        :type dec: float</span>
+
+<span class="sd">        :param radius: Cone Search Radius in degrees.</span>
+<span class="sd">        :type radius: float</span>
+
+<span class="sd">        :param columns: Name of the columns the query should return. If specified as a string,</span>
+<span class="sd">            it should be a comma-separated list of column names.</span>
+<span class="sd">        :type columns: str or list of str</span>
+
+<span class="sd">        :param top: When set to ``N``, returns only the top ``N`` records.</span>
+<span class="sd">        :type top: int</span>
+
+<span class="sd">        :param count_only: If `True`, returns only an `int`: the count of the records</span>
+<span class="sd">            the query would return when set to `False`. Default is `False`.</span>
+<span class="sd">        :type count_only: bool</span>
+
+<span class="sd">        :param query_str_only: If `True`, returns only a `str`: the query string that</span>
+<span class="sd">            would be issued to the TAP service. Default is `False`.</span>
+<span class="sd">        :type query_str_only: bool</span>
+
+<span class="sd">        :param help: If `True`, prints all the parameters accepted in ``column_filters``</span>
+<span class="sd">            and ``columns``. Default is `False`.</span>
+<span class="sd">        :type help: bool</span>
+
+<span class="sd">        :param authenticated: If `True`, runs the query as an authenticated user.</span>
+<span class="sd">            Authentication must be done beforehand via :meth:`~astroquery.eso.EsoClass.login`.</span>
+<span class="sd">            Note that authenticated queries are slower. Default is `False`.</span>
+<span class="sd">        :type authenticated: bool</span>
+
+<span class="sd">        :param column_filters: Constraints applied to the query. Default is `None`.</span>
+<span class="sd">        :type column_filters: dict, `None`</span>
+
+<span class="sd">        :param open_form: **Deprecated** - unused.</span>
+<span class="sd">        :type open_form: bool</span>
+
+<span class="sd">        :param cache: **Deprecated** - unused.</span>
+<span class="sd">        :type cache: bool</span>
+
+<span class="sd">        :returns:</span>
+<span class="sd">            - By default, a `~astropy.table.Table` containing records based on the specified</span>
+<span class="sd">              columns and constraints. Returns `None` when the query has no results.</span>
+<span class="sd">            - When ``count_only`` is `True`, returns an `int` representing the</span>
+<span class="sd">              record count for the specified filters.</span>
+<span class="sd">            - When ``query_str_only`` is `True`, returns the query string that</span>
+<span class="sd">              would be issued to the TAP service given the specified arguments.</span>
+
+<span class="sd">        :rtype: `~astropy.table.Table`, `str`, `int`, or `None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">open_form</span><span class="p">,</span> <span class="n">cache</span>  <span class="c1"># make explicit that we are aware these arguments are unused</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">column_filters</span> <span class="k">if</span> <span class="n">column_filters</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">c</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_on_allowed_values</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="n">EsoNames</span><span class="o">.</span><span class="n">phase3_table</span><span class="p">,</span>
+                                             <span class="n">column_name</span><span class="o">=</span><span class="n">EsoNames</span><span class="o">.</span><span class="n">phase3_surveys_column</span><span class="p">,</span>
+                                             <span class="n">allowed_values</span><span class="o">=</span><span class="n">surveys</span><span class="p">,</span>
+                                             <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span>
+                                             <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
+                                             <span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">,</span>
+                                             <span class="n">count_only</span><span class="o">=</span><span class="n">count_only</span><span class="p">,</span>
+                                             <span class="n">query_str_only</span><span class="o">=</span><span class="n">query_str_only</span><span class="p">,</span>
+                                             <span class="n">print_help</span><span class="o">=</span><span class="n">help</span><span class="p">,</span>
+                                             <span class="n">authenticated</span><span class="o">=</span><span class="n">authenticated</span><span class="p">,</span>
+                                             <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EsoClass.query_main">
+<a class="viewcode-back" href="../../../api/astroquery.eso.EsoClass.html#astroquery.eso.EsoClass.query_main">[docs]</a>
+    <span class="nd">@deprecated_renamed_argument</span><span class="p">((</span><span class="s1">&#39;open_form&#39;</span><span class="p">,</span> <span class="s1">&#39;cache&#39;</span><span class="p">),</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                                 <span class="n">since</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0.4.11&#39;</span><span class="p">,</span> <span class="s1">&#39;0.4.11&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">query_main</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">instruments</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">ra</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">top</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">count_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">query_str_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">help</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">authenticated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">column_filters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">open_form</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">astropy</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">Table</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Query raw data from all instruments contained in the ESO archive.</span>
+
+<span class="sd">        :param instruments: Name of the instruments to filter. Should be one or more of the</span>
+<span class="sd">            names returned by :meth:`~astroquery.eso.EsoClass.list_instruments`. If specified</span>
+<span class="sd">            as a string, it should be a comma-separated list of instrument names.</span>
+<span class="sd">            If not specified, returns records relative to all instruments. Default is `None`.</span>
+<span class="sd">        :type instruments: str or list</span>
+
+<span class="sd">        :param ra: Cone Search Center - Right Ascension in degrees.</span>
+<span class="sd">        :type ra: float</span>
+
+<span class="sd">        :param dec: Cone Search Center - Declination in degrees.</span>
+<span class="sd">        :type dec: float</span>
+
+<span class="sd">        :param radius: Cone Search Radius in degrees.</span>
+<span class="sd">        :type radius: float</span>
+
+<span class="sd">        :param columns: Name of the columns the query should return. If specified as a string,</span>
+<span class="sd">            it should be a comma-separated list of column names.</span>
+<span class="sd">        :type columns: str or list of str</span>
+
+<span class="sd">        :param top: When set to ``N``, returns only the top ``N`` records.</span>
+<span class="sd">        :type top: int</span>
+
+<span class="sd">        :param count_only: If `True`, returns only an `int`: the count of the records</span>
+<span class="sd">            the query would return when set to `False`. Default is `False`.</span>
+<span class="sd">        :type count_only: bool</span>
+
+<span class="sd">        :param query_str_only: If `True`, returns only a `str`: the query string that</span>
+<span class="sd">            would be issued to the TAP service. Default is `False`.</span>
+<span class="sd">        :type query_str_only: bool</span>
+
+<span class="sd">        :param help: If `True`, prints all the parameters accepted in ``column_filters``</span>
+<span class="sd">            and ``columns``. Default is `False`.</span>
+<span class="sd">        :type help: bool</span>
+
+<span class="sd">        :param authenticated: If `True`, runs the query as an authenticated user.</span>
+<span class="sd">            Authentication must be done beforehand via :meth:`~astroquery.eso.EsoClass.login`.</span>
+<span class="sd">            Note that authenticated queries are slower. Default is `False`.</span>
+<span class="sd">        :type authenticated: bool</span>
+
+<span class="sd">        :param column_filters: Constraints applied to the query. Default is `None`.</span>
+<span class="sd">        :type column_filters: dict, `None`</span>
+
+<span class="sd">        :param open_form: **Deprecated** - unused.</span>
+<span class="sd">        :type open_form: bool</span>
+
+<span class="sd">        :param cache: **Deprecated** - unused.</span>
+<span class="sd">        :type cache: bool</span>
+
+<span class="sd">        :returns:</span>
+<span class="sd">            - By default, a `~astropy.table.Table` containing records based on the specified</span>
+<span class="sd">              columns and constraints. Returns `None` when the query has no results.</span>
+<span class="sd">            - When ``count_only`` is `True`, returns an `int` representing the</span>
+<span class="sd">              record count for the specified filters.</span>
+<span class="sd">            - When ``query_str_only`` is `True`, returns the query string that</span>
+<span class="sd">              would be issued to the TAP service given the specified arguments.</span>
+
+<span class="sd">        :rtype: `~astropy.table.Table`, `str`, `int`, or `None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">open_form</span><span class="p">,</span> <span class="n">cache</span>  <span class="c1"># make explicit that we are aware these arguments are unused</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">column_filters</span> <span class="k">if</span> <span class="n">column_filters</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">c</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_on_allowed_values</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="n">EsoNames</span><span class="o">.</span><span class="n">raw_table</span><span class="p">,</span>
+                                             <span class="n">column_name</span><span class="o">=</span><span class="n">EsoNames</span><span class="o">.</span><span class="n">raw_instruments_column</span><span class="p">,</span>
+                                             <span class="n">allowed_values</span><span class="o">=</span><span class="n">instruments</span><span class="p">,</span>
+                                             <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span>
+                                             <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
+                                             <span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">,</span>
+                                             <span class="n">count_only</span><span class="o">=</span><span class="n">count_only</span><span class="p">,</span>
+                                             <span class="n">query_str_only</span><span class="o">=</span><span class="n">query_str_only</span><span class="p">,</span>
+                                             <span class="n">print_help</span><span class="o">=</span><span class="n">help</span><span class="p">,</span>
+                                             <span class="n">authenticated</span><span class="o">=</span><span class="n">authenticated</span><span class="p">,</span>
+                                             <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EsoClass.query_instrument">
+<a class="viewcode-back" href="../../../api/astroquery.eso.EsoClass.html#astroquery.eso.EsoClass.query_instrument">[docs]</a>
+    <span class="nd">@deprecated_renamed_argument</span><span class="p">((</span><span class="s1">&#39;open_form&#39;</span><span class="p">,</span> <span class="s1">&#39;cache&#39;</span><span class="p">),</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                                 <span class="n">since</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0.4.11&#39;</span><span class="p">,</span> <span class="s1">&#39;0.4.11&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">query_instrument</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">instrument</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+            <span class="n">ra</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">top</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">count_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">query_str_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">help</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">authenticated</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">column_filters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">open_form</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">astropy</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">Table</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Query instrument-specific raw data contained in the ESO archive.</span>
+
+<span class="sd">        :param instrument: Name of the instrument from which raw data is to be queried.</span>
+<span class="sd">            Should be ONLY ONE of the names returned by</span>
+<span class="sd">            :meth:`~astroquery.eso.EsoClass.list_instruments`.</span>
+<span class="sd">        :type instruments: str</span>
+
+<span class="sd">        :param ra: Cone Search Center - Right Ascension in degrees.</span>
+<span class="sd">        :type ra: float</span>
+
+<span class="sd">        :param dec: Cone Search Center - Declination in degrees.</span>
+<span class="sd">        :type dec: float</span>
+
+<span class="sd">        :param radius: Cone Search Radius in degrees.</span>
+<span class="sd">        :type radius: float</span>
+
+<span class="sd">        :param columns: Name of the columns the query should return. If specified as a string,</span>
+<span class="sd">            it should be a comma-separated list of column names.</span>
+<span class="sd">        :type columns: str or list of str</span>
+
+<span class="sd">        :param top: When set to ``N``, returns only the top ``N`` records.</span>
+<span class="sd">        :type top: int</span>
+
+<span class="sd">        :param count_only: If `True`, returns only an `int`: the count of the records</span>
+<span class="sd">            the query would return when set to `False`. Default is `False`.</span>
+<span class="sd">        :type count_only: bool</span>
+
+<span class="sd">        :param query_str_only: If `True`, returns only a `str`: the query string that</span>
+<span class="sd">            would be issued to the TAP service. Default is `False`.</span>
+<span class="sd">        :type query_str_only: bool</span>
+
+<span class="sd">        :param help: If `True`, prints all the parameters accepted in ``column_filters``</span>
+<span class="sd">            and ``columns``. Default is `False`.</span>
+<span class="sd">        :type help: bool</span>
+
+<span class="sd">        :param authenticated: If `True`, runs the query as an authenticated user.</span>
+<span class="sd">            Authentication must be done beforehand via :meth:`~astroquery.eso.EsoClass.login`.</span>
+<span class="sd">            Note that authenticated queries are slower. Default is `False`.</span>
+<span class="sd">        :type authenticated: bool</span>
+
+<span class="sd">        :param column_filters: Constraints applied to the query. Default is `None`.</span>
+<span class="sd">        :type column_filters: dict, `None`</span>
+
+<span class="sd">        :param open_form: **Deprecated** - unused.</span>
+<span class="sd">        :type open_form: bool</span>
+
+<span class="sd">        :param cache: **Deprecated** - unused.</span>
+<span class="sd">        :type cache: bool</span>
+
+<span class="sd">        :returns:</span>
+<span class="sd">            - By default, a `~astropy.table.Table` containing records based on the specified</span>
+<span class="sd">              columns and constraints. Returns `None` when the query has no results.</span>
+<span class="sd">            - When ``count_only`` is `True`, returns an `int` representing the</span>
+<span class="sd">              record count for the specified filters.</span>
+<span class="sd">            - When ``query_str_only`` is `True`, returns the query string that</span>
+<span class="sd">              would be issued to the TAP service given the specified arguments.</span>
+
+<span class="sd">        :rtype: `~astropy.table.Table`, `str`, `int`, or `None`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">open_form</span><span class="p">,</span> <span class="n">cache</span>  <span class="c1"># make explicit that we are aware these arguments are unused</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">column_filters</span> <span class="k">if</span> <span class="n">column_filters</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">c</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_on_allowed_values</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="n">EsoNames</span><span class="o">.</span><span class="n">ist_table</span><span class="p">(</span><span class="n">instrument</span><span class="p">),</span>
+                                             <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                             <span class="n">allowed_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                             <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span>
+                                             <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
+                                             <span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">,</span>
+                                             <span class="n">count_only</span><span class="o">=</span><span class="n">count_only</span><span class="p">,</span>
+                                             <span class="n">query_str_only</span><span class="o">=</span><span class="n">query_str_only</span><span class="p">,</span>
+                                             <span class="n">print_help</span><span class="o">=</span><span class="n">help</span><span class="p">,</span>
+                                             <span class="n">authenticated</span><span class="o">=</span><span class="n">authenticated</span><span class="p">,</span>
+                                             <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EsoClass.get_headers">
+<a class="viewcode-back" href="../../../api/astroquery.eso.EsoClass.html#astroquery.eso.EsoClass.get_headers">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">product_ids</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the headers associated to a list of data product IDs</span>
+
+<span class="sd">        This method returns a `~astropy.table.Table` where the rows correspond</span>
+<span class="sd">        to the provided data product IDs, and the columns are from each of</span>
+<span class="sd">        the Fits headers keywords.</span>
+
+<span class="sd">        Note: The additional column ``&#39;DP.ID&#39;`` found in the returned table</span>
+<span class="sd">        corresponds to the provided data product IDs.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        product_ids : either a list of strings or a `~astropy.table.Column`</span>
+<span class="sd">            List of data product IDs.</span>
+<span class="sd">        cache : bool</span>
+<span class="sd">            Defaults to True. If set overrides global caching behavior.</span>
+<span class="sd">            See :ref:`caching documentation &lt;astroquery_cache&gt;`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : `~astropy.table.Table`</span>
+<span class="sd">            A table where: columns are header keywords, rows are product_ids.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_schema_product_ids</span> <span class="o">=</span> <span class="n">schema</span><span class="o">.</span><span class="n">Schema</span><span class="p">(</span>
+            <span class="n">schema</span><span class="o">.</span><span class="n">Or</span><span class="p">(</span><span class="n">Column</span><span class="p">,</span> <span class="p">[</span><span class="n">schema</span><span class="o">.</span><span class="n">Schema</span><span class="p">(</span><span class="nb">str</span><span class="p">)]))</span>
+        <span class="n">_schema_product_ids</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">product_ids</span><span class="p">)</span>
+        <span class="c1"># Get all headers</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">dp_id</span> <span class="ow">in</span> <span class="n">product_ids</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span>
+                <span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;https://archive.eso.org/hdr?DpId=</span><span class="si">{</span><span class="n">dp_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">)</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="s1">&#39;html5lib&#39;</span><span class="p">)</span>
+            <span class="n">hdr</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;pre&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;DP.ID&#39;</span><span class="p">:</span> <span class="n">dp_id</span><span class="p">}</span>
+            <span class="k">for</span> <span class="n">key_value</span> <span class="ow">in</span> <span class="n">hdr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s2">&quot;=&quot;</span> <span class="ow">in</span> <span class="n">key_value</span><span class="p">:</span>
+                    <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">key_value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;COMMENT&quot;</span><span class="p">:</span>  <span class="c1"># drop comments</span>
+                        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;T&quot;</span><span class="p">:</span>  <span class="c1"># Convert boolean T to True</span>
+                            <span class="n">value</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;F&quot;</span><span class="p">:</span>  <span class="c1"># Convert boolean F to False</span>
+                            <span class="n">value</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="c1"># Convert to string, removing quotation marks</span>
+                        <span class="k">elif</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">:</span>
+                            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="k">elif</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>  <span class="c1"># Convert to float</span>
+                            <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Convert to integer</span>
+                            <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                        <span class="n">header</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="k">elif</span> <span class="n">key_value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;END&quot;</span><span class="p">):</span>
+                    <span class="k">break</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+        <span class="c1"># Identify all columns</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">column_types</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+                    <span class="n">columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                    <span class="n">column_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+        <span class="c1"># Add all missing elements</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">column_type</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">column_types</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">r</span><span class="p">:</span>
+                    <span class="n">r</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">column_type</span><span class="p">()</span>
+        <span class="c1"># Return as Table</span>
+        <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_filename_from_response</span><span class="p">(</span><span class="n">response</span><span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">content_disposition</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Content-Disposition&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;filename=(\S+)&quot;</span><span class="p">,</span> <span class="n">content_disposition</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">RemoteServiceError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unable to find filename for </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_find_cached_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">files_to_check</span> <span class="o">=</span> <span class="p">[</span><span class="n">filename</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s1">&#39;fits.Z&#39;</span><span class="p">,</span> <span class="s1">&#39;fits.gz&#39;</span><span class="p">)):</span>
+            <span class="n">files_to_check</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files_to_check</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found cached file </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_download_eso_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_link</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                           <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+        <span class="n">block_size</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">download_block_size</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auth_header</span><span class="p">()</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">file_link</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_filename_from_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="n">part_filename</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.part&quot;</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">part_filename</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Removing partially downloaded file </span><span class="si">{</span><span class="n">part_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">part_filename</span><span class="p">)</span>
+            <span class="n">download_required</span> <span class="o">=</span> <span class="n">overwrite</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_cached_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">download_required</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">part_filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="n">block_size</span><span class="p">):</span>
+                        <span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">part_filename</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">filename</span><span class="p">,</span> <span class="n">download_required</span>
+
+    <span class="k">def</span> <span class="nf">_download_eso_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">destination</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                            <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="n">destination</span> <span class="o">=</span> <span class="n">destination</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_location</span>
+        <span class="n">destination</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">nfiles</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_ids</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Downloading </span><span class="si">{</span><span class="n">nfiles</span><span class="si">}</span><span class="s2"> files ...&quot;</span><span class="p">)</span>
+        <span class="n">downloaded_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">file_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">file_ids</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">file_link</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DOWNLOAD_URL</span> <span class="o">+</span> <span class="n">file_id</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Downloading file </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">nfiles</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">file_link</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">filename</span><span class="p">,</span> <span class="n">downloaded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_eso_file</span><span class="p">(</span><span class="n">file_link</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">)</span>
+                <span class="n">downloaded_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">downloaded</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Successfully downloaded dataset </span><span class="si">{</span><span class="n">file_id</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">http_error</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">http_error</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">401</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Access denied to </span><span class="si">{</span><span class="n">file_link</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to download </span><span class="si">{</span><span class="n">file_link</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">http_error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to download </span><span class="si">{</span><span class="n">file_link</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">downloaded_files</span>
+
+    <span class="k">def</span> <span class="nf">_unzip_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Uncompress the provided file with gunzip.</span>
+
+<span class="sd">        Note: ``system_tools.gunzip`` does not work with .Z files</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">uncompressed_filename</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s1">&#39;fits.Z&#39;</span><span class="p">,</span> <span class="s1">&#39;fits.gz&#39;</span><span class="p">)):</span>
+            <span class="n">uncompressed_filename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">uncompressed_filename</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Uncompressing file </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">GUNZIP</span><span class="p">,</span> <span class="n">filename</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                    <span class="n">uncompressed_filename</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to unzip </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">uncompressed_filename</span> <span class="ow">or</span> <span class="n">filename</span>
+
+    <span class="k">def</span> <span class="nf">_unzip_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GUNZIP</span><span class="p">):</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_unzip_file</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Unable to unzip files &quot;</span>
+                          <span class="s2">&quot;(gunzip is not available on this system)&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">files</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_unique_files_from_association_tree</span><span class="p">(</span><span class="n">xml</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">xml</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">element</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">tree</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">)}</span>
+
+    <span class="k">def</span> <span class="nf">_save_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">destination</span> <span class="o">=</span> <span class="n">destination</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_location</span>
+        <span class="n">destination</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving Calselector association tree to </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
+            <span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+
+<div class="viewcode-block" id="EsoClass.get_associated_files">
+<a class="viewcode-back" href="../../../api/astroquery.eso.EsoClass.html#astroquery.eso.EsoClass.get_associated_files">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_associated_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datasets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;raw&quot;</span><span class="p">,</span>
+                             <span class="n">savexml</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Invoke Calselector service to find calibration files associated to the provided datasets.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        datasets : list of strings</span>
+<span class="sd">            List of datasets for which calibration files should be retrieved.</span>
+<span class="sd">        mode : string</span>
+<span class="sd">            Calselector mode: &#39;raw&#39; (default) for raw calibrations,</span>
+<span class="sd">             or &#39;processed&#39; for processed calibrations.</span>
+<span class="sd">        savexml : bool</span>
+<span class="sd">            If true, save to disk the XML association tree returned by Calselector.</span>
+<span class="sd">        destination : string</span>
+<span class="sd">            Directory where the XML files are saved (default = astropy cache).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        files :</span>
+<span class="sd">            List of unique datasets associated to the input datasets.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;Raw2Raw&quot;</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;raw&quot;</span> <span class="k">else</span> <span class="s2">&quot;Raw2Master&quot;</span>
+        <span class="n">post_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;dp_id&quot;</span><span class="p">:</span> <span class="n">datasets</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">:</span> <span class="n">mode</span><span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_session</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">CALSELECTOR_URL</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">post_data</span><span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="n">associated_files</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">content_type</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">]</span>
+        <span class="c1"># Calselector can return one or more XML association trees depending on the input.</span>
+        <span class="c1"># For a single dataset it returns one XML and content-type = &#39;application/xml&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;application/xml&#39;</span> <span class="ow">in</span> <span class="n">content_type</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_filename_from_response</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+            <span class="n">xml</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span>
+            <span class="n">associated_files</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_unique_files_from_association_tree</span><span class="p">(</span><span class="n">xml</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">savexml</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_save_xml</span><span class="p">(</span><span class="n">xml</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span>
+        <span class="c1"># For multiple datasets it returns a multipart message</span>
+        <span class="k">elif</span> <span class="s1">&#39;multipart/form-data&#39;</span> <span class="ow">in</span> <span class="n">content_type</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">message_from_string</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Content-Type: </span><span class="si">{</span><span class="n">content_type</span><span class="si">}</span><span class="se">\r\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_payload</span><span class="p">():</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">get_filename</span><span class="p">()</span>
+                <span class="n">xml</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">get_payload</span><span class="p">(</span><span class="n">decode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">associated_files</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_unique_files_from_association_tree</span><span class="p">(</span><span class="n">xml</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">savexml</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_save_xml</span><span class="p">(</span><span class="n">xml</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">CalSelectorError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected content-type &#39;</span><span class="si">{</span><span class="n">content_type</span><span class="si">}</span><span class="s2">&#39; for </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># remove input datasets from calselector results</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">associated_files</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">datasets</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="EsoClass.retrieve_data">
+<a class="viewcode-back" href="../../../api/astroquery.eso.EsoClass.html#astroquery.eso.EsoClass.retrieve_data">[docs]</a>
+    <span class="nd">@deprecated_renamed_argument</span><span class="p">((</span><span class="s1">&#39;request_all_objects&#39;</span><span class="p">,</span> <span class="s1">&#39;request_id&#39;</span><span class="p">),</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                                 <span class="n">since</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0.4.7&#39;</span><span class="p">,</span> <span class="s1">&#39;0.4.7&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">retrieve_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datasets</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">continuation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">destination</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                      <span class="n">with_calib</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">unzip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                      <span class="n">request_all_objects</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">request_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve a list of datasets form the ESO archive.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        datasets : list of strings or string</span>
+<span class="sd">            List of datasets strings to retrieve from the archive.</span>
+<span class="sd">        destination: string</span>
+<span class="sd">            Directory where the files are copied.</span>
+<span class="sd">            Files already found in the destination directory are skipped,</span>
+<span class="sd">            unless continuation=True.</span>
+<span class="sd">            Default to astropy cache.</span>
+<span class="sd">        continuation : bool</span>
+<span class="sd">            Force the retrieval of data that are present in the destination</span>
+<span class="sd">            directory.</span>
+<span class="sd">        with_calib : string</span>
+<span class="sd">            Retrieve associated calibration files: None (default), &#39;raw&#39; for</span>
+<span class="sd">            raw calibrations, or &#39;processed&#39; for processed calibrations.</span>
+<span class="sd">        unzip : bool</span>
+<span class="sd">            Unzip compressed files from the archive after download. `True` by</span>
+<span class="sd">            default.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        files : list of strings or string</span>
+<span class="sd">            List of files that have been locally downloaded from the archive.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; dptbl = Eso.query_instrument(&#39;apex&#39;, pi_coi=&#39;ginsburg&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; dpids = [row[&#39;DP.ID&#39;] for row in dptbl if &#39;Map&#39; in row[&#39;Object&#39;]]</span>
+<span class="sd">        &gt;&gt;&gt; files = Eso.retrieve_data(dpids)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">request_all_objects</span><span class="p">,</span> <span class="n">request_id</span>
+        <span class="n">return_string</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">return_string</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">datasets</span> <span class="o">=</span> <span class="p">[</span><span class="n">datasets</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span> <span class="n">astropy</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">column</span><span class="o">.</span><span class="n">Column</span><span class="p">):</span>
+            <span class="n">datasets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">with_calib</span> <span class="ow">and</span> <span class="n">with_calib</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;raw&#39;</span><span class="p">,</span> <span class="s1">&#39;processed&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid value for &#39;with_calib&#39;. &quot;</span>
+                             <span class="s2">&quot;It must be &#39;raw&#39; or &#39;processed&#39;&quot;</span><span class="p">)</span>
+
+        <span class="n">associated_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">with_calib</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Retrieving associated &#39;</span><span class="si">{</span><span class="n">with_calib</span><span class="si">}</span><span class="s2">&#39; calibration files ...&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># batch calselector requests to avoid possible issues on the ESO server</span>
+                <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">100</span>
+                <span class="n">sorted_datasets</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_datasets</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">):</span>
+                    <span class="n">associated_files</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_associated_files</span><span class="p">(</span>
+                        <span class="n">sorted_datasets</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="n">with_calib</span><span class="p">)</span>
+                <span class="n">associated_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">associated_files</span><span class="p">))</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">associated_files</span><span class="p">)</span><span class="si">}</span><span class="s2"> associated files&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to retrieve associated files: </span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">all_datasets</span> <span class="o">=</span> <span class="n">datasets</span> <span class="o">+</span> <span class="n">associated_files</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Downloading datasets ...&quot;</span><span class="p">)</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_download_eso_files</span><span class="p">(</span><span class="n">all_datasets</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">continuation</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">unzip</span><span class="p">:</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unzip_files</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">files</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">return_string</span> <span class="k">else</span> <span class="n">files</span></div>
+
+
+<div class="viewcode-block" id="EsoClass.query_apex_quicklooks">
+<a class="viewcode-back" href="../../../api/astroquery.eso.EsoClass.html#astroquery.eso.EsoClass.query_apex_quicklooks">[docs]</a>
+    <span class="nd">@deprecated_renamed_argument</span><span class="p">((</span><span class="s1">&#39;open_form&#39;</span><span class="p">,</span> <span class="s1">&#39;cache&#39;</span><span class="p">),</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                                 <span class="n">since</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0.4.11&#39;</span><span class="p">,</span> <span class="s1">&#39;0.4.11&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">query_apex_quicklooks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">project_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                              <span class="n">column_filters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                              <span class="n">open_form</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                              <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        APEX data are distributed with quicklook products identified with a</span>
+<span class="sd">        different name than other ESO products.  This query tool searches by</span>
+<span class="sd">        project ID or any other supported keywords.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; tbl = ...</span>
+<span class="sd">        &gt;&gt;&gt; files = ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO All this function</span>
+        <span class="c1"># make explicit that we are aware these arguments are unused</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">project_id</span><span class="p">,</span> <span class="n">help</span><span class="p">,</span> <span class="n">column_filters</span><span class="p">,</span> <span class="n">open_form</span><span class="p">,</span> <span class="n">cache</span><span class="p">,</span> <span class="n">kwargs</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+</div>
+
+
+
+<span class="n">Eso</span> <span class="o">=</span> <span class="n">EsoClass</span><span class="p">()</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 02 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>

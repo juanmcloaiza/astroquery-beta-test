@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>SIMBAD Queries (astroquery.simbad) &#8212; astroquery v0.4.8.dev10179</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+    
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=1d6242bd"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Simbad module evolutions" href="simbad_evolution.html" />
+    <link rel="prev" title="Conf" href="../api/astroquery.nvas.Conf.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="simbad_evolution.html" title="Simbad module evolutions">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../api/astroquery.nvas.Conf.html" title="Conf">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">astroquery v0.4.8.dev10179</a>
+	 &#187;
+      </li>
+      
+      <li>SIMBAD Queries (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.simbad</span></code>)</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="simbad-queries-astroquery-simbad">
+<span id="astroquery-simbad"></span><h1>SIMBAD Queries (<a class="reference internal" href="#module-astroquery.simbad" title="astroquery.simbad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.simbad</span></code></a>)<a class="headerlink" href="#simbad-queries-astroquery-simbad" title="Link to this heading">¶</a></h1>
+<section id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h2>
+<p>This module can be used to query the SIMBAD service. Presented below are
+examples that illustrate the different types of queries that can be
+formulated. If successful all the queries will return the results in a
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a>.</p>
+<section id="a-warning-about-query-rate">
+<h3>A warning about query rate<a class="headerlink" href="#a-warning-about-query-rate" title="Link to this heading">¶</a></h3>
+<p>The SIMBAD database is widely used and has to limit the rate of incoming queries.
+If you spam the server with more that ~5-10 queries per second you will be
+blacklisted for up to an hour. This can happen when a query method is called within a loop.
+There is always a way to send the information in a bigger query rather than in a lot of
+smaller ones. Frequent use cases are that you can pass a vector of coordinates to
+<a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_region" title="astroquery.simbad.SimbadClass.query_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_region</span></code></a> or a list of names to
+<a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_objects" title="astroquery.simbad.SimbadClass.query_objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_objects</span></code></a>, and SIMBAD will treat this submission as
+a single query. If this does not fit your use case, then you’ll need to either use
+<a class="reference internal" href="#wildcards">Wildcards</a> or a custom <a class="reference internal" href="#query-tap"><span class="std std-ref">query TAP</span></a>.</p>
+</section>
+<section id="simbad-evolutions">
+<h3>Simbad Evolutions<a class="headerlink" href="#simbad-evolutions" title="Link to this heading">¶</a></h3>
+<p>The SIMBAD module follows evolutions of the SIMBAD database.
+Some of these changes are documented into more details here:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="simbad_evolution.html">Simbad module evolutions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="simbad_evolution.html#translating-query-criteria-into-criteria">Translating query_criteria into criteria</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simbad_evolution.html#object-types">Object types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simbad_evolution.html#optical-filters">Optical Filters</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="different-ways-to-access-simbad">
+<h3>Different ways to access SIMBAD<a class="headerlink" href="#different-ways-to-access-simbad" title="Link to this heading">¶</a></h3>
+<p>The SIMBAD module described here provides methods that write ADQL queries. These
+methods are described in the next sections.</p>
+<p>A more versatile option is to query SIMBAD directly with your own ADQL queries via
+Table Access Protocol (TAP) with the <a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_tap" title="astroquery.simbad.SimbadClass.query_tap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_tap</span></code></a> method.
+This is described in this section: <a class="reference internal" href="#query-tap"><span class="std std-ref">query TAP</span></a>.</p>
+</section>
+</section>
+<section id="query-modes">
+<h2>Query modes<a class="headerlink" href="#query-modes" title="Link to this heading">¶</a></h2>
+<section id="objects-queries">
+<h3>Objects queries<a class="headerlink" href="#objects-queries" title="Link to this heading">¶</a></h3>
+<section id="query-by-an-identifier">
+<h4>Query by an Identifier<a class="headerlink" href="#query-by-an-identifier" title="Link to this heading">¶</a></h4>
+<p>This is useful if you want to query an object by a known identifier (name). For instance
+to query the messier object M1:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result_table</span> <span class="o">=</span> <span class="n">Simbad</span><span class="o">.</span><span class="n">query_object</span><span class="p">(</span><span class="s2">&quot;m1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">result_table</span><span class="p">)</span>
+<span class="go">main_id    ra     dec   ... coo_wavelength     coo_bibcode     matched_id</span>
+<span class="go">          deg     deg   ...</span>
+<span class="go">------- ------- ------- ... -------------- ------------------- ----------</span>
+<span class="go">  M   1 83.6324 22.0174 ...              X 2022A&amp;A...661A..38P      M   1</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="#wildcards">Wildcards</a> are supported. Note that this makes the query case-sensitive.
+This allows, for instance, to query messier objects from 1 through 9:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result_table</span> <span class="o">=</span> <span class="n">Simbad</span><span class="o">.</span><span class="n">query_object</span><span class="p">(</span><span class="s2">&quot;M [1-9]&quot;</span><span class="p">,</span> <span class="n">wildcard</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">result_table</span><span class="p">)</span> 
+<span class="go"> main_id          ra         ...     coo_bibcode     matched_id</span>
+<span class="go">                 deg         ...</span>
+<span class="go">--------- ------------------ ... ------------------- ----------</span>
+<span class="go">    M   1            83.6287 ... 1995AuJPh..48..143S      M   1</span>
+<span class="go">    M   2 323.36258333333336 ... 2010AJ....140.1830G      M   2</span>
+<span class="go">    M   3  205.5484166666666 ... 2010AJ....140.1830G      M   3</span>
+<span class="go">NGC  6475 268.44699999999995 ... 2021A&amp;A...647A..19T      M   7</span>
+<span class="go">NGC  6405 265.06899999999996 ... 2021A&amp;A...647A..19T      M   6</span>
+<span class="go">    M   4 245.89675000000003 ... 2010AJ....140.1830G      M   4</span>
+<span class="go">    M   8 270.90416666666664 ...                          M   8</span>
+<span class="go">    M   9 259.79908333333333 ... 2002MNRAS.332..441F      M   9</span>
+<span class="go">    M   5 229.63841666666673 ... 2010AJ....140.1830G      M   5</span>
+</pre></div>
+</div>
+<p>The messier objects from 1 to 9 are found. Their main identifier <code class="docutils literal notranslate"><span class="pre">main_id</span></code> is not
+necessarily the one corresponding to the wildcard expression.
+The column <code class="docutils literal notranslate"><span class="pre">matched_id</span></code> contains the identifier that was matched.</p>
+<p>Note that in this example, the wildcard parameter could have been replaced by a way
+faster query done with <a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_objects" title="astroquery.simbad.SimbadClass.query_objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_objects</span></code></a>.</p>
+<section id="wildcards">
+<h5>Wildcards<a class="headerlink" href="#wildcards" title="Link to this heading">¶</a></h5>
+<dl class="simple">
+<dt>Wildcards are supported in these methods:</dt><dd><ul class="simple">
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_object" title="astroquery.simbad.SimbadClass.query_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_object</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_objects" title="astroquery.simbad.SimbadClass.query_objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_objects</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_bibcode" title="astroquery.simbad.SimbadClass.query_bibcode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_bibcode</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<p>They allow to provide a pattern that the query will match. To see the available
+wildcards and their meaning:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="p">()</span><span class="o">.</span><span class="n">list_wildcards</span><span class="p">()</span>
+<span class="go">*: Any string of characters (including an empty one)</span>
+<span class="go">?: Any character (exactly one character)</span>
+<span class="go">[abc]: Exactly one character taken in the list. Can also be defined by a range of characters: [A-Z]</span>
+<span class="go">[^0-9]: Any (one) character not in the list.</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="query-to-get-all-names-identifiers-of-an-object">
+<h4>Query to get all names (identifiers) of an object<a class="headerlink" href="#query-to-get-all-names-identifiers-of-an-object" title="Link to this heading">¶</a></h4>
+<p>These queries can be used to retrieve all of the names (identifiers)
+associated with an object.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result_table</span> <span class="o">=</span> <span class="n">Simbad</span><span class="o">.</span><span class="n">query_objectids</span><span class="p">(</span><span class="s2">&quot;Polaris&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result_table</span>
+<span class="go">&lt;Table length=46&gt;</span>
+<span class="go">           id</span>
+<span class="go">         object</span>
+<span class="go">-----------------------</span>
+<span class="go">              HIP 11767</span>
+<span class="go">          TIC 303256075</span>
+<span class="go">          NAME Lodestar</span>
+<span class="go">               PLX  299</span>
+<span class="go">                SBC9 76</span>
+<span class="go">              *   1 UMi</span>
+<span class="go">                    ...</span>
+<span class="go">           ADS  1477 AP</span>
+<span class="go">            ** WRH   39</span>
+<span class="go">       WDS J02318+8916A</span>
+<span class="go">           ** STF   93A</span>
+<span class="go">2MASS J02314822+8915503</span>
+<span class="go">        NAME North Star</span>
+<span class="go">              WEB  2438</span>
+</pre></div>
+</div>
+</section>
+<section id="query-hierarchy-to-get-all-parents-or-children-or-siblings-of-an-object">
+<h4>Query hierarchy: to get all parents (or children, or siblings) of an object<a class="headerlink" href="#query-hierarchy-to-get-all-parents-or-children-or-siblings-of-an-object" title="Link to this heading">¶</a></h4>
+<p>SIMBAD also records hierarchy links between objects. For example, two galaxies in a pair
+of galaxies are siblings, a cluster of stars is composed of stars: its children. This
+information can be accessed with the <a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_hierarchy" title="astroquery.simbad.SimbadClass.query_hierarchy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_hierarchy</span></code></a>
+method.</p>
+<p>Whenever available, membership probabilities are recorded in SIMBAD as given by
+the authors, though rounded to an integer. When authors do not give a value but
+assessments, they are translated in SIMBAD as follows:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>assessment</p></th>
+<th class="head"><p>membership certainty</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>member</p></td>
+<td><p>100</p></td>
+</tr>
+<tr class="row-odd"><td><p>likely member</p></td>
+<td><p>75</p></td>
+</tr>
+<tr class="row-even"><td><p>possible member</p></td>
+<td><p>50</p></td>
+</tr>
+<tr class="row-odd"><td><p>likely not member</p></td>
+<td><p>25</p></td>
+</tr>
+<tr class="row-even"><td><p>non member</p></td>
+<td><p>0</p></td>
+</tr>
+</tbody>
+</table>
+<p>For gravitational lens systems, double stars, and blends (superposition of two
+non-physically linked objects), the SIMBAD team does not assign a probability
+value (this will be a <code class="docutils literal notranslate"><span class="pre">None</span></code>).</p>
+<p>You can find more details in the <a class="reference external" href="https://simbad.cds.unistra.fr/guide/dataHierarchy.htx">hierarchy documentation</a> of SIMBAD’s webpages.</p>
+<p>Let’s find the galaxies composing the galaxy pair <code class="docutils literal notranslate"><span class="pre">Mrk</span> <span class="pre">116</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">galaxies</span> <span class="o">=</span> <span class="n">Simbad</span><span class="o">.</span><span class="n">query_hierarchy</span><span class="p">(</span><span class="s2">&quot;Mrk 116&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                                  <span class="n">hierarchy</span><span class="o">=</span><span class="s2">&quot;children&quot;</span><span class="p">,</span> <span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;otype=&#39;G..&#39;&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">galaxies</span><span class="p">[[</span><span class="s2">&quot;main_id&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">,</span> <span class="s2">&quot;membership_certainty&quot;</span><span class="p">]]</span>
+<span class="go">&lt;Table length=2&gt;</span>
+<span class="go"> main_id         ra            dec       membership_certainty</span>
+<span class="go">                deg            deg             percent</span>
+<span class="go">  object      float64        float64            int16</span>
+<span class="go">--------- --------------- -------------- --------------------</span>
+<span class="go">Mrk  116A 143.50821525019 55.24105273196                   --</span>
+<span class="go">Mrk  116B      143.509956      55.239762                   --</span>
+</pre></div>
+</div>
+<p>Alternatively, if we know one member of a group, we can find the others by asking for
+<code class="docutils literal notranslate"><span class="pre">siblings</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">galaxies</span> <span class="o">=</span> <span class="n">Simbad</span><span class="o">.</span><span class="n">query_hierarchy</span><span class="p">(</span><span class="s2">&quot;Mrk 116A&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                                  <span class="n">hierarchy</span><span class="o">=</span><span class="s2">&quot;siblings&quot;</span><span class="p">,</span> <span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;otype=&#39;G..&#39;&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">galaxies</span><span class="p">[[</span><span class="s2">&quot;main_id&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">,</span> <span class="s2">&quot;membership_certainty&quot;</span><span class="p">]]</span>
+<span class="go">&lt;Table length=2&gt;</span>
+<span class="go"> main_id         ra            dec       membership_certainty</span>
+<span class="go">                deg            deg             percent</span>
+<span class="go">  object      float64        float64            int16</span>
+<span class="go">--------- --------------- -------------- --------------------</span>
+<span class="go">Mrk  116A 143.50821525019 55.24105273196                   --</span>
+<span class="go">Mrk  116B      143.509956      55.239762                   --</span>
+</pre></div>
+</div>
+<p>Note that if we had not added the criteria on the object type, we would also get
+some stars that are part of these galaxies in the result.</p>
+<p>And the other way around, let’s find which cluster of stars contains
+<code class="docutils literal notranslate"><span class="pre">2MASS</span> <span class="pre">J18511048-0615470</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cluster</span> <span class="o">=</span> <span class="n">Simbad</span><span class="o">.</span><span class="n">query_hierarchy</span><span class="p">(</span><span class="s2">&quot;2MASS J18511048-0615470&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                                 <span class="n">hierarchy</span><span class="o">=</span><span class="s2">&quot;parents&quot;</span><span class="p">,</span> <span class="n">detailed_hierarchy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cluster</span><span class="p">[[</span><span class="s2">&quot;main_id&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">]]</span>
+<span class="go">&lt;Table length=1&gt;</span>
+<span class="go"> main_id     ra     dec</span>
+<span class="go">            deg     deg</span>
+<span class="go">  object  float64 float64</span>
+<span class="go">--------- ------- -------</span>
+<span class="go">NGC  6705 282.766  -6.272</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>By default, we get a more detailed report with the two extra columns:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hierarchy_bibcode</span></code> : the paper in which the hierarchy is established,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">membership_certainty</span></code>: if present in the paper, a certainty index (100 meaning
+100% sure).</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cluster</span> <span class="o">=</span> <span class="n">Simbad</span><span class="o">.</span><span class="n">query_hierarchy</span><span class="p">(</span><span class="s2">&quot;2MASS J18511048-0615470&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                                 <span class="n">hierarchy</span><span class="o">=</span><span class="s2">&quot;parents&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                                 <span class="n">detailed_hierarchy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cluster</span><span class="p">[[</span><span class="s2">&quot;main_id&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">,</span> <span class="s2">&quot;hierarchy_bibcode&quot;</span><span class="p">,</span> <span class="s2">&quot;membership_certainty&quot;</span><span class="p">]]</span>
+<span class="go">&lt;Table length=13&gt;</span>
+<span class="go"> main_id     ra     dec    hierarchy_bibcode  membership_certainty</span>
+<span class="go">            deg     deg                             percent</span>
+<span class="go">  object  float64 float64        object              int16</span>
+<span class="go">--------- ------- ------- ------------------- --------------------</span>
+<span class="go">NGC  6705 282.766  -6.272 2014A&amp;A...563A..44M                  100</span>
+<span class="go">NGC  6705 282.766  -6.272 2015A&amp;A...573A..55T                  100</span>
+<span class="go">NGC  6705 282.766  -6.272 2016A&amp;A...591A..37J                  100</span>
+<span class="go">NGC  6705 282.766  -6.272 2018A&amp;A...618A..93C                  100</span>
+<span class="go">NGC  6705 282.766  -6.272 2020A&amp;A...633A..99C                  100</span>
+<span class="go">NGC  6705 282.766  -6.272 2020A&amp;A...640A...1C                  100</span>
+<span class="go">NGC  6705 282.766  -6.272 2020A&amp;A...643A..71G                  100</span>
+<span class="go">NGC  6705 282.766  -6.272 2020ApJ...903...55P                  100</span>
+<span class="go">NGC  6705 282.766  -6.272 2020MNRAS.496.4701J                  100</span>
+<span class="go">NGC  6705 282.766  -6.272 2021A&amp;A...647A..19T                  100</span>
+<span class="go">NGC  6705 282.766  -6.272 2021A&amp;A...651A..84M                  100</span>
+<span class="go">NGC  6705 282.766  -6.272 2021MNRAS.503.3279S                   99</span>
+<span class="go">NGC  6705 282.766  -6.272 2022MNRAS.509.1664J                  100</span>
+</pre></div>
+</div>
+<p>Here, we see that the SIMBAD team found 13 papers mentioning the fact that
+<code class="docutils literal notranslate"><span class="pre">2MASS</span> <span class="pre">J18511048-0615470</span></code> is a member of <code class="docutils literal notranslate"><span class="pre">NGC</span>&#160; <span class="pre">6705</span></code> and that the authors of these
+articles gave high confidence indices for this membership (<code class="docutils literal notranslate"><span class="pre">membership_certainty</span></code> is
+close to 100 for all bibcodes).</p>
+<section id="a-note-of-caution-on-hierarchy">
+<h5>A note of caution on hierarchy<a class="headerlink" href="#a-note-of-caution-on-hierarchy" title="Link to this heading">¶</a></h5>
+<p>In some tricky cases, low membership values represent extremely important information.
+Let’s for example look at the star <code class="docutils literal notranslate"><span class="pre">V*</span> <span class="pre">V787</span> <span class="pre">Cep</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parents</span> <span class="o">=</span> <span class="n">Simbad</span><span class="o">.</span><span class="n">query_hierarchy</span><span class="p">(</span><span class="s2">&quot;V* V787 Cep&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                                 <span class="n">hierarchy</span><span class="o">=</span><span class="s2">&quot;parents&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                                 <span class="n">detailed_hierarchy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parents</span><span class="p">[[</span><span class="s2">&quot;main_id&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">,</span> <span class="s2">&quot;hierarchy_bibcode&quot;</span><span class="p">,</span> <span class="s2">&quot;membership_certainty&quot;</span><span class="p">]]</span>
+<span class="go">&lt;Table length=4&gt;</span>
+<span class="go"> main_id          ra           dec    hierarchy_bibcode  membership_certainty</span>
+<span class="go">                 deg           deg                             percent</span>
+<span class="go">  object       float64       float64        object              int16</span>
+<span class="go">--------- ------------------ ------- ------------------- --------------------</span>
+<span class="go">NGC   188 11.797999999999998  85.244 2003AJ....126.2922P                   46</span>
+<span class="go">NGC   188 11.797999999999998  85.244 2004PASP..116.1012S                   46</span>
+<span class="go">NGC   188 11.797999999999998  85.244 2018A&amp;A...616A..10G                  100</span>
+<span class="go">NGC   188 11.797999999999998  85.244 2021MNRAS.503.3279S                    1</span>
+</pre></div>
+</div>
+<p>Here, we see that the link between <code class="docutils literal notranslate"><span class="pre">V*</span> <span class="pre">V787</span> <span class="pre">Cep</span></code> and the open cluster <code class="docutils literal notranslate"><span class="pre">NGC</span> <span class="pre">188</span></code> is
+opened for debate: the only way to build an opinion is to read the four articles.
+This information would be hidden if we did not print the detailed hierarchy report.</p>
+<p>These somewhat contradictory results are an inherent part of SIMBAD, which simply
+translates the literature into a database.</p>
+</section>
+</section>
+<section id="query-a-region">
+<h4>Query a region<a class="headerlink" href="#query-a-region" title="Link to this heading">¶</a></h4>
+<p>Query in a cone with a specified radius. The center can be a string with an
+identifier, a string representing coordinates, or a <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SkyCoord</span></code></a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># get 10 objects in a radius of 0.5° around M81</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">ROW_LIMIT</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result_table</span> <span class="o">=</span> <span class="n">simbad</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="s2">&quot;m81&quot;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="s2">&quot;0.5d&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">result_table</span><span class="p">)</span>   
+<span class="go">             main_id                       ra                dec        ... coo_err_angle coo_wavelength     coo_bibcode</span>
+<span class="go">                                          deg                deg        ...      deg</span>
+<span class="go">---------------------------------- ------------------ ----------------- ... ------------- -------------- -------------------</span>
+<span class="go">                      [PR95] 40298 149.14159166666667 69.19170000000001 ...            --</span>
+<span class="go">                       [GTK91b] 19 149.03841666666668 69.21222222222222 ...            --</span>
+<span class="go">                       [GTK91b] 15 149.26095833333332 69.22230555555556 ...            --</span>
+<span class="go">                           PSK 212 148.86083333333332 69.15333333333334 ...            --</span>
+<span class="go">                           PSK 210  148.8595833333333 69.20111111111112 ...            --</span>
+<span class="go">                       [BBC91] N06 148.84166666666664 69.14222222222223 ...            --</span>
+<span class="go">[GKP2011] M81C J095534.66+691213.7 148.89441666666667 69.20380555555556 ...            --              O 2011ApJ...743..176G</span>
+<span class="go">                      [PR95] 51153 148.89568749999998  69.1995888888889 ...            --              O 2012ApJ...747...15K</span>
+<span class="go">                           PSK 300 148.96499999999997 69.16638888888889 ...            --</span>
+<span class="go">                           PSK 234  148.9008333333333 69.19944444444445 ...            --</span>
+</pre></div>
+</div>
+<p>When no radius is specified, the radius defaults to 2 arcmin. When the radius is
+explicitly specified it can be either a string accepted by
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.Angle.html#astropy.coordinates.Angle" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Angle</span></code></a> (ex: <code class="docutils literal notranslate"><span class="pre">radius='0d6m0s'</span></code>) or directly a
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Quantity</span></code></a> object.</p>
+<p>If the center is defined by coordinates, then the best solution is to use a
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astropy.coordinates.SkyCoord</span></code></a> object.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">SkyCoord</span><span class="p">(</span><span class="mf">31.0087</span><span class="p">,</span> <span class="mf">14.0627</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">),</span>
+<span class="gp">... </span>                    <span class="n">frame</span><span class="o">=</span><span class="s1">&#39;galactic&#39;</span><span class="p">),</span> <span class="n">radius</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">arcsec</span><span class="p">)</span>
+<span class="go">&lt;Table length=2&gt;</span>
+<span class="go">       main_id                ra        ... coo_wavelength     coo_bibcode</span>
+<span class="go">                             deg        ...</span>
+<span class="go">        object             float64      ...      str1             object</span>
+<span class="go">--------------------- ----------------- ... -------------- -------------------</span>
+<span class="go">NAME Barnard&#39;s Star b 269.4520769586187 ...              O 2020yCat.1350....0G</span>
+<span class="go">  NAME Barnard&#39;s star 269.4520769586187 ...              O 2020yCat.1350....0G</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Calling <a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_region" title="astroquery.simbad.SimbadClass.query_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_region</span></code></a> within a loop is <strong>very</strong>
+inefficient. If you need to query many regions, use a multi-coordinate
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SkyCoord</span></code></a> and a list of radii. It looks like this:</p>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span> <span class="n">dec</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">],</span>
+<span class="gp">... </span>                    <span class="n">unit</span><span class="o">=</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">),</span> <span class="n">frame</span><span class="o">=</span><span class="s1">&#39;fk5&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                    <span class="n">radius</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">arcmin</span><span class="p">])</span>   
+<span class="go">&lt;Table length=6&gt;</span>
+<span class="go">        main_id                  ra         ...     coo_bibcode</span>
+<span class="go">                                deg         ...</span>
+<span class="go">         object               float64       ...        object</span>
+<span class="go">------------------------ ------------------ ... -------------------</span>
+<span class="go">SDSS J004014.26+095527.0 10.059442999999998 ... 2020ApJS..250....8L</span>
+<span class="go">            LEDA 1387229 10.988333333333335 ... 2003A&amp;A...412...45P</span>
+<span class="go">         IRAS 00371+0946   9.92962860161661 ... 1988NASAR1190....1B</span>
+<span class="go">         IRAS 00373+0947  9.981768085280164 ... 1988NASAR1190....1B</span>
+<span class="go">   PLCKECC G118.25-52.70  9.981250000000001 ... 2011A&amp;A...536A...7P</span>
+<span class="go">  GALEX J004011.0+095752 10.045982309580001 ... 2020yCat.1350....0G</span>
+</pre></div>
+</div>
+<p>If the radius is the same in every cone, you can also just give this single radius without
+having to create the list (ex: <code class="docutils literal notranslate"><span class="pre">radius</span> <span class="pre">=</span> <span class="pre">&quot;5arcmin&quot;</span></code>).</p>
+</section>
+<section id="query-a-catalogue">
+<h4>Query a catalogue<a class="headerlink" href="#query-a-catalogue" title="Link to this heading">¶</a></h4>
+<p>Queries can also return all the objects from a catalogue. For instance to query
+the ESO catalog:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">(</span><span class="n">ROW_LIMIT</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">query_catalog</span><span class="p">(</span><span class="s1">&#39;ESO&#39;</span><span class="p">)</span>
+<span class="go">&lt;Table length=6&gt;</span>
+<span class="go"> main_id          ra         ...     coo_bibcode     catalog_id</span>
+<span class="go">                 deg         ...</span>
+<span class="go">  object       float64       ...        object         object</span>
+<span class="go">--------- ------------------ ... ------------------- ----------</span>
+<span class="go">NGC  2573     25.40834109527 ... 2020yCat.1350....0G  ESO   1-1</span>
+<span class="go">ESO   1-2           76.15327 ... 2020MNRAS.494.1784A  ESO   1-2</span>
+<span class="go">ESO   1-3  80.65212083333333 ... 2006AJ....131.1163S  ESO   1-3</span>
+<span class="go">ESO   1-4 117.37006325383999 ... 2020yCat.1350....0G  ESO   1-4</span>
+<span class="go">ESO   1-5  133.2708583333333 ... 2006AJ....131.1163S  ESO   1-5</span>
+<span class="go">ESO   1-6    216.83122280179 ... 2020yCat.1350....0G  ESO   1-6</span>
+</pre></div>
+</div>
+<p>Note that the name in <code class="docutils literal notranslate"><span class="pre">main_id</span></code> is not necessarily from the queried catalog. This
+information is in the <code class="docutils literal notranslate"><span class="pre">catalog_id</span></code> column.</p>
+<p>To see the available catalogues, you can write a custom ADQL query
+(see <a class="reference internal" href="#query-tap-documentation"><span class="std std-ref">query_tap</span></a>.) on the <code class="docutils literal notranslate"><span class="pre">cat</span></code> table.
+For example to get the 10 biggest catalogs in SIMBAD, it looks like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="s1">&#39;SELECT TOP 10 cat_name, description FROM cat ORDER BY &quot;size&quot; DESC&#39;</span><span class="p">)</span>  
+<span class="go">&lt;Table length=10&gt;</span>
+<span class="go">cat_name                           description</span>
+<span class="go">object                               object</span>
+<span class="go">-------- ----------------------------------------------------------------</span>
+<span class="go">    Gaia                                                             Gaia</span>
+<span class="go">   2MASS                               2 Micron Sky Survey, Point Sources</span>
+<span class="go">     TIC                                               TESS Input Catalog</span>
+<span class="go">    SDSS                                         Sloan Digital Sky Survey</span>
+<span class="go">     TYC                                                    Tycho mission</span>
+<span class="go">    OGLE                              Optical Gravitational Lensing Event</span>
+<span class="go">   UCAC4                               Fourth USNO CCD Astrograph Catalog</span>
+<span class="go">    WISE Wide-field Infrared Survey Explorer Final Release Source Catalog</span>
+<span class="go">     GSC                                             Guide Star Catalogue</span>
+<span class="go">    LEDA                              Lyon-Meudon Extragalactic DatabaseA</span>
+</pre></div>
+</div>
+<p>Where you can remove <code class="docutils literal notranslate"><span class="pre">TOP</span> <span class="pre">10</span></code> to get <strong>all</strong> the catalogues (there’s a lot of them).</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This method is case-sensitive since version 0.4.8</p>
+</div>
+</section>
+</section>
+<section id="bibliographic-queries">
+<h3>Bibliographic queries<a class="headerlink" href="#bibliographic-queries" title="Link to this heading">¶</a></h3>
+<section id="query-a-bibcode">
+<h4>Query a bibcode<a class="headerlink" href="#query-a-bibcode" title="Link to this heading">¶</a></h4>
+<p>This retrieves information about the article corresponding to a bibcode.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_bibcode</span><span class="p">(</span><span class="s1">&#39;2005A&amp;A.430.165F&#39;</span><span class="p">)</span>
+<span class="go">&lt;Table length=1&gt;</span>
+<span class="go">      bibcode                  doi             journal ... volume  year</span>
+<span class="go">       object                 object            object ... int32  int16</span>
+<span class="go">------------------- -------------------------- ------- ... ------ -----</span>
+<span class="go">2005A&amp;A...430..165F 10.1051/0004-6361:20041272     A&amp;A ...    430  2005</span>
+</pre></div>
+</div>
+<p>The abstract of the reference can also be added as an other column in the output by
+setting the <code class="docutils literal notranslate"><span class="pre">abstract</span></code> parameter to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<p><a class="reference internal" href="#wildcards">Wildcards</a> can be used in these queries as well. This can be useful to retrieve all
+the bibcodes from a given journal in a given year:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">biblio</span> <span class="o">=</span> <span class="n">Simbad</span><span class="o">.</span><span class="n">query_bibcode</span><span class="p">(</span><span class="s1">&#39;2013A&amp;ARv.*&#39;</span><span class="p">,</span> <span class="n">wildcard</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">biblio</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;bibcode&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">biblio</span>
+<span class="go">    &lt;Table length=9&gt;</span>
+<span class="go">      bibcode                  doi            journal ... volume  year</span>
+<span class="go">       object                 object           object ... int32  int16</span>
+<span class="go">------------------- ------------------------- ------- ... ------ -----</span>
+<span class="go">2013A&amp;ARv..21...59I 10.1007/s00159-013-0059-2   A&amp;ARv ...     21  2013</span>
+<span class="go">2013A&amp;ARv..21...61R 10.1007/s00159-013-0061-8   A&amp;ARv ...     21  2013</span>
+<span class="go">2013A&amp;ARv..21...62D 10.1007/s00159-013-0062-7   A&amp;ARv ...     21  2013</span>
+<span class="go">2013A&amp;ARv..21...63T 10.1007/s00159-013-0063-6   A&amp;ARv ...     21  2013</span>
+<span class="go">2013A&amp;ARv..21...64D 10.1007/s00159-013-0064-5   A&amp;ARv ...     21  2013</span>
+<span class="go">2013A&amp;ARv..21...67B 10.1007/s00159-013-0067-2   A&amp;ARv ...     21  2013</span>
+<span class="go">2013A&amp;ARv..21...68G 10.1007/s00159-013-0068-1   A&amp;ARv ...     21  2013</span>
+<span class="go">2013A&amp;ARv..21...69R 10.1007/s00159-013-0069-0   A&amp;ARv ...     21  2013</span>
+<span class="go">2013A&amp;ARv..21...70B 10.1007/s00159-013-0070-7   A&amp;ARv ...     21  2013</span>
+</pre></div>
+</div>
+<p>or to look for articles published between 2010 and 2012 with a given keyword:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">ROW_LIMIT</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">query_bibcode</span><span class="p">(</span><span class="s1">&#39;20??A&amp;A.*&#39;</span><span class="p">,</span> <span class="n">wildcard</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">... </span>                     <span class="n">criteria</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\&quot;</span><span class="s2">year</span><span class="se">\&quot;</span><span class="s2"> &gt;= 2010 and </span><span class="se">\&quot;</span><span class="s2">year</span><span class="se">\&quot;</span><span class="s2"> &lt;= 2012&quot;</span>
+<span class="gp">... </span>                               <span class="s2">&quot; and </span><span class="se">\&quot;</span><span class="s2">abstract</span><span class="se">\&quot;</span><span class="s2"> like &#39;</span><span class="si">%e</span><span class="s2">xoplanet%&#39;&quot;</span><span class="p">))</span>
+<span class="go">&lt;Table length=5&gt;</span>
+<span class="go">      bibcode                   doi             journal ... volume  year</span>
+<span class="go">       object                  object            object ... int32  int16</span>
+<span class="go">------------------- --------------------------- ------- ... ------ -----</span>
+<span class="go">2010A&amp;A...509A..31G 10.1051/0004-6361/200912902     A&amp;A ...    509  2010</span>
+<span class="go">2010A&amp;A...510A..21S 10.1051/0004-6361/200913675     A&amp;A ...    510  2010</span>
+<span class="go">2010A&amp;A...510A.107M 10.1051/0004-6361/200912910     A&amp;A ...    510  2010</span>
+<span class="go">2010A&amp;A...511A..36C 10.1051/0004-6361/200913629     A&amp;A ...    511  2010</span>
+<span class="go">2010A&amp;A...511L...1M 10.1051/0004-6361/201014139     A&amp;A ...    511  2010</span>
+</pre></div>
+</div>
+<p>As you can see, some wildcards can be replaced by a criteria (ex: we could also
+write: <code class="docutils literal notranslate"><span class="pre">&quot;journal&quot;</span> <span class="pre">=</span> <span class="pre">'A&amp;A'</span></code> in the criteria string). It is often faster to avoid
+wildcards and use a criteria instead.</p>
+</section>
+<section id="query-a-bibobj">
+<h4>Query a bibobj<a class="headerlink" href="#query-a-bibobj" title="Link to this heading">¶</a></h4>
+<p>These queries can be used to retrieve all the objects that are discussed in the
+article specified by a bibcode:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_bibobj</span><span class="p">(</span><span class="s1">&#39;2006AJ....131.1163S&#39;</span><span class="p">)</span>
+<span class="go">&lt;Table length=8&gt;</span>
+<span class="go">        main_id                 ra         ...       bibcode       obj_freq</span>
+<span class="go">                               deg         ...</span>
+<span class="go">         object              float64       ...        object        int16</span>
+<span class="go">----------------------- ------------------ ... ------------------- --------</span>
+<span class="go">      NAME Lockman Hole             161.25 ... 2006AJ....131.1163S       --</span>
+<span class="go">        Cl Melotte   22  56.60099999999999 ... 2006AJ....131.1163S       --</span>
+<span class="go">                  M  32           10.67427 ... 2006AJ....131.1163S       --</span>
+<span class="go">                  M  31 10.684708333333333 ... 2006AJ....131.1163S       --</span>
+<span class="go">   NAME Galactic Center       266.41500889 ... 2006AJ....131.1163S       --</span>
+<span class="go">               NAME LMC  80.89416666666666 ... 2006AJ....131.1163S       --</span>
+<span class="go">               NAME SMC 13.158333333333333 ... 2006AJ....131.1163S       --</span>
+<span class="go">2MASX J04504846-7531580          72.701925 ... 2006AJ....131.1163S       --</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="customizing-the-default-settings">
+<h2>Customizing the default settings<a class="headerlink" href="#customizing-the-default-settings" title="Link to this heading">¶</a></h2>
+<p>This section describe how the default output for the SIMBAD queries can be changed.</p>
+<section id="changing-the-row-limit">
+<h3>Changing the row limit<a class="headerlink" href="#changing-the-row-limit" title="Link to this heading">¶</a></h3>
+<p>To fetch all the rows in the result, the row limit must be set to -1. This is the default
+behavior. However if you’re only interested in a certain number of objects, or if
+the result would be too large, you can change this behavior.
+If you want to do this only for the current python session then:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">ROW_LIMIT</span> <span class="o">=</span> <span class="mi">15</span> <span class="c1"># now any query except query_tap fetches at most 15 rows</span>
+</pre></div>
+</div>
+<p>If you would like to make your choice persistent, then you can do this by
+modifying the setting in the Astroquery configuration file.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This works with every <code class="docutils literal notranslate"><span class="pre">query_***</span></code> method, except
+<a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_tap" title="astroquery.simbad.SimbadClass.query_tap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_tap</span></code></a> as the number of returned rows is fixed
+in the ADQL string with the <code class="docutils literal notranslate"><span class="pre">TOP</span></code> instruction.</p>
+</div>
+</section>
+<section id="choosing-the-columns-in-the-output-tables">
+<h3>Choosing the columns in the output tables<a class="headerlink" href="#choosing-the-columns-in-the-output-tables" title="Link to this heading">¶</a></h3>
+<p>Some query methods outputs can be customized. This is the case for:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_object" title="astroquery.simbad.SimbadClass.query_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_object</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_objects" title="astroquery.simbad.SimbadClass.query_objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_objects</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_region" title="astroquery.simbad.SimbadClass.query_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_region</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_catalog" title="astroquery.simbad.SimbadClass.query_catalog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_catalog</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_hierarchy" title="astroquery.simbad.SimbadClass.query_hierarchy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_hierarchy</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_bibobj" title="astroquery.simbad.SimbadClass.query_bibobj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_bibobj</span></code></a></p></li>
+</ul>
+<p>For these methods, the default columns in the output are:</p>
+<ul class="simple">
+<li><p>main_id</p></li>
+<li><p>ra</p></li>
+<li><p>dec</p></li>
+<li><p>coo_err_maj</p></li>
+<li><p>coo_err_min</p></li>
+<li><p>coo_err_angle</p></li>
+<li><p>coo_wavelength</p></li>
+<li><p>coo_bibcode</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The columns that will appear in the output can be printed with the
+<a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.get_votable_fields" title="astroquery.simbad.SimbadClass.get_votable_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_votable_fields</span></code></a> method</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">get_votable_fields</span><span class="p">()</span>
+<span class="go">[&#39;basic.main_id&#39;, &#39;basic.ra&#39;, &#39;basic.dec&#39;, &#39;basic.coo_err_maj&#39;, &#39;basic.coo_err_min&#39;, &#39;basic.coo_err_angle&#39;, &#39;basic.coo_wavelength&#39;, &#39;basic.coo_bibcode&#39;]</span>
+</pre></div>
+</div>
+<p>Here we see the lists of columns that are selected per default. They are all from
+the table of basic information (<code class="docutils literal notranslate"><span class="pre">basic</span></code>).</p>
+</div>
+<p>This can be permanently changed in astroquery’s configuration files. To do this within
+a session or for a single query, use <a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.add_votable_fields" title="astroquery.simbad.SimbadClass.add_votable_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_votable_fields</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">add_votable_fields</span><span class="p">(</span><span class="s2">&quot;otype&quot;</span><span class="p">)</span>  <span class="c1"># here we add a single column about the main object type</span>
+</pre></div>
+</div>
+<p>Some options add a single column and others add  a bunch of columns that are relevant
+for a theme (ex: fluxes, proper motions…). The list of possible options is printed
+with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">list_votable_fields</span><span class="p">()[[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">]]</span>
+<span class="go">&lt;Table length=...&gt;</span>
+<span class="go">    name                           description</span>
+<span class="go">   object                             object</span>
+<span class="go">----------- ---------------------------------------------------------</span>
+<span class="go">mesDiameter                          Collection of stellar diameters.</span>
+<span class="go">      mesPM                             Collection of proper motions.</span>
+<span class="go">     mesISO           Infrared Space Observatory (ISO) observing log.</span>
+<span class="go">     mesSpT                             Collection of spectral types.</span>
+<span class="go">  allfluxes          all flux/magnitudes U,B,V,I,J,H,K,u_,g_,r_,i_,z_</span>
+<span class="go">      ident                     Identifiers of an astronomical object</span>
+<span class="go">       flux   Magnitude/Flux information about an astronomical object</span>
+<span class="go">   mesOtype Other object types associated with an object with origins</span>
+<span class="go">     mesPLX                   Collection of trigonometric parallaxes.</span>
+<span class="go">        ...                                                       ...</span>
+<span class="go">          K                                               Magnitude K</span>
+<span class="go">          u                                          Magnitude SDSS u</span>
+<span class="go">          g                                          Magnitude SDSS g</span>
+<span class="go">          r                                          Magnitude SDSS r</span>
+<span class="go">          i                                          Magnitude SDSS i</span>
+<span class="go">          z                                          Magnitude SDSS z</span>
+<span class="go">          G                                          Magnitude Gaia G</span>
+<span class="go">      F150W                                         JWST NIRCam F150W</span>
+<span class="go">      F200W                                         JWST NIRCam F200W</span>
+<span class="go">      F444W                                         JWST NIRCan F444W</span>
+</pre></div>
+</div>
+<p>You can also access a single field description with
+<a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.get_field_description" title="astroquery.simbad.SimbadClass.get_field_description"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_field_description</span></code></a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">get_field_description</span><span class="p">(</span><span class="s2">&quot;rvz_type&quot;</span><span class="p">)</span>
+<span class="go">&#39;Radial velocity / redshift type&#39;</span>
+</pre></div>
+</div>
+<p>And the columns in the output can be reset to their default value with
+<a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.reset_votable_fields" title="astroquery.simbad.SimbadClass.reset_votable_fields"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_votable_fields</span></code></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A detailed description on the ways to add fluxes is available in the
+<a class="reference internal" href="simbad_evolution.html#optical-filters"><span class="std std-ref">Optical Filters</span></a> section.</p>
+</div>
+<section id="measurement-fields-vs-basic-fields">
+<h4>Measurement fields vs. Basic fields<a class="headerlink" href="#measurement-fields-vs-basic-fields" title="Link to this heading">¶</a></h4>
+<p>Some field names start with <code class="docutils literal notranslate"><span class="pre">mes</span></code>. These denote what SIMBAD calls a
+“measurement table”. These tables store the history on past measurements of a physical
+parameter for each object.</p>
+<p>Let’s look at the star <code class="docutils literal notranslate"><span class="pre">HD</span> <span class="pre">200207</span></code> with the parallax measurements table <code class="docutils literal notranslate"><span class="pre">mesplx</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">add_votable_fields</span><span class="p">(</span><span class="s2">&quot;mesplx&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hd_200207</span> <span class="o">=</span> <span class="n">simbad</span><span class="o">.</span><span class="n">query_object</span><span class="p">(</span><span class="s2">&quot;HD 200207&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hd_200207</span><span class="p">[[</span><span class="s2">&quot;main_id&quot;</span><span class="p">,</span> <span class="s2">&quot;mesplx.plx&quot;</span><span class="p">,</span> <span class="s2">&quot;mesplx.plx_err&quot;</span><span class="p">,</span> <span class="s2">&quot;mesplx.bibcode&quot;</span><span class="p">]]</span>
+<span class="go">&lt;Table length=5&gt;</span>
+<span class="go"> main_id  mesplx.plx mesplx.plx_err    mesplx.bibcode</span>
+<span class="go">             mas          mas</span>
+<span class="go">  object   float32      float32            object</span>
+<span class="go">--------- ---------- -------------- -------------------</span>
+<span class="go">HD 200207     3.4084         0.0195 2020yCat.1350....0G</span>
+<span class="go">HD 200207     3.4552         0.0426 2018yCat.1345....0G</span>
+<span class="go">HD 200207       3.35           0.76 1997A&amp;A...323L..49P</span>
+<span class="go">HD 200207       3.72           0.62 2007A&amp;A...474..653V</span>
+<span class="go">HD 200207       3.25           0.22 2016A&amp;A...595A...2G</span>
+</pre></div>
+</div>
+<p>This field adds one line per parallax measurement: five articles have measured it
+for this star.</p>
+<p>If you are only interested in the most precise measure recorded by the SIMBAD team, some
+measurements fields have an equivalent in the basic fields. These fields only give one
+line per object with the most precise currently known value:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>measurement field</p></th>
+<th class="head"><p>basic field</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>mesplx</p></td>
+<td><p>parallax</p></td>
+</tr>
+<tr class="row-odd"><td><p>mespm</p></td>
+<td><p>propermotions</p></td>
+</tr>
+<tr class="row-even"><td><p>messpt</p></td>
+<td><p>sp</p></td>
+</tr>
+<tr class="row-odd"><td><p>mesvelocities</p></td>
+<td><p>velocity</p></td>
+</tr>
+</tbody>
+</table>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">mesplx</span></code> has an equivalent in the basic fields so we could have done:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">add_votable_fields</span><span class="p">(</span><span class="s2">&quot;parallax&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hd_200207</span> <span class="o">=</span> <span class="n">simbad</span><span class="o">.</span><span class="n">query_object</span><span class="p">(</span><span class="s2">&quot;HD 200207&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hd_200207</span><span class="p">[[</span><span class="s2">&quot;main_id&quot;</span><span class="p">,</span> <span class="s2">&quot;plx_value&quot;</span><span class="p">,</span> <span class="s2">&quot;plx_err&quot;</span><span class="p">,</span> <span class="s2">&quot;plx_bibcode&quot;</span><span class="p">]]</span>
+<span class="go">&lt;Table length=1&gt;</span>
+<span class="go"> main_id  plx_value plx_err     plx_bibcode</span>
+<span class="go">             mas      mas</span>
+<span class="go">  object   float64  float32        object</span>
+<span class="go">--------- --------- ------- -------------------</span>
+<span class="go">HD 200207    3.4084  0.0195 2020yCat.1350....0G</span>
+</pre></div>
+</div>
+<p>And we only have one line per object with the value selected by SIMBAD’s team.</p>
+<p>Thus, choosing to add a measurement field or a basic field depends on your goal.</p>
+</section>
+</section>
+<section id="additional-criteria">
+<h3>Additional criteria<a class="headerlink" href="#additional-criteria" title="Link to this heading">¶</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Before astroquery v0.4.8, criteria could only be used with the method <code class="docutils literal notranslate"><span class="pre">query_criteria</span></code>.
+This method is now deprecated and is replaced by the criteria argument in every
+other methods. See <a class="reference internal" href="simbad_evolution.html#simbad-evolutions"><span class="std std-ref">SIMBAD evolutions</span></a>.</p>
+</div>
+<p>Most query methods take a <code class="docutils literal notranslate"><span class="pre">criteria</span></code> argument. They are listed here:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_object" title="astroquery.simbad.SimbadClass.query_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_object</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_objects" title="astroquery.simbad.SimbadClass.query_objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_objects</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_region" title="astroquery.simbad.SimbadClass.query_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_region</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_catalog" title="astroquery.simbad.SimbadClass.query_catalog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_catalog</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_hierarchy" title="astroquery.simbad.SimbadClass.query_hierarchy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_hierarchy</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_bibobj" title="astroquery.simbad.SimbadClass.query_bibobj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_bibobj</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_bibcode" title="astroquery.simbad.SimbadClass.query_bibcode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_bibcode</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_objectids" title="astroquery.simbad.SimbadClass.query_objectids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_objectids</span></code></a></p></li>
+</ul>
+<p>The criteria argument expect a string written in the syntax of the <code class="docutils literal notranslate"><span class="pre">WHERE</span></code> clause of
+an ADQL query. Some examples can be found in the
+<a class="reference external" href="http://simbad.cds.unistra.fr/simbad/tap/help/adqlHelp.html">Simbad ADQL cheat sheet</a>.</p>
+<p>To help writing criteria, a good tip is to inspect the columns that the query would
+return by querying a blank table (of zero rows).
+This allows to inspect the columns the method would return:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">ROW_LIMIT</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># get no lines, just the table structure</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># add the table about proper motion measurements, and the object type column</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">add_votable_fields</span><span class="p">(</span><span class="s2">&quot;mesPM&quot;</span><span class="p">,</span> <span class="s2">&quot;otype&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">peek</span> <span class="o">=</span> <span class="n">simbad</span><span class="o">.</span><span class="n">query_object</span><span class="p">(</span><span class="s2">&quot;BD+30  2512&quot;</span><span class="p">)</span> <span class="c1"># a query on an object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">peek</span><span class="o">.</span><span class="n">info</span>
+<span class="go">&lt;Table length=0&gt;</span>
+<span class="go">        name         dtype    unit                                description</span>
+<span class="go">------------------- ------- -------- ----------------------------------------------------------------------</span>
+<span class="go">            main_id  object                                                   Main identifier for an object</span>
+<span class="go">                 ra float64      deg                                                        Right ascension</span>
+<span class="go">                dec float64      deg                                                            Declination</span>
+<span class="go">        coo_err_maj float32      mas                                            Coordinate error major axis</span>
+<span class="go">        coo_err_min float32      mas                                            Coordinate error minor axis</span>
+<span class="go">      coo_err_angle   int16      deg                                                 Coordinate error angle</span>
+<span class="go">     coo_wavelength    str1                Wavelength class for the origin of the coordinates (R,I,V,U,X,G)</span>
+<span class="go">        coo_bibcode  object                                                            Coordinate reference</span>
+<span class="go">              otype  object                                                                     Object type</span>
+<span class="go">      mespm.bibcode  object                                                             measurement bibcode</span>
+<span class="go">    mespm.coosystem  object                                                  coordinates system designation</span>
+<span class="go">       mespm.mespos   int16                             Position of a measurement in a list of measurements</span>
+<span class="go">         mespm.pmde float32 mas / yr                                                     Proper motion DEC.</span>
+<span class="go">     mespm.pmde_err float32 mas / yr                                                           sigma{pm-de}</span>
+<span class="go">mespm.pmde_err_prec   int16          Precision (# of decimal positions) associated with the column pmde_err</span>
+<span class="go">    mespm.pmde_prec   int16              Precision (# of decimal positions) associated with the column pmde</span>
+<span class="go">         mespm.pmra float32 mas / yr                                                     Proper motion R.A.</span>
+<span class="go">     mespm.pmra_err float32 mas / yr                                                           sigma{pm-ra}</span>
+<span class="go">mespm.pmra_err_prec   int16          Precision (# of decimal positions) associated with the column pmra_err</span>
+<span class="go">    mespm.pmra_prec   int16              Precision (# of decimal positions) associated with the column pmra</span>
+<span class="go">         matched_id  object                                                                      Identifier</span>
+</pre></div>
+</div>
+<p>Now that we know which columns will be returned by the query, we can edit the number of
+returned rows and add a criteria.</p>
+<p>For example, to get only proper motion measurements more recent than 2000, we can add a
+constraint on the first character of the <code class="docutils literal notranslate"><span class="pre">mespm.bibcode</span></code> column
+(the first 4 digits of a bibcode are the year of publication of the article):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">criteria</span> <span class="o">=</span> <span class="s2">&quot;mespm.bibcode LIKE &#39;2%&#39;&quot;</span> <span class="c1"># starts with 2, anything after</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">add_votable_fields</span><span class="p">(</span><span class="s2">&quot;mesPM&quot;</span><span class="p">,</span> <span class="s2">&quot;otype&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pm_measurements</span> <span class="o">=</span> <span class="n">simbad</span><span class="o">.</span><span class="n">query_object</span><span class="p">(</span><span class="s2">&quot;BD+30  2512&quot;</span><span class="p">,</span> <span class="n">criteria</span><span class="o">=</span><span class="n">criteria</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pm_measurements</span><span class="p">[[</span><span class="s2">&quot;main_id&quot;</span><span class="p">,</span> <span class="s2">&quot;mespm.pmra&quot;</span><span class="p">,</span> <span class="s2">&quot;mespm.pmde&quot;</span><span class="p">,</span> <span class="s2">&quot;mespm.bibcode&quot;</span><span class="p">]]</span>
+<span class="go">&lt;Table length=7&gt;</span>
+<span class="go">  main_id   mespm.pmra mespm.pmde    mespm.bibcode</span>
+<span class="go">             mas / yr   mas / yr</span>
+<span class="go">   object    float32    float32          object</span>
+<span class="go">----------- ---------- ---------- -------------------</span>
+<span class="go">BD+30  2512     -631.6     -289.5 2016ApJ...817..112S</span>
+<span class="go">BD+30  2512   -631.662   -308.469 2020yCat.1350....0G</span>
+<span class="go">BD+30  2512     -631.6     -289.5 2016ApJS..224...36K</span>
+<span class="go">BD+30  2512   -631.625   -308.495 2018yCat.1345....0G</span>
+<span class="go">BD+30  2512    -631.36    -306.88 2007A&amp;A...474..653V</span>
+<span class="go">BD+30  2512     -631.0     -307.0 2005AJ....129.1483L</span>
+<span class="go">BD+30  2512     -630.0     -306.0 2002ApJS..141..187B</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="query-tap">
+<span id="id1"></span><h2>Query TAP<a class="headerlink" href="#query-tap" title="Link to this heading">¶</a></h2>
+<p id="query-tap-documentation"><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_tap" title="astroquery.simbad.SimbadClass.query_tap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_tap</span></code></a> (for Table Access Protocol) is the one
+query to rule them all. It allows one to access all the information in SIMBAD with the
+Astronomical Data Query Language (ADQL). ADQL is a flavor of the Structured
+Query Language (SQL) adapted to astronomy. To learn more about this language,
+see the <a class="reference external" href="https://ivoa.net/documents/ADQL/index.html">ADQL documentation</a>
+or the <a class="reference external" href="http://simbad.cds.unistra.fr/simbad/tap/help/adqlHelp.html">Simbad ADQL cheat sheet</a>.</p>
+<section id="structure-of-an-adql-query">
+<h3>Structure of an ADQL query<a class="headerlink" href="#structure-of-an-adql-query" title="Link to this heading">¶</a></h3>
+<p>The method <a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_tap" title="astroquery.simbad.SimbadClass.query_tap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_tap</span></code></a> is called with a string containing the
+ADQL query.</p>
+<div class="highlight-SQL notranslate"><div class="highlight"><pre><span></span><span class="cm">/*ADQL queries start with selecting the columns that will be in the output. Usually,</span>
+<span class="cm">the column name is sufficient. If there is a need to lift ambiguity, add the table</span>
+<span class="cm">name first (table_name.column_name). This is also where the number of rows is fixed</span>
+<span class="cm">(here 5).*/</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">TOP</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="n">basic</span><span class="p">.</span><span class="n">ra</span><span class="p">,</span><span class="w"> </span><span class="n">basic</span><span class="p">.</span><span class="nb">dec</span><span class="p">,</span><span class="w"> </span><span class="n">main_id</span><span class="p">,</span><span class="w"> </span><span class="n">nbref</span>
+<span class="cm">/*Then comes the declaration of the tables to be included in the query. Here *basic* and</span>
+<span class="cm">*ident*. Their common column is named *oid* in *basic* and *oidref* in *ident*.*/</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">basic</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">ident</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">basic</span><span class="p">.</span><span class="n">oid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ident</span><span class="p">.</span><span class="n">oidref</span>
+<span class="cm">/*The conditions come after. This query filters otypes that are not in any</span>
+<span class="cm">cluster of star (Cl*) sub-category (..), specific redshifts, and the results should</span>
+<span class="cm">have an NGC name in their list of names.*/</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="p">(</span><span class="n">otype</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">&#39;Cl*..&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="p">(</span><span class="n">rvz_redshift</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;NGC%&#39;</span><span class="p">)</span>
+<span class="cm">/*The result is then sorted so that the top 5 selected corresponds to</span>
+<span class="cm">the objects cited by the largest number of papers.*/</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">nbref</span><span class="w"> </span><span class="k">DESC</span>
+</pre></div>
+</div>
+<p>This ADQL query can be called with <a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_tap" title="astroquery.simbad.SimbadClass.query_tap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_tap</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;SELECT TOP 5 basic.ra, basic.dec, main_id, nbref</span>
+<span class="gp">... </span><span class="s2">                 FROM basic JOIN ident ON basic.oid = ident.oidref</span>
+<span class="gp">... </span><span class="s2">                 WHERE (otype != &#39;Cl*..&#39;) AND (rvz_redshift &lt; 1)</span>
+<span class="gp">... </span><span class="s2">                 AND (id LIKE &#39;NGC%&#39;)</span>
+<span class="gp">... </span><span class="s2">                 ORDER BY nbref DESC&quot;&quot;&quot;</span><span class="p">)</span> 
+<span class="go">    &lt;Table length=5&gt;</span>
+<span class="go">        ra                dec         main_id  nbref</span>
+<span class="go">       deg                deg</span>
+<span class="go">     float64            float64        object  int32</span>
+<span class="go">------------------ ------------------ -------- -----</span>
+<span class="go">10.684708333333333 41.268750000000004    M  31 12412</span>
+<span class="go">13.158333333333333 -72.80027777777778 NAME SMC 10875</span>
+<span class="go">   187.70593076725 12.391123246083334    M  87  7040</span>
+<span class="go">148.96845833333333  69.67970277777778    M  82  5769</span>
+<span class="go">    23.46206906218 30.660175111980003    M  33  5737</span>
+</pre></div>
+</div>
+<p>And voilà, we get the 5 NGC objects that are the most cited in literature, are not clusters
+of stars, and have a redshift &lt; 1. The following sections cover methods that help build ADQL
+queries. A showcase of more complex queries comes after.</p>
+</section>
+<section id="available-tables">
+<h3>Available tables<a class="headerlink" href="#available-tables" title="Link to this heading">¶</a></h3>
+<p>SIMBAD is a relational database. This means that it is a collection of tables with
+links between them. You can access a <a class="reference external" href="http://simbad.cds.unistra.fr/simbad/tap/tapsearch.html">graphic representation of Simbad’s tables and
+their relations</a> or print
+the names and descriptions of each table with the
+<a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.list_tables" title="astroquery.simbad.SimbadClass.list_tables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_tables</span></code></a> method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">list_tables</span><span class="p">()</span> 
+<span class="go">&lt;Table length=30&gt;</span>
+<span class="go">  table_name                                  description</span>
+<span class="go">    object                                       object</span>
+<span class="go">------------- ----------------------------------------------------------------------------</span>
+<span class="go">        basic                                    General data about an astronomical object</span>
+<span class="go">          ids                                             all names concatenated with pipe</span>
+<span class="go">     alltypes                                      all object types concatenated with pipe</span>
+<span class="go">        ident                                        Identifiers of an astronomical object</span>
+<span class="go">          cat                                                              Catalogues name</span>
+<span class="go">         flux                      Magnitude/Flux information about an astronomical object</span>
+<span class="go">    allfluxes                             all flux/magnitudes U,B,V,I,J,H,K,u_,g_,r_,i_,z_</span>
+<span class="go">       filter                                                 Description of a flux filter</span>
+<span class="go">      has_ref Associations between astronomical objects and their bibliographic references</span>
+<span class="go">          ref                                                      Bibliographic reference</span>
+<span class="go">       author                                          Author of a bibliographic reference</span>
+<span class="go">       h_link                                              hierarchy of membership measure</span>
+<span class="go">  mesHerschel                                                   The Herschel observing Log</span>
+<span class="go">       biblio                                                                 Bibliography</span>
+<span class="go">     keywords                                                  List of keywords in a paper</span>
+<span class="go">       mesXmm                                                           XMM observing log.</span>
+<span class="go">mesVelocities                                   Collection of HRV, Vlsr, cz and redshifts.</span>
+<span class="go">       mesVar                         Collection of stellar variability types and periods.</span>
+<span class="go">       mesRot                                               Stellar Rotational Velocities.</span>
+<span class="go">        mesPM                                                Collection of proper motions.</span>
+<span class="go">       mesPLX                                      Collection of trigonometric parallaxes.</span>
+<span class="go">     otypedef                               all names and definitions for the object types</span>
+<span class="go">       mesIUE                            International Ultraviolet Explorer observing log.</span>
+<span class="go">       mesISO                              Infrared Space Observatory (ISO) observing log.</span>
+<span class="go">      mesFe_h                  Collection of metallicity, as well as Teff, logg for stars.</span>
+<span class="go">  mesDiameter                                             Collection of stellar diameters.</span>
+<span class="go">  mesDistance                   Collection of distances (pc, kpc or Mpc) by several means.</span>
+<span class="go">       otypes                           List of all object types associated with an object</span>
+<span class="go">       mesSpT                                                Collection of spectral types.</span>
+<span class="go">     journals                             Description of all used journals in the database</span>
+</pre></div>
+</div>
+<p>To join tables, any columns sharing the same name are possible links between tables.
+To find the other possible joins, the <a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.list_linked_tables" title="astroquery.simbad.SimbadClass.list_linked_tables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_linked_tables</span></code></a> method
+can be useful. Here we look for possible links with the <code class="docutils literal notranslate"><span class="pre">mesDiameter</span></code> table</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">list_linked_tables</span><span class="p">(</span><span class="s2">&quot;mesDiameter&quot;</span><span class="p">)</span>
+<span class="go">&lt;Table length=1&gt;</span>
+<span class="go"> from_table from_column target_table target_column</span>
+<span class="go">   object      object      object        object</span>
+<span class="go">----------- ----------- ------------ -------------</span>
+<span class="go">mesDiameter      oidref        basic           oid</span>
+</pre></div>
+</div>
+<p>The output indicates that the <code class="docutils literal notranslate"><span class="pre">mesDiameter</span></code> table can be linked to <code class="docutils literal notranslate"><span class="pre">basic</span></code> with the following
+join statement: <code class="docutils literal notranslate"><span class="pre">[...]</span> <span class="pre">mesDiameter</span> <span class="pre">JOIN</span> <span class="pre">basic</span> <span class="pre">ON</span> <span class="pre">mesDiameter.oidref</span> <span class="pre">=</span> <span class="pre">basic.oid</span> <span class="pre">[...]</span></code>.</p>
+<figure class="align-default" id="id2">
+<div class="graphviz"><object data="../_images/graphviz-e3951a9878c4ed925c2df4fddf0bd67353d56213.svg" type="image/svg+xml" class="graphviz">
+<p class="warning">This interactive graph summarizes the information that can be obtained with `~astroquery.simbad.SimbadClass.list_tables` and `~astroquery.simbad.SimbadClass.list_linked_tables`.</p></object></div>
+<figcaption>
+<p><span class="caption-text">A quick view of SIMBAD’s tables. Hover the links to see the linked columns.</span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="available-columns">
+<h3>Available columns<a class="headerlink" href="#available-columns" title="Link to this heading">¶</a></h3>
+<p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.list_columns" title="astroquery.simbad.SimbadClass.list_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_columns</span></code></a> lists the columns in all or a subset of SIMBAD tables.
+Calling it with no argument returns the 289 columns of SIMBAD. To restrict the output to
+some tables, add their name. To get the columns of the tables <code class="docutils literal notranslate"><span class="pre">ref</span></code> and <code class="docutils literal notranslate"><span class="pre">biblio</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">list_columns</span><span class="p">(</span><span class="s2">&quot;ref&quot;</span><span class="p">,</span> <span class="s2">&quot;biblio&quot;</span><span class="p">)</span>
+<span class="go">&lt;Table length=13&gt;</span>
+<span class="go">table_name column_name   datatype  ...  unit          ucd</span>
+<span class="go">  object      object      object   ... object        object</span>
+<span class="go">---------- ----------- ----------- ... ------ --------------------</span>
+<span class="go">    biblio      biblio     VARCHAR ...        meta.record;meta.bib</span>
+<span class="go">    biblio      oidref      BIGINT ...         meta.record;meta.id</span>
+<span class="go">       ref      &quot;year&quot;    SMALLINT ...          meta.note;meta.bib</span>
+<span class="go">       ref    abstract UNICODECHAR ...                 meta.record</span>
+<span class="go">       ref     bibcode        CHAR ...            meta.bib.bibcode</span>
+<span class="go">       ref         doi     VARCHAR ...          meta.code;meta.bib</span>
+<span class="go">       ref     journal     VARCHAR ...            meta.bib.journal</span>
+<span class="go">       ref   last_page     INTEGER ...               meta.bib.page</span>
+<span class="go">       ref    nbobject     INTEGER ...                 meta.number</span>
+<span class="go">       ref      oidbib      BIGINT ...        meta.record;meta.bib</span>
+<span class="go">       ref        page     INTEGER ...               meta.bib.page</span>
+<span class="go">       ref       title UNICODECHAR ...                  meta.title</span>
+<span class="go">       ref      volume     INTEGER ...             meta.bib.volume</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.list_columns" title="astroquery.simbad.SimbadClass.list_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_columns</span></code></a> can also be called with a keyword argument.
+This returns columns from any table for witch the given keyword is either in the table name,
+in the column name or in its description. This is not case-sensitive.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">list_columns</span><span class="p">(</span><span class="n">keyword</span><span class="o">=</span><span class="s2">&quot;Radial velocity&quot;</span><span class="p">)</span>
+<span class="go">&lt;Table length=9&gt;</span>
+<span class="go">  table_name    column_name   ...  unit                   ucd</span>
+<span class="go">    object         object     ... object                 object</span>
+<span class="go">------------- --------------- ... ------ -------------------------------------</span>
+<span class="go">        basic     rvz_bibcode ...          meta.bib.bibcode;spect.dopplerVeloc</span>
+<span class="go">        basic         rvz_err ... km.s-1         stat.error;spect.dopplerVeloc</span>
+<span class="go">        basic    rvz_err_prec ...</span>
+<span class="go">        basic        rvz_qual ...            meta.code.qual;spect.dopplerVeloc</span>
+<span class="go">        basic      rvz_radvel ... km.s-1                spect.dopplerVeloc.opt</span>
+<span class="go">        basic rvz_radvel_prec ...</span>
+<span class="go">        basic        rvz_type ...</span>
+<span class="go">        basic  rvz_wavelength ...        instr.bandpass;spect.dopplerVeloc.opt</span>
+<span class="go">mesVelocities          origin ...                                    meta.note</span>
+</pre></div>
+</div>
+</section>
+<section id="example-tap-queries">
+<h3>Example TAP queries<a class="headerlink" href="#example-tap-queries" title="Link to this heading">¶</a></h3>
+<p>This section lists more complex queries by looking at use cases from former astroquery issues.</p>
+<section id="getting-all-bibcodes-containing-a-certain-type-of-measurement-for-a-given-object">
+<h4>Getting all bibcodes containing a certain type of measurement for a given object<a class="headerlink" href="#getting-all-bibcodes-containing-a-certain-type-of-measurement-for-a-given-object" title="Link to this heading">¶</a></h4>
+<p>The measurement tables – the ones with names starting with <code class="docutils literal notranslate"><span class="pre">mes</span></code>– have a bibcode column
+that corresponds to the paper in which the information was found.</p>
+<p>This query joins the tables <code class="docutils literal notranslate"><span class="pre">ident</span></code> to get all possible names of the object and <code class="docutils literal notranslate"><span class="pre">mesrot</span></code>
+that is the measurement table for rotations. Their common column is <code class="docutils literal notranslate"><span class="pre">oidref</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;SELECT DISTINCT bibcode AS &quot;Rotation Measurements Bibcodes&quot;</span>
+<span class="gp">... </span><span class="s2">    FROM ident JOIN mesrot USING(oidref)</span>
+<span class="gp">... </span><span class="s2">    WHERE id = &#39;Sirius&#39;;</span>
+<span class="gp">... </span><span class="s2">    &quot;&quot;&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bibcodes</span> <span class="o">=</span> <span class="n">Simbad</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bibcodes</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;Rotation Measurements Bibcodes&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bibcodes</span>
+<span class="go">&lt;Table length=8&gt;</span>
+<span class="go">Rotation Measurements Bibcodes</span>
+<span class="go">            object</span>
+<span class="go">------------------------------</span>
+<span class="go">           1970CoAsi.239....1B</span>
+<span class="go">           1970CoKwa.189....0U</span>
+<span class="go">           1995ApJS...99..135A</span>
+<span class="go">           2002A&amp;A...393..897R</span>
+<span class="go">           2005yCat.3244....0G</span>
+<span class="go">           2011A&amp;A...531A.143D</span>
+<span class="go">           2016A&amp;A...589A..83G</span>
+<span class="go">           2023ApJS..266...11B</span>
+</pre></div>
+</div>
+<p>This returns six papers in which the SIMBAD team found rotation data for Sirius.</p>
+</section>
+<section id="criteria-on-region-measurements-and-object-types">
+<h4>Criteria on region, measurements and object types<a class="headerlink" href="#criteria-on-region-measurements-and-object-types" title="Link to this heading">¶</a></h4>
+<p>Here we search for objects that are not stars and have a redshift&lt;0.4 in a cone search. All this information
+is in the <code class="docutils literal notranslate"><span class="pre">basic</span></code> column. The <code class="docutils literal notranslate"><span class="pre">star..</span></code> syntax refers to any type of star.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;SELECT ra, dec, main_id, rvz_redshift, otype</span>
+<span class="gp">... </span><span class="s2">        FROM basic</span>
+<span class="gp">... </span><span class="s2">        WHERE otype != &#39;star..&#39;</span>
+<span class="gp">... </span><span class="s2">        AND CONTAINS(POINT(&#39;ICRS&#39;, basic.ra, basic.dec), CIRCLE(&#39;ICRS&#39;, 331.92, +12.44 , 0.25)) = 1</span>
+<span class="gp">... </span><span class="s2">        AND rvz_redshift &lt;= 0.4&quot;&quot;&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+<span class="go">&lt;Table length=11&gt;</span>
+<span class="go">       ra              dec                 main_id          rvz_redshift otype</span>
+<span class="go">      deg              deg</span>
+<span class="go">    float64          float64                object            float64    object</span>
+<span class="go">--------------- ------------------ ------------------------ ------------ ------</span>
+<span class="go">331.86493815752     12.61105991847 SDSS J220727.58+123639.8      0.11816    EmG</span>
+<span class="go">331.80665742545      12.5032406228 SDSS J220713.60+123011.7       0.1477    EmG</span>
+<span class="go">     332.022027           12.29211 SDSS J220805.28+121731.5      0.12186      G</span>
+<span class="go">     331.984091          12.573282 SDSS J220756.18+123423.8      0.13824      G</span>
+<span class="go">331.87489584192      12.5830568196 SDSS J220729.97+123458.8      0.03129      G</span>
+<span class="go">331.77233978222 12.314639195540002  2MASX J22070538+1218523        0.079      G</span>
+<span class="go">     331.796426          12.426641 SDSS J220711.14+122535.9      0.07886      G</span>
+<span class="go">331.68420630414      12.3609942055  2MASX J22064423+1221397       0.1219      G</span>
+<span class="go">     331.951995          12.431051 SDSS J220748.47+122551.7      0.16484      G</span>
+<span class="go">     332.171805          12.430204 SDSS J220841.23+122548.7      0.14762      G</span>
+<span class="go">     332.084711          12.486509 SDSS J220820.33+122911.4      0.12246      G</span>
+</pre></div>
+</div>
+<p>This returns a few galaxies ‘G’ and emission-line galaxies ‘EmG’.</p>
+</section>
+<section id="get-the-members-of-a-galaxy-cluster">
+<h4>Get the members of a galaxy cluster<a class="headerlink" href="#get-the-members-of-a-galaxy-cluster" title="Link to this heading">¶</a></h4>
+<p>All membership information is in the <code class="docutils literal notranslate"><span class="pre">h_link</span></code> table. We first need to retrieve the <code class="docutils literal notranslate"><span class="pre">oidref</span></code>
+corresponding to the parent cluster SDSSCGB 350. This is done is the sub-query between parenthesis.
+Then, the <code class="docutils literal notranslate"><span class="pre">basic</span></code> table is joined with <code class="docutils literal notranslate"><span class="pre">h_link</span></code> and the sub-query result.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;SELECT main_id AS &quot;child id&quot;,</span>
+<span class="gp">... </span><span class="s2">        otype, ra, dec, membership,</span>
+<span class="gp">... </span><span class="s2">        cluster_table.id AS &quot;parent cluster&quot;</span>
+<span class="gp">... </span><span class="s2">        FROM (SELECT oidref, id FROM ident WHERE id = &#39;SDSSCGB 350&#39;) AS cluster_table,</span>
+<span class="gp">... </span><span class="s2">        basic JOIN h_link ON basic.oid = h_link.child</span>
+<span class="gp">... </span><span class="s2">        WHERE h_link.parent = cluster_table.oidref;</span>
+<span class="gp">... </span><span class="s2">        &quot;&quot;&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+<span class="go">&lt;Table length=7&gt;</span>
+<span class="go">        child id         otype          ra         ... membership parent cluster</span>
+<span class="go">                                       deg         ...  percent</span>
+<span class="go">         object          object      float64       ...   int16        object</span>
+<span class="go">------------------------ ------ ------------------ ... ---------- --------------</span>
+<span class="go">           SDSSCGB 350.4      G 243.18303333333336 ...         75    SDSSCGB 350</span>
+<span class="go">SDSS J161245.36+281652.4      G 243.18900464937997 ...         75    SDSSCGB 350</span>
+<span class="go">           SDSSCGB 350.1      G 243.18618110644002 ...         75    SDSSCGB 350</span>
+<span class="go">            LEDA 1831614      G         243.189153 ...         75    SDSSCGB 350</span>
+<span class="go">            LEDA 1832284      G         243.187819 ...        100    SDSSCGB 350</span>
+<span class="go">           SDSSCGB 350.1      G 243.18618110644002 ...        100    SDSSCGB 350</span>
+<span class="go">            LEDA 1831614      G         243.189153 ...        100    SDSSCGB 350</span>
+</pre></div>
+</div>
+</section>
+<section id="query-a-long-list-of-objects">
+<h4>Query a long list of objects<a class="headerlink" href="#query-a-long-list-of-objects" title="Link to this heading">¶</a></h4>
+<p>To query a list of objects (or coordinates, of bibliographic references), we can use the
+ADQL criteria <code class="docutils literal notranslate"><span class="pre">IN</span></code> like so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="s2">&quot;SELECT main_id, otype FROM basic WHERE main_id IN (&#39;M1&#39;, &#39;M2&#39;, &#39;M3&#39;)&quot;</span><span class="p">)</span>
+<span class="go">&lt;Table length=3&gt;</span>
+<span class="go">main_id otype</span>
+<span class="go"> object object</span>
+<span class="go">------- ------</span>
+<span class="go">  M   1    SNR</span>
+<span class="go">  M   2    GlC</span>
+<span class="go">  M   3    GlC</span>
+</pre></div>
+</div>
+<p>And that would work perfectly… until we reach the character limit for the ADQL query. This
+is one of the example use case where the upload table capability is very useful. You can create/use
+an <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a> containing the desired list and use it in a <code class="docutils literal notranslate"><span class="pre">JOIN</span></code> to replace an <code class="docutils literal notranslate"><span class="pre">IN</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">list_of_objects</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="s2">&quot;M1&quot;</span><span class="p">,</span> <span class="s2">&quot;M2&quot;</span><span class="p">,</span> <span class="s2">&quot;M3&quot;</span><span class="p">]],</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Messier_objects&quot;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;SELECT main_id, otype FROM basic</span>
+<span class="gp">... </span><span class="s2">           JOIN TAP_UPLOAD.messiers</span>
+<span class="gp">... </span><span class="s2">           ON basic.main_id = TAP_UPLOAD.messiers.Messier_objects</span>
+<span class="gp">... </span><span class="s2">        &quot;&quot;&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">messiers</span><span class="o">=</span><span class="n">list_of_objects</span><span class="p">)</span>
+<span class="go">&lt;Table length=3&gt;</span>
+<span class="go">main_id otype</span>
+<span class="go"> object object</span>
+<span class="go">------- ------</span>
+<span class="go">  M   1    SNR</span>
+<span class="go">  M   2    GlC</span>
+<span class="go">  M   3    GlC</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The uploaded tables are limited to 200000 lines. You might need to break your query into smaller
+chunks if you have longer tables.</p>
+</div>
+</section>
+</section>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<p>If you are repeatedly getting failed queries, or bad/out-of-date results, try clearing
+your cache:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">clear_cache</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If this function is unavailable, upgrade your version of astroquery.
+The <code class="docutils literal notranslate"><span class="pre">clear_cache</span></code> function was introduced in version 0.4.7.dev8479.</p>
+</section>
+<section id="citation">
+<h2>Citation<a class="headerlink" href="#citation" title="Link to this heading">¶</a></h2>
+<p>If SIMBAD was useful for your research, you can
+<a class="reference external" href="https://cds.unistra.fr/help/acknowledgement/">read its acknowledgement page</a>.</p>
+</section>
+<section id="reference-api">
+<h2>Reference/API<a class="headerlink" href="#reference-api" title="Link to this heading">¶</a></h2>
+<section id="module-astroquery.simbad">
+<span id="astroquery-simbad-package"></span><h3>astroquery.simbad Package<a class="headerlink" href="#module-astroquery.simbad" title="Link to this heading">¶</a></h3>
+<section id="simbad-query-tool">
+<h4>SIMBAD Query Tool<a class="headerlink" href="#simbad-query-tool" title="Link to this heading">¶</a></h4>
+<p>The SIMBAD query tool creates <a class="reference external" href="https://cds.unistra.fr/help/documentation/simbad-more/adql-simbad/">TAP ADQL queries</a> that return VOtable XML
+data. This is then parsed into a <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a> object.</p>
+</section>
+<section id="classes">
+<h4>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h4>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass" title="astroquery.simbad.SimbadClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimbadClass</span></code></a>([ROW_LIMIT])</p></td>
+<td><p>The class for querying the SIMBAD web service.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/astroquery.simbad.Conf.html#astroquery.simbad.Conf" title="astroquery.simbad.Conf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Conf</span></code></a>()</p></td>
+<td><p>Configuration parameters for <a class="reference internal" href="#module-astroquery.simbad" title="astroquery.simbad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.simbad</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">SIMBAD Queries (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.simbad</span></code>)</a><ul>
+<li><a class="reference internal" href="#getting-started">Getting started</a><ul>
+<li><a class="reference internal" href="#a-warning-about-query-rate">A warning about query rate</a></li>
+<li><a class="reference internal" href="#simbad-evolutions">Simbad Evolutions</a></li>
+<li><a class="reference internal" href="#different-ways-to-access-simbad">Different ways to access SIMBAD</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#query-modes">Query modes</a><ul>
+<li><a class="reference internal" href="#objects-queries">Objects queries</a><ul>
+<li><a class="reference internal" href="#query-by-an-identifier">Query by an Identifier</a><ul>
+<li><a class="reference internal" href="#wildcards">Wildcards</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#query-to-get-all-names-identifiers-of-an-object">Query to get all names (identifiers) of an object</a></li>
+<li><a class="reference internal" href="#query-hierarchy-to-get-all-parents-or-children-or-siblings-of-an-object">Query hierarchy: to get all parents (or children, or siblings) of an object</a><ul>
+<li><a class="reference internal" href="#a-note-of-caution-on-hierarchy">A note of caution on hierarchy</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#query-a-region">Query a region</a></li>
+<li><a class="reference internal" href="#query-a-catalogue">Query a catalogue</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bibliographic-queries">Bibliographic queries</a><ul>
+<li><a class="reference internal" href="#query-a-bibcode">Query a bibcode</a></li>
+<li><a class="reference internal" href="#query-a-bibobj">Query a bibobj</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#customizing-the-default-settings">Customizing the default settings</a><ul>
+<li><a class="reference internal" href="#changing-the-row-limit">Changing the row limit</a></li>
+<li><a class="reference internal" href="#choosing-the-columns-in-the-output-tables">Choosing the columns in the output tables</a><ul>
+<li><a class="reference internal" href="#measurement-fields-vs-basic-fields">Measurement fields vs. Basic fields</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#additional-criteria">Additional criteria</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#query-tap">Query TAP</a><ul>
+<li><a class="reference internal" href="#structure-of-an-adql-query">Structure of an ADQL query</a></li>
+<li><a class="reference internal" href="#available-tables">Available tables</a></li>
+<li><a class="reference internal" href="#available-columns">Available columns</a></li>
+<li><a class="reference internal" href="#example-tap-queries">Example TAP queries</a><ul>
+<li><a class="reference internal" href="#getting-all-bibcodes-containing-a-certain-type-of-measurement-for-a-given-object">Getting all bibcodes containing a certain type of measurement for a given object</a></li>
+<li><a class="reference internal" href="#criteria-on-region-measurements-and-object-types">Criteria on region, measurements and object types</a></li>
+<li><a class="reference internal" href="#get-the-members-of-a-galaxy-cluster">Get the members of a galaxy cluster</a></li>
+<li><a class="reference internal" href="#query-a-long-list-of-objects">Query a long list of objects</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li><a class="reference internal" href="#citation">Citation</a></li>
+<li><a class="reference internal" href="#reference-api">Reference/API</a><ul>
+<li><a class="reference internal" href="#module-astroquery.simbad">astroquery.simbad Package</a><ul>
+<li><a class="reference internal" href="#simbad-query-tool">SIMBAD Query Tool</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="../_sources/simbad/simbad.rst.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 02 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>

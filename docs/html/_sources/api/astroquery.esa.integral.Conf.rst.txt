@@ -1,0 +1,43 @@
+Conf
+====
+
+.. currentmodule:: astroquery.esa.integral
+
+.. autoclass:: Conf
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~Conf.ISLA_CONE_TARGET_CONDITION
+      ~Conf.ISLA_COORDINATE_CONDITION
+      ~Conf.ISLA_DATA_SERVER
+      ~Conf.ISLA_EPOCH_QUERY
+      ~Conf.ISLA_EPOCH_TARGET_QUERY
+      ~Conf.ISLA_INSTRUMENT_BAND_QUERY
+      ~Conf.ISLA_LOGIN_SERVER
+      ~Conf.ISLA_LOGOUT_SERVER
+      ~Conf.ISLA_OBSERVATION_BASE_QUERY
+      ~Conf.ISLA_SERVLET
+      ~Conf.ISLA_TAP_SERVER
+      ~Conf.ISLA_TARGET_CONDITION
+      ~Conf.ISLA_TARGET_RESOLVER
+      ~Conf.TIMEOUT
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: ISLA_CONE_TARGET_CONDITION
+   .. autoattribute:: ISLA_COORDINATE_CONDITION
+   .. autoattribute:: ISLA_DATA_SERVER
+   .. autoattribute:: ISLA_EPOCH_QUERY
+   .. autoattribute:: ISLA_EPOCH_TARGET_QUERY
+   .. autoattribute:: ISLA_INSTRUMENT_BAND_QUERY
+   .. autoattribute:: ISLA_LOGIN_SERVER
+   .. autoattribute:: ISLA_LOGOUT_SERVER
+   .. autoattribute:: ISLA_OBSERVATION_BASE_QUERY
+   .. autoattribute:: ISLA_SERVLET
+   .. autoattribute:: ISLA_TAP_SERVER
+   .. autoattribute:: ISLA_TARGET_CONDITION
+   .. autoattribute:: ISLA_TARGET_RESOLVER
+   .. autoattribute:: TIMEOUT

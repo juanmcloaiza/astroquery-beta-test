@@ -1,0 +1,65 @@
+IntegralClass
+=============
+
+.. currentmodule:: astroquery.esa.integral
+
+.. autoclass:: IntegralClass
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~IntegralClass.tap
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~IntegralClass.download_science_windows
+      ~IntegralClass.get_bands
+      ~IntegralClass.get_epochs
+      ~IntegralClass.get_instrument_band_map
+      ~IntegralClass.get_instruments
+      ~IntegralClass.get_job
+      ~IntegralClass.get_job_list
+      ~IntegralClass.get_long_term_timeseries
+      ~IntegralClass.get_mosaic
+      ~IntegralClass.get_observations
+      ~IntegralClass.get_short_term_timeseries
+      ~IntegralClass.get_source_metadata
+      ~IntegralClass.get_sources
+      ~IntegralClass.get_spectra
+      ~IntegralClass.get_table
+      ~IntegralClass.get_tables
+      ~IntegralClass.get_timeline
+      ~IntegralClass.login
+      ~IntegralClass.logout
+      ~IntegralClass.query_tap
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: tap
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: download_science_windows
+   .. automethod:: get_bands
+   .. automethod:: get_epochs
+   .. automethod:: get_instrument_band_map
+   .. automethod:: get_instruments
+   .. automethod:: get_job
+   .. automethod:: get_job_list
+   .. automethod:: get_long_term_timeseries
+   .. automethod:: get_mosaic
+   .. automethod:: get_observations
+   .. automethod:: get_short_term_timeseries
+   .. automethod:: get_source_metadata
+   .. automethod:: get_sources
+   .. automethod:: get_spectra
+   .. automethod:: get_table
+   .. automethod:: get_tables
+   .. automethod:: get_timeline
+   .. automethod:: login
+   .. automethod:: logout
+   .. automethod:: query_tap

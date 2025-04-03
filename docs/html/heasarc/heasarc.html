@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>HEASARC Queries (astroquery.heasarc) &#8212; astroquery v0.4.8.dev10179</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+    
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=1d6242bd"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="HeasarcClass" href="../api/astroquery.heasarc.HeasarcClass.html" />
+    <link rel="prev" title="ObservationsClass" href="../api/astroquery.gemini.ObservationsClass.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="../api/astroquery.heasarc.HeasarcClass.html" title="HeasarcClass">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../api/astroquery.gemini.ObservationsClass.html" title="ObservationsClass">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">astroquery v0.4.8.dev10179</a>
+	 &#187;
+      </li>
+      
+      <li>HEASARC Queries (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.heasarc</span></code>)</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="heasarc-queries-astroquery-heasarc">
+<span id="astroquery-heasarc"></span><h1>HEASARC Queries (<a class="reference internal" href="#module-astroquery.heasarc" title="astroquery.heasarc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.heasarc</span></code></a>)<a class="headerlink" href="#heasarc-queries-astroquery-heasarc" title="Link to this heading">¶</a></h1>
+<section id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h2>
+<p>This is a python interface for querying the
+<a class="reference external" href="https://heasarc.gsfc.nasa.gov/">HEASARC</a>
+archive web service.</p>
+<p>The main interface for the Heasarc services <code class="docutils literal notranslate"><span class="pre">heasarc.Heasarc</span></code> uses
+Virtual Observatory protocols, which offer powerful archive search options.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#heasarc-main-interface"><span class="std std-ref">Heasarc Main Interface</span></a>.</p></li>
+</ul>
+</section>
+<section id="heasarc-main-interface">
+<span id="id1"></span><h2>Heasarc Main Interface<a class="headerlink" href="#heasarc-main-interface" title="Link to this heading">¶</a></h2>
+<section id="query-a-catalog">
+<h3>Query a Catalog<a class="headerlink" href="#query-a-catalog" title="Link to this heading">¶</a></h3>
+<p>The basic use case is one where we want to query a catalog from some position in the sky.
+In this example, we query the NuSTAR master catalog <code class="docutils literal notranslate"><span class="pre">numaster</span></code> for all observations
+of the AGN <code class="docutils literal notranslate"><span class="pre">NGC</span> <span class="pre">3783</span></code>. We use <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SkyCoord</span></code></a> to obtain the coordinates
+and then pass them to <a class="reference internal" href="../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.query_region" title="astroquery.heasarc.HeasarcClass.query_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_region</span></code></a>. In following, we
+also select only columns with <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>. Zero values are typically used for observations
+that have been approved but not observed.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.heasarc</span> <span class="kn">import</span> <span class="n">Heasarc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pos</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s1">&#39;ngc 3783&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tab</span> <span class="o">=</span> <span class="n">Heasarc</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">catalog</span><span class="o">=</span><span class="s1">&#39;numaster&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tab</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">tab</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tab</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tab</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;obsid&#39;</span><span class="p">,</span> <span class="s1">&#39;ra&#39;</span><span class="p">,</span> <span class="s1">&#39;dec&#39;</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+<span class="go">name      obsid       ra      dec</span>
+<span class="go">                    deg      deg</span>
+<span class="go">-------- ----------- -------- --------</span>
+<span class="go">NGC_3783 60101110002 174.7236 -37.7230</span>
+<span class="go">NGC_3783 60101110004 174.7253 -37.7277</span>
+<span class="go">NGC_3783 80202006002 174.7838 -37.7277</span>
+</pre></div>
+</div>
+<p>To query a region around some position, specifying the search radius,
+we use <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Quantity</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.heasarc</span> <span class="kn">import</span> <span class="n">Heasarc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pos</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="s1">&#39;120 38&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tab</span> <span class="o">=</span> <span class="n">Heasarc</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">catalog</span><span class="o">=</span><span class="s1">&#39;chanmaster&#39;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tab</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tab</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;obsid&#39;</span><span class="p">,</span> <span class="s1">&#39;ra&#39;</span><span class="p">,</span> <span class="s1">&#39;dec&#39;</span><span class="p">][:</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">align</span><span class="o">=</span><span class="s1">&#39;&lt;&#39;</span><span class="p">)</span>
+<span class="go">           name           obsid     ra      dec</span>
+<span class="go">                                   deg      deg</span>
+<span class="go">------------------------- ----- --------- --------</span>
+<span class="go">B2 0755+37                858   119.61750 37.78667</span>
+<span class="go">ABELL 611                 3194  120.23708 36.05722</span>
+<span class="go">1RXS J075526.1+391111     13008 118.85875 39.18639</span>
+<span class="go">SDSS J080040.77+391700.5  18110 120.17000 39.28344</span>
+<span class="go">WISEA J080357.73+390823.1 28213 120.99060 39.13980</span>
+</pre></div>
+</div>
+<p>If no radius value is given, a default that is appropriate
+for each catalog is used. You can see the value of the default
+radius values by calling <a class="reference internal" href="../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.get_default_radius" title="astroquery.heasarc.HeasarcClass.get_default_radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_default_radius</span></code></a>,
+passing the name of the catalog.</p>
+<p>The list of returned columns can also be given as a comma-separated string to
+<a class="reference internal" href="../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.query_region" title="astroquery.heasarc.HeasarcClass.query_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_region</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.heasarc</span> <span class="kn">import</span> <span class="n">Heasarc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pos</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="s1">&#39;120 38&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tab</span> <span class="o">=</span> <span class="n">Heasarc</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">catalog</span><span class="o">=</span><span class="s1">&#39;chanmaster&#39;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span>
+<span class="gp">... </span>                           <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;obsid, name, time, pi&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tab</span><span class="p">[:</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+<span class="go">obsid            name                 time          pi</span>
+<span class="go">                                    d</span>
+<span class="go">----- ------------------------- ---------------- -------</span>
+<span class="go">3194                 ABELL 611 52216.7805324074   Allen</span>
+<span class="go">858                B2 0755+37 51637.0090740741 Worrall</span>
+<span class="go">28213 WISEA J080357.73+390823.1 60315.9524768519  Pooley</span>
+<span class="go">29168 WISEA J080357.73+390823.1 60316.2761805556  Pooley</span>
+<span class="go">13008     1RXS J075526.1+391111 55536.6453587963     Liu</span>
+</pre></div>
+</div>
+<p>If no columns are given, the call will return a set of default columns.
+If you want all the columns returned, use <code class="docutils literal notranslate"><span class="pre">columns='*'</span></code></p>
+</section>
+<section id="list-available-catalogs">
+<h3>List Available Catalogs<a class="headerlink" href="#list-available-catalogs" title="Link to this heading">¶</a></h3>
+<p>The collection of available catalogs can be obtained by calling the <a class="reference internal" href="../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.list_catalogs" title="astroquery.heasarc.HeasarcClass.list_catalogs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_catalogs</span></code></a>
+method. In this example, we query the master catalogs only by passing <code class="docutils literal notranslate"><span class="pre">master=True</span></code>.
+which is <code class="docutils literal notranslate"><span class="pre">False</span></code> by default (i.e. return all catalogs). <a class="reference internal" href="../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.list_catalogs" title="astroquery.heasarc.HeasarcClass.list_catalogs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_catalogs</span></code></a> returns an
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Table</span></code></a> with two columns containing the names and description of the available
+catalogs.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.heasarc</span> <span class="kn">import</span> <span class="n">Heasarc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">catalogs</span> <span class="o">=</span> <span class="n">Heasarc</span><span class="o">.</span><span class="n">list_catalogs</span><span class="p">(</span><span class="n">master</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">catalogs</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">align</span><span class="o">=</span><span class="s1">&#39;&lt;&#39;</span><span class="p">)</span>
+<span class="go">   name                             description</span>
+<span class="go">---------- -------------------------------------------------------------</span>
+<span class="go">ascamaster ASCA Master Catalog</span>
+<span class="go">chanmaster Chandra Observations</span>
+<span class="go">cmbmaster  LAMBDA Cosmic Microwave Background Experiments Master Catalog</span>
+<span class="go">...</span>
+</pre></div>
+</div>
+<p>If you do not know the name of the catalog you are looking for, you can use the <code class="docutils literal notranslate"><span class="pre">keywords</span></code>
+parameter in <a class="reference internal" href="../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.list_catalogs" title="astroquery.heasarc.HeasarcClass.list_catalogs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_catalogs</span></code></a>. For example, if you want to find all catalogs that
+are related to Chandra, you can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.heasarc</span> <span class="kn">import</span> <span class="n">Heasarc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">catalogs</span> <span class="o">=</span> <span class="n">Heasarc</span><span class="o">.</span><span class="n">list_catalogs</span><span class="p">(</span><span class="n">keywords</span><span class="o">=</span><span class="s1">&#39;chandra&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># list the first 10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">catalogs</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+<span class="go">   name                              description</span>
+<span class="go">---------- ----------------------------------------------------------------</span>
+<span class="go">acceptcat Archive of Chandra Cluster Entropy Profile Tables (ACCEPT) Catal</span>
+<span class="go">    aegisx  AEGIS-X Chandra Extended Groth Strip X-Ray Point Source Catalog</span>
+<span class="go">aegisxdcxo           AEGIS-X Deep Survey Chandra X-Ray Point Source Catalog</span>
+<span class="go">aknepdfcxo  Akari North Ecliptic Pole Deep Field Chandra X-Ray Point Source</span>
+<span class="go">arcquincxo Arches and Quintuplet Clusters Chandra X-Ray Point Source Catalo</span>
+<span class="go">atcdfsss82  Australia Telescope Chandra Deep Field-South and SDSS Stripe 82</span>
+<span class="go">bmwchancat                 Brera Multi-scale Wavelet Chandra Source Catalog</span>
+<span class="go">candelscxo                   CANDELS H-Band Selected Chandra Source Catalog</span>
+<span class="go">cargm31cxo          Carina Nebula Gum 31 Chandra X-Ray Point Source Catalog</span>
+<span class="go">carinaclas                 Carina Nebula Chandra X-Ray Point Source Classes</span>
+</pre></div>
+</div>
+<p>If you are interested only finding the master catalogs, you can also set <code class="docutils literal notranslate"><span class="pre">master</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.heasarc</span> <span class="kn">import</span> <span class="n">Heasarc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">catalog</span> <span class="o">=</span> <span class="n">Heasarc</span><span class="o">.</span><span class="n">list_catalogs</span><span class="p">(</span><span class="n">keywords</span><span class="o">=</span><span class="s1">&#39;chandra&#39;</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">catalog</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+<span class="go">   name        description</span>
+<span class="go">---------- --------------------</span>
+<span class="go">chanmaster Chandra Observations</span>
+</pre></div>
+</div>
+<p>Multiple keywords that are separated by space are joined with <strong>AND</strong>, so the
+following finds all the catalogs that have both ‘xmm’ and ‘chandra’ keywords:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.heasarc</span> <span class="kn">import</span> <span class="n">Heasarc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">catalog</span> <span class="o">=</span> <span class="n">Heasarc</span><span class="o">.</span><span class="n">list_catalogs</span><span class="p">(</span><span class="n">keywords</span><span class="o">=</span><span class="s1">&#39;xmm chandra&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">catalog</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+<span class="go">   name                              description</span>
+<span class="go">---------- ----------------------------------------------------------------</span>
+<span class="go">gmrt1hxcsf Giant Metrewave Radio Telescope 1h XMM/Chandra Survey Fld 610-MH</span>
+<span class="go">ic10xmmcxo          IC 10 XMM-Newton and Chandra X-Ray Point Source Catalog</span>
+<span class="go">ros13hrcxo      ROSAT/XMM-Newton 13-hour Field Chandra X-Ray Source Catalog</span>
+<span class="go">xmmomcdfs   XMM-Newton Optical Monitor Chandra Deep Field-South UV Catalog</span>
+</pre></div>
+</div>
+<p>If you want an <strong>OR</strong> relation between keywords, you can pass them in a list. The
+following for instance will find master catalogs that have keywords ‘nicer’ or ‘swift’</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.heasarc</span> <span class="kn">import</span> <span class="n">Heasarc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">catalog</span> <span class="o">=</span> <span class="n">Heasarc</span><span class="o">.</span><span class="n">list_catalogs</span><span class="p">(</span><span class="n">keywords</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;nicer&#39;</span><span class="p">,</span> <span class="s1">&#39;swift&#39;</span><span class="p">],</span> <span class="n">master</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">catalog</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+<span class="go">   name        description</span>
+<span class="go">---------- --------------------</span>
+<span class="go">nicermastr NICER Master Catalog</span>
+<span class="go">swiftmastr Swift Master Catalog</span>
+</pre></div>
+</div>
+</section>
+<section id="links-to-data-products">
+<h3>Links to Data Products<a class="headerlink" href="#links-to-data-products" title="Link to this heading">¶</a></h3>
+<p>Once the query result is obtained, you can query any data products associated
+with those results.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.heasarc</span> <span class="kn">import</span> <span class="n">Heasarc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pos</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s1">&#39;ngc 3516&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tab</span> <span class="o">=</span> <span class="n">Heasarc</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">catalog</span><span class="o">=</span><span class="s1">&#39;nicermastr&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tab</span> <span class="o">=</span> <span class="n">tab</span><span class="p">[</span><span class="n">tab</span><span class="p">[</span><span class="s1">&#39;exposure&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">links</span> <span class="o">=</span> <span class="n">Heasarc</span><span class="o">.</span><span class="n">locate_data</span><span class="p">(</span><span class="n">tab</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">links</span><span class="p">[</span><span class="s1">&#39;access_url&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+<span class="go">                            access_url</span>
+<span class="go">---------------------------------------------------------------------</span>
+<span class="go">https://heasarc.gsfc.nasa.gov/FTP/nicer/data/obs/2018_08//1100120101/</span>
+<span class="go">https://heasarc.gsfc.nasa.gov/FTP/nicer/data/obs/2018_08//1100120102/</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">links</span></code> table has three relevant columns: <code class="docutils literal notranslate"><span class="pre">access_url</span></code>, <code class="docutils literal notranslate"><span class="pre">sciserver</span></code> and <code class="docutils literal notranslate"><span class="pre">aws</span></code>.
+The first gives the url to the data from the main heasarc server. The second gives
+the local path to the data on Sciserver. The last gives the S3 URI to the data in the cloud.
+You can specify where the data are to be downloaded using the <code class="docutils literal notranslate"><span class="pre">location</span></code> parameter.</p>
+<p>To download the data, you can pass <code class="docutils literal notranslate"><span class="pre">links</span></code> table (or row) to <a class="reference internal" href="../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.download_data" title="astroquery.heasarc.HeasarcClass.download_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_data</span></code></a>,
+specifying from where you want the data to be fetched by specifying the <code class="docutils literal notranslate"><span class="pre">host</span></code> parameter. By default,
+the data is fetched from the main HEASARC servers.
+The recommendation is to use different hosts depending on where your code is running:
+* <code class="docutils literal notranslate"><span class="pre">host='sciserver'</span></code>: Use this option if you running you analysis on Sciserver. Because
+all the archive can be mounted locally there, <a class="reference internal" href="../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.download_data" title="astroquery.heasarc.HeasarcClass.download_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_data</span></code></a>
+will only copy the relevant data.
+* <code class="docutils literal notranslate"><span class="pre">host='aws'</span></code>: Use this option if you are running the analysis in Amazon Web Services (AWS).
+Data will be downloaded from AWS S3 storage.
+* <code class="docutils literal notranslate"><span class="pre">host='heasarc'</span></code>: Use this option for other cases. This is the classical and most general option.
+In this case, the requested data will be tarred and downloaded as a single file called <code class="docutils literal notranslate"><span class="pre">heasarc-data.tar</span></code>
+before being untarred.</p>
+</section>
+<section id="advanced-queries">
+<h3>Advanced Queries<a class="headerlink" href="#advanced-queries" title="Link to this heading">¶</a></h3>
+<p>Behind the scenes, <a class="reference internal" href="../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.query_region" title="astroquery.heasarc.HeasarcClass.query_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_region</span></code></a> constructs an query in the
+Astronomical Data Query Language ADQL, which is powerful in constructing
+complex queries. Passing <code class="docutils literal notranslate"><span class="pre">get_query_payload=True</span></code> to <a class="reference internal" href="../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.query_region" title="astroquery.heasarc.HeasarcClass.query_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_region</span></code></a>
+returns the constructed ADQL query.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.heasarc</span> <span class="kn">import</span> <span class="n">Heasarc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pos</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="s1">&#39;120 38&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="n">Heasarc</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">catalog</span><span class="o">=</span><span class="s1">&#39;xmmmaster&#39;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">2</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span>
+<span class="gp">... </span>                             <span class="n">columns</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">get_query_payload</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span>
+<span class="go">&quot;SELECT * FROM xmmmaster WHERE CONTAINS(POINT(&#39;ICRS&#39;,ra,dec),CIRCLE(&#39;ICRS&#39;,120.0,38.0,2.0))=1&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># The query can be modified and then submitted using:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;SELECT ra,dec,name,obsid FROM xmmmaster</span>
+<span class="gp">... </span><span class="s2">           WHERE CONTAINS(POINT(&#39;ICRS&#39;,ra,dec),CIRCLE(&#39;ICRS&#39;,120.0,38.0,2.0))=1&quot;&quot;&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tab</span> <span class="o">=</span> <span class="n">Heasarc</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">to_table</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tab</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+<span class="go">    ra      dec            name           obsid</span>
+<span class="go">deg      deg</span>
+<span class="go">--------- -------- -------------------- ----------</span>
+<span class="go">120.22707 36.04139            Abell 611 0781590301</span>
+<span class="go">120.25583 36.04944            Abell 611 0781590501</span>
+<span class="go">120.23300 36.06100                 A611 0605000601</span>
+<span class="go">120.21750 36.06500            Abell 611 0781590401</span>
+<span class="go">120.24624 36.07305            Abell 611 0781590201</span>
+<span class="go">120.39708 36.46875 RMJ080135.3+362807.5 0881901001</span>
+<span class="go">119.61710 37.78661           B2 0755+37 0602390101</span>
+<span class="go">121.92084 39.00417              UGC4229 0138950101</span>
+<span class="go">121.92084 39.00417              UGC4229 0138951401</span>
+<span class="go">121.92099 39.00422              MRK 622 0852180501</span>
+</pre></div>
+</div>
+</section>
+<section id="complex-regions">
+<h3>Complex Regions<a class="headerlink" href="#complex-regions" title="Link to this heading">¶</a></h3>
+<p>In addition to a cone search (some position and search radius), <code class="docutils literal notranslate"><span class="pre">`Heasarc.query_region`</span></code> accepts
+other options too, including <code class="docutils literal notranslate"><span class="pre">'box'</span></code>, <code class="docutils literal notranslate"><span class="pre">'polygon'</span></code> and <code class="docutils literal notranslate"><span class="pre">'all-sky'</span></code>. Details can be found
+in <a class="reference internal" href="../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.query_region" title="astroquery.heasarc.HeasarcClass.query_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_region</span></code></a>. Examples include:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># query box region</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pos</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="s1">&#39;226.2 10.6&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Heasarc</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">catalog</span><span class="o">=</span><span class="s1">&#39;xmmmaster&#39;</span><span class="p">,</span> <span class="n">spatial</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>for <code class="docutils literal notranslate"><span class="pre">'box'</span></code> and:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Heasarc</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="n">catalog</span><span class="o">=</span><span class="s1">&#39;xmmmaster&#39;</span><span class="p">,</span> <span class="n">spatial</span><span class="o">=</span><span class="s1">&#39;polygon&#39;</span><span class="p">,</span>
+<span class="go">              polygon=[(226.2,10.6),(225.9,10.5),(225.8,10.2),(226.2,10.3)])</span>
+</pre></div>
+</div>
+<p>for <code class="docutils literal notranslate"><span class="pre">'polygon'</span></code>.</p>
+</section>
+<section id="list-catalog-columns">
+<h3>List Catalog Columns<a class="headerlink" href="#list-catalog-columns" title="Link to this heading">¶</a></h3>
+<p>To list the columns of some catalog, use <a class="reference internal" href="../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass.list_columns" title="astroquery.heasarc.HeasarcClass.list_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_columns</span></code></a>. Here we list the columns
+in the XMM master catalog <code class="docutils literal notranslate"><span class="pre">xmmmaster</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.heasarc</span> <span class="kn">import</span> <span class="n">Heasarc</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">columns</span> <span class="o">=</span> <span class="n">Heasarc</span><span class="o">.</span><span class="n">list_columns</span><span class="p">(</span><span class="n">catalog_name</span><span class="o">=</span><span class="s1">&#39;suzamaster&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">columns</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">columns</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">align</span><span class="o">=</span><span class="s1">&#39;&lt;&#39;</span><span class="p">)</span>
+<span class="go">      name                    description                 unit</span>
+<span class="go">--------------- ---------------------------------------- ------</span>
+<span class="go">dec             Declination (Pointing Position)          degree</span>
+<span class="go">exposure        Effective Total Observation Exposure (s) s</span>
+<span class="go">name            Designation of the Pointed Source</span>
+<span class="go">obsid           Unique Observation/Sequence Number</span>
+<span class="go">processing_date Date of Processing                       mjd</span>
+<span class="go">public_date     Public Date                              mjd</span>
+<span class="go">ra              Right Ascension (Pointing Position)      degree</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="reference-api">
+<h2>Reference/API<a class="headerlink" href="#reference-api" title="Link to this heading">¶</a></h2>
+<section id="module-astroquery.heasarc">
+<span id="astroquery-heasarc-package"></span><h3>astroquery.heasarc Package<a class="headerlink" href="#module-astroquery.heasarc" title="Link to this heading">¶</a></h3>
+<section id="heasarc">
+<h4>HEASARC<a class="headerlink" href="#heasarc" title="Link to this heading">¶</a></h4>
+<p>The High Energy Astrophysics Science Archive Research Center (HEASARC)
+is the primary archive for NASA’s (and other space agencies’) missions.</p>
+</section>
+<section id="classes">
+<h4>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h4>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/astroquery.heasarc.HeasarcClass.html#astroquery.heasarc.HeasarcClass" title="astroquery.heasarc.HeasarcClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HeasarcClass</span></code></a>()</p></td>
+<td><p>Class for accessing HEASARC data with VO protocol using the Xamin backend.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/astroquery.heasarc.Conf.html#astroquery.heasarc.Conf" title="astroquery.heasarc.Conf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Conf</span></code></a>()</p></td>
+<td><p>Configuration parameters for <a class="reference internal" href="#module-astroquery.heasarc" title="astroquery.heasarc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.heasarc</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">HEASARC Queries (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.heasarc</span></code>)</a><ul>
+<li><a class="reference internal" href="#getting-started">Getting started</a></li>
+<li><a class="reference internal" href="#heasarc-main-interface">Heasarc Main Interface</a><ul>
+<li><a class="reference internal" href="#query-a-catalog">Query a Catalog</a></li>
+<li><a class="reference internal" href="#list-available-catalogs">List Available Catalogs</a></li>
+<li><a class="reference internal" href="#links-to-data-products">Links to Data Products</a></li>
+<li><a class="reference internal" href="#advanced-queries">Advanced Queries</a></li>
+<li><a class="reference internal" href="#complex-regions">Complex Regions</a></li>
+<li><a class="reference internal" href="#list-catalog-columns">List Catalog Columns</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#reference-api">Reference/API</a><ul>
+<li><a class="reference internal" href="#module-astroquery.heasarc">astroquery.heasarc Package</a><ul>
+<li><a class="reference internal" href="#heasarc">HEASARC</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="../_sources/heasarc/heasarc.rst.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 02 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>

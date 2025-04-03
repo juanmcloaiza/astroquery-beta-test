@@ -1,0 +1,75 @@
+MastMissionsClass
+=================
+
+.. currentmodule:: astroquery.mast
+
+.. autoclass:: MastMissionsClass
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~MastMissionsClass.cache_location
+      ~MastMissionsClass.mission
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~MastMissionsClass.__call__
+      ~MastMissionsClass.authenticated
+      ~MastMissionsClass.clear_cache
+      ~MastMissionsClass.disable_cloud_dataset
+      ~MastMissionsClass.download_file
+      ~MastMissionsClass.download_products
+      ~MastMissionsClass.enable_cloud_dataset
+      ~MastMissionsClass.filter_products
+      ~MastMissionsClass.get_column_list
+      ~MastMissionsClass.get_dataset_kwd
+      ~MastMissionsClass.get_product_list
+      ~MastMissionsClass.get_product_list_async
+      ~MastMissionsClass.get_unique_product_list
+      ~MastMissionsClass.login
+      ~MastMissionsClass.logout
+      ~MastMissionsClass.query_criteria
+      ~MastMissionsClass.query_criteria_async
+      ~MastMissionsClass.query_object
+      ~MastMissionsClass.query_object_async
+      ~MastMissionsClass.query_region
+      ~MastMissionsClass.query_region_async
+      ~MastMissionsClass.reset_cache_location
+      ~MastMissionsClass.resolve_object
+      ~MastMissionsClass.session_info
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: cache_location
+   .. autoattribute:: mission
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__
+   .. automethod:: authenticated
+   .. automethod:: clear_cache
+   .. automethod:: disable_cloud_dataset
+   .. automethod:: download_file
+   .. automethod:: download_products
+   .. automethod:: enable_cloud_dataset
+   .. automethod:: filter_products
+   .. automethod:: get_column_list
+   .. automethod:: get_dataset_kwd
+   .. automethod:: get_product_list
+   .. automethod:: get_product_list_async
+   .. automethod:: get_unique_product_list
+   .. automethod:: login
+   .. automethod:: logout
+   .. automethod:: query_criteria
+   .. automethod:: query_criteria_async
+   .. automethod:: query_object
+   .. automethod:: query_object_async
+   .. automethod:: query_region
+   .. automethod:: query_region_async
+   .. automethod:: reset_cache_location
+   .. automethod:: resolve_object
+   .. automethod:: session_info

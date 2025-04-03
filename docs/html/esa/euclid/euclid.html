@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ESA EUCLID Archive (astroquery.esa.euclid) &#8212; astroquery v0.4.8.dev10179</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css?v=7f9a90b1" />
+    
+    <script src="../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../_static/documentation_options.js?v=1d6242bd"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../../_static/copybutton.js"></script>
+    <link rel="icon" href="../../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="EuclidClass" href="../../api/astroquery.esa.euclid.EuclidClass.html" />
+    <link rel="prev" title="Conf" href="../../api/astroquery.linelists.cdms.Conf.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="../../api/astroquery.esa.euclid.EuclidClass.html" title="EuclidClass">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../../api/astroquery.linelists.cdms.Conf.html" title="Conf">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../../index.html">astroquery v0.4.8.dev10179</a>
+	 &#187;
+      </li>
+      
+      <li>ESA EUCLID Archive (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.esa.euclid</span></code>)</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="esa-euclid-archive-astroquery-esa-euclid">
+<span id="astroquery-esa-euclid"></span><h1>ESA EUCLID Archive (<a class="reference internal" href="#module-astroquery.esa.euclid" title="astroquery.esa.euclid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.esa.euclid</span></code></a>)<a class="headerlink" href="#esa-euclid-archive-astroquery-esa-euclid" title="Link to this heading">¶</a></h1>
+<p>Euclid is an ESA mission to map the geometry of the dark Universe. The mission investigates the distance-redshift
+relationship and the evolution of cosmic structures. The space telescope creates a great map of the large-scale
+structure of the Universe across space and time by observing billions of galaxies out to 10 billion light-years, across
+more than a third of the sky. It achieves this by measuring shapes and redshifts of galaxies and clusters of galaxies
+out to redshifts ~2, or equivalently to a look-back time of 10 billion years. It therefore explores how the Universe has
+expanded and how structure has formed over cosmic history, revealing more about the role of gravity and the nature of
+dark energy and dark matter.</p>
+<p>This package allows access to the European Space Agency Euclid Archive (<a class="reference external" href="https://eas.esac.esa.int/">https://eas.esac.esa.int/</a>).</p>
+<p>The Euclid Survey is done in a ‘step-and-stare’ mode, where the telescope points to a position on the sky and then
+imaging and spectroscopic measurements are performed on an area of ~0.48 deg<sup>2</sup> around this position. The telescope
+consists of two cameras, the visible instrument (VIS) and the Near Infrared Spectrometer and Photometer (NISP)
+instrument that observe simultaneously using a light splitting dichroic.</p>
+<p>For the survey standard operating mode, the telescope undertakes a 4-point dither pattern. At each position VIS and NISP
+each take a 560s exposure, consisting of a direct visible image and a red grism exposure. This is followed by further
+NISP exposures in the Y, J, and H band filters (87 seconds each). The telescope is then dithered, and the sequence is
+repeated starting with a different grism position angle. There are actually two operational grisms oriented 180 degrees
+from each other. Each grism will be used twice in this sequence, but with slight angular offsets (+/- 4 degrees),
+effectively creating the four different grism angles (Scaramella et al. 2022, A&amp;A 662, A112).</p>
+<p>This standard four-dithers operating mode sequence is called a single observation and all the individual exposures
+associated with each observation are organized by Observation ID in the archive. The SGS also processes all of its
+imaging into merged mosaics, which can contain multiple different observations. All products associated with these
+mosaics are organized by Tile ID in the archive.</p>
+<p><a class="reference internal" href="#module-astroquery.esa.euclid" title="astroquery.esa.euclid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.esa.euclid</span></code></a> provides the astroquery interface to the metadata and datasets provided by the European Space
+Agency EUCLID Archive using a TAP+ REST service. TAP+ is an extension of Table Access Protocol (TAP: <a class="reference external" href="http://www.ivoa.net/documents/TAP/">http://www.ivoa.net/documents/TAP/</a>)
+specified by the International Virtual Observatory Alliance (IVOA: <a class="reference external" href="http://www.ivoa.net">http://www.ivoa.net</a>).</p>
+<p>The TAP query language is Astronomical Data Query Language
+(ADQL: <a class="reference external" href="https://www.ivoa.net/documents/ADQL/20231215/index.html">https://www.ivoa.net/documents/ADQL/20231215/index.html</a> ), which is similar to Structured Query Language (SQL),
+widely used to query databases.</p>
+<p>TAP provides two operation modes: Synchronous and Asynchronous:</p>
+<ul class="simple">
+<li><p>Synchronous: the response to the request will be generated as soon as the request received by the server.
+(Do not use this method for queries that generate a large amount of results.)</p></li>
+<li><p>Asynchronous: the server starts a job that will execute the request.
+The first response to the request is the required information (a link) to obtain the job status.
+Once the job is finished, the results can be retrieved.</p></li>
+</ul>
+<p>ESA EUCLID TAP+ server provides two access modes: public and authenticated:</p>
+<ul class="simple">
+<li><p>Public: this is the standard TAP access.
+A user can execute ADQL queries and upload tables to be used in a query ‘on-the-fly’ (these tables will be removed
+once the query is executed). The results are available to any other user, and they will remain in the server for a
+limited space of time.</p></li>
+<li><p>Authenticated: some functionalities are restricted to authenticated users only.
+The results are saved in a private user space and they will remain in the server forever (they can be removed by the
+user).</p>
+<ul>
+<li><p>ADQL queries and results are saved in a user private area.</p></li>
+<li><p>Cross-match operations: a catalog cross-match operation can be executed.
+Cross-match operations results are saved in a user private area.</p></li>
+<li><p>Persistence of uploaded tables: a user can upload a table in a private space.
+These tables can be used in queries as well as in cross-matches operations.</p></li>
+</ul>
+</li>
+</ul>
+<p>If you use public Euclid data in your paper, please take note of our <a class="reference external" href="https://www.cosmos.esa.int/web/euclid/data-credits-acknowledgements">guide</a> on how to acknowledge and cite Euclid data.</p>
+<p>This python module provides an Astroquery API access.</p>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
+<p>It is highly recommended checking the status of Euclid TAP before executing this module. To do this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">get_status_messages</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This method will retrieve the same warning messages shown in EUCLID Science Archive with information about service degradation.</p>
+<section id="euclid-science-archive-systems">
+<h3>0. Euclid science archive systems<a class="headerlink" href="#euclid-science-archive-systems" title="Link to this heading">¶</a></h3>
+<p>The Euclid Science Archive has several environments serving different purposes for the Euclid Consortium members.</p>
+<p>1. The OTF (“on-the-fly”) environment of the Euclid science archive, first started at the start of science operation exposed data as processed by
+the SGS (Science Ground Segment) soon after acquisition to provide an access as soon as possible. In this environment
+the data will not be reprocessed and the processing is therefore heterogeneous.</p>
+<p>2. The REG (for non-regression testing) environment of the Euclid science archive, where a large area in the sky is processed with the same version for
+all data products. The first campaign was run in September 2024, for area of about 500 square degrees (~1000
+observations), the next campaign shall be run in March-April 2025.</p>
+<p>3. The IDR (Internal Data Release) environment of the Euclid science archive holds the data that will then become public. The first release Q1
+opened on the 6th of November 2024, with a first pass on the three Euclid deep fields (EDFN, EDFS and EDFF) as well as
+observations on the Lynds Dark Nebula LDN1641.</p>
+<p>4. The PDR (Public Data Release) environment of the Euclid science archive holds the public data. Euclid Q1 data will be publicly released on March 19,
+2025. The main component of the Q1 data shall contain Level 2 data of a single visit (at the depth of the Euclid Wide
+Survey) over the Euclid Deep Fields (EDFs): 20 deg<sup>2</sup> of the EDF North, 10 deg<sup>2</sup> of EDF Fornax, and
+23 deg<sup>2</sup> of the EDF South. The deep fields will be visited multiple times during the mission.</p>
+<p>The description of these data products can be found on the Data Product Definition Document (<a class="reference external" href="http://st-dm.pages.euclid-sgs.uk/data-product-doc/dm10/">DPDD</a>)</p>
+<p>By default, the object <em>Euclid</em></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+</pre></div>
+</div>
+<p>makes use of the <em>PDR</em> environment. In order to make use of a different one, it is necessary to instantiate the class EuclidClass</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">EuclidClass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">euclid</span> <span class="o">=</span> <span class="n">EuclidClass</span><span class="p">(</span><span class="n">environment</span><span class="o">=</span><span class="s1">&#39;IDR&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The parameter <em>environment</em> is limited to <em>IDR</em>, <em>OTF</em>, <em>PDR</em> or <em>REG</em>.</p>
+</section>
+<section id="non-authenticated-access">
+<h3>1. Non authenticated access<a class="headerlink" href="#non-authenticated-access" title="Link to this heading">¶</a></h3>
+<section id="getting-public-tables-metadata">
+<h4>1.1. Getting public tables metadata<a class="headerlink" href="#getting-public-tables-metadata" title="Link to this heading">¶</a></h4>
+<p>Table and column metadata are specified by IVOA <a class="reference external" href="https://www.ivoa.net/documents/TAP/">TAP</a> recommendation (to access to the actual data, an ADQL query must be executed).</p>
+<p>To load only table names metadata (TAP+ capability):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tables</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">load_tables</span><span class="p">(</span><span class="n">only_names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">include_shared_tables</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">INFO: Retrieving tables... [astroquery.utils.tap.core]</span>
+<span class="go">INFO: Parsing tables... [astroquery.utils.tap.core]</span>
+<span class="go">INFO: Done. [astroquery.utils.tap.core]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tables</span><span class="p">),</span> <span class="s2">&quot;tables&quot;</span><span class="p">)</span> 
+<span class="go">Found 34 tables</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>  
+<span class="go">ivoa.obscore</span>
+<span class="go">public.dual</span>
+<span class="go">sedm.raw_detector</span>
+<span class="go">sedm.raw_frame</span>
+<span class="go">sedm.raw_quadrant</span>
+<span class="go">sedm.aux_calibrated</span>
+<span class="go">sedm.aux_mosaic</span>
+<span class="go">sedm.aux_stacked</span>
+<span class="go">sedm.basic_download_data</span>
+<span class="go">sedm.calibrated_detectors</span>
+<span class="go">sedm.calibrated_frame</span>
+<span class="go">sedm.column_values</span>
+<span class="go">sedm.combined_spectra</span>
+<span class="go">...</span>
+<span class="go">tap_config.coord_sys</span>
+<span class="go">tap_config.properties</span>
+<span class="go">...</span>
+</pre></div>
+</div>
+<p>To load all table metadata (TAP compatible):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tables</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">load_tables</span><span class="p">()</span>
+<span class="go">INFO: Retrieving tables... [astroquery.utils.tap.core]</span>
+<span class="go">INFO: Parsing tables... [astroquery.utils.tap.core]</span>
+<span class="go">INFO: Done. [astroquery.utils.tap.core]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> 
+<span class="go">TAP Table name: ivoa.obscore</span>
+<span class="go">Description: None</span>
+<span class="go">Size (bytes): 0</span>
+<span class="go">Num. columns: 34</span>
+</pre></div>
+</div>
+<p>To load only a table (TAP+ capability) and inspect its columns:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">raw_detector_table</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">load_table</span><span class="p">(</span><span class="s1">&#39;sedm.raw_detector&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">raw_detector_table</span><span class="p">)</span> 
+<span class="go">TAP Table name: sedm.raw_detector</span>
+<span class="go">Description: None</span>
+<span class="go">Size (bytes): 0</span>
+<span class="go">Num. columns: 12</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">column</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">raw_detector_table</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>  
+<span class="go">crpix1</span>
+<span class="go">crpix2</span>
+<span class="go">crval1</span>
+<span class="go">crval2</span>
+<span class="go">detector_id</span>
+<span class="go">detector_oid</span>
+<span class="go">l1_raw_frame_oid</span>
+<span class="go">q1_oid</span>
+<span class="go">q2_oid</span>
+<span class="go">q3_oid</span>
+<span class="go">q4_oid</span>
+<span class="go">to_be_published</span>
+</pre></div>
+</div>
+<p>To get the list of products associated with a given Euclid observation_id or tile_index (for mosaic):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">product_list_results</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">get_product_list</span><span class="p">(</span><span class="n">tile_index</span><span class="o">=</span><span class="s2">&quot;102018211&quot;</span><span class="p">,</span> <span class="n">product_type</span><span class="o">=</span><span class="s2">&quot;DpdMerBksMosaic&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">product_list_results</span><span class="p">),</span> <span class="s2">&quot;results&quot;</span><span class="p">)</span>
+<span class="go">Found 12 results</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">product_list_results</span><span class="p">)</span>
+<span class="go">                                    file_name                                      mosaic_product_oid tile_index instrument_name filter_name category second_type     ra       dec   technique</span>
+<span class="go">                                      str255                                             int64          int64         str255        str255    str255     str255    float64   float64   str255</span>
+<span class="go">---------------------------------------------------------------------------------- ------------------ ---------- --------------- ----------- -------- ----------- ---------- ------- ---------</span>
+<span class="go">EUC_MER_BGSUB-MOSAIC-DES-I_TILE102018211-31E2C9_20241018T143048.358037Z_00.00.fits               1399  102018211           DECAM     DECAM_i  SCIENCE         SKY 57.9990741   -51.5     IMAGE</span>
+<span class="go">  EUC_MER_BGSUB-MOSAIC-VIS_TILE102018211-ACBD03_20241018T142710.276838Z_00.00.fits               1395  102018211             VIS         VIS  SCIENCE         SKY 57.9990741   -51.5     IMAGE</span>
+<span class="go">EUC_MER_BGSUB-MOSAIC-DES-G_TILE102018211-D9D163_20241018T143010.768685Z_00.00.fits               1394  102018211           DECAM     DECAM_g  SCIENCE         SKY 57.9990741   -51.5     IMAGE</span>
+<span class="go">EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102018211-42F1AD_20241018T142558.469987Z_00.00.fits               1396  102018211            NISP       NIR_H  SCIENCE         SKY 57.9990741   -51.5     IMAGE</span>
+<span class="go">EUC_MER_BGSUB-MOSAIC-NIR-J_TILE102018211-E044A1_20241018T142600.459089Z_00.00.fits               1393  102018211            NISP       NIR_J  SCIENCE         SKY 57.9990741   -51.5     IMAGE</span>
+<span class="go">EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE102018211-E5CAE1_20241018T142558.172837Z_00.00.fits               1397  102018211            NISP       NIR_Y  SCIENCE         SKY 57.9990741   -51.5     IMAGE</span>
+<span class="go">EUC_MER_BGSUB-MOSAIC-DES-R_TILE102018211-1078B7_20241018T142927.232351Z_00.00.fits               1401  102018211           DECAM     DECAM_r  SCIENCE         SKY 57.9990741   -51.5     IMAGE</span>
+<span class="go">EUC_MER_BGSUB-MOSAIC-DES-Z_TILE102018211-83C32F_20241018T143526.104818Z_00.00.fits               1398  102018211           DECAM     DECAM_z  SCIENCE         SKY 57.9990741   -51.5     IMAGE</span>
+</pre></div>
+</div>
+<p>The method returns a list of products as an astropy.table.</p>
+</section>
+<section id="cone-search">
+<h4>1.2. Cone search<a class="headerlink" href="#cone-search" title="Link to this heading">¶</a></h4>
+<p>This query performs a cone search centered at the specified ra/dec coordinates with the provided radius argument.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1">#example cone search for source NGC6505</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">coord</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="s2">&quot;17h51m07.4s +65d31m50.8s&quot;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s1">&#39;icrs&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">radius</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">cone_search</span><span class="p">(</span><span class="n">coordinate</span><span class="o">=</span><span class="n">coord</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;sedm.mosaic_product&quot;</span><span class="p">,</span> <span class="n">ra_column_name</span><span class="o">=</span><span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="n">dec_column_name</span><span class="o">=</span><span class="s2">&quot;dec&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">async_job</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">INFO: Query finished. [astroquery.utils.tap.core]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cone_results</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get_results</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cone_results</span><span class="p">),</span> <span class="s2">&quot;results&quot;</span><span class="p">)</span>
+<span class="go">Found 27 results</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cone_results</span><span class="p">[</span><span class="s1">&#39;tile_index&#39;</span><span class="p">,</span> <span class="s1">&#39;creation_date&#39;</span><span class="p">,</span> <span class="s1">&#39;ra&#39;</span><span class="p">,</span> <span class="s1">&#39;dec&#39;</span><span class="p">,</span> <span class="s1">&#39;file_name&#39;</span><span class="p">,</span> <span class="s1">&#39;file_path&#39;</span><span class="p">,</span> <span class="s1">&#39;datalabs_path&#39;</span><span class="p">,</span> <span class="s1">&#39;filter_name&#39;</span><span class="p">,</span> <span class="s1">&#39;dist&#39;</span><span class="p">][:</span><span class="mi">5</span><span class="p">]</span>
+<span class="go">&lt;Table length=5&gt;</span>
+<span class="go">tile_index      creation_date           ra       dec                                         file_name                                                              file_path                                       datalabs_path                filter_name         dist</span>
+<span class="go">  int64             str23            float64   float64                                         str88                                                                  str55                                             str43                       str11          float64</span>
+<span class="go">---------- ----------------------- ----------- ------- ------------------------------------------------------------------------------------- ------------------------------------------------------- ------------------------------------------- ----------- -------------------</span>
+<span class="go"> 102158889 2024-10-26T14:01:21.038 267.3807789 65.4983   EUC_MER_BGSUB-MOSAIC-CFIS-R_TILE102158889-4366B7_20241024T203624.450577Z_00.00.fits /euclid/repository_idr/iqr1/Q1_R1/MER/102158889/MEGACAM /data/euclid_q1/Q1_R1/MER/102158889/MEGACAM   MEGACAM_r 0.16895922479034217</span>
+<span class="go"> 102158889 2024-10-26T13:50:13.676 267.3807789 65.4983 EUC_MER_BGSUB-MOSAIC-WISHES-G_TILE102158889-3DC3C3_20241024T205647.635112Z_00.00.fits     /euclid/repository_idr/iqr1/Q1_R1/MER/102158889/HSC     /data/euclid_q1/Q1_R1/MER/102158889/HSC       HSC_g 0.16895922479034217</span>
+<span class="go"> 102158889 2024-10-26T13:37:09.628 267.3807789 65.4983    EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE102158889-AC6585_20241024T225321.344048Z_00.00.fits    /euclid/repository_idr/iqr1/Q1_R1/MER/102158889/NISP    /data/euclid_q1/Q1_R1/MER/102158889/NISP       NIR_Y 0.16895922479034217</span>
+<span class="go"> 102158889  2024-10-26T14:05:09.98 267.3807789 65.4983    EUC_MER_BGSUB-MOSAIC-CFIS-U_TILE102158889-9E97F_20241024T204431.839748Z_00.00.fits /euclid/repository_idr/iqr1/Q1_R1/MER/102158889/MEGACAM /data/euclid_q1/Q1_R1/MER/102158889/MEGACAM   MEGACAM_u 0.16895922479034217</span>
+<span class="go"> 102158889 2024-10-26T13:10:32.453 267.3807789 65.4983    EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102158889-ED035A_20241024T212936.705156Z_00.00.fits    /euclid/repository_idr/iqr1/Q1_R1/MER/102158889/NISP    /data/euclid_q1/Q1_R1/MER/102158889/NISP       NIR_H 0.16895922479034217</span>
+</pre></div>
+</div>
+<p>Queries return a limited number of rows controlled by <code class="docutils literal notranslate"><span class="pre">Euclid.ROW_LIMIT</span></code>. To change the default behaviour set this appropriately.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">ROW_LIMIT</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">cone_search</span><span class="p">(</span><span class="n">coordinate</span><span class="o">=</span><span class="n">coord</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;sedm.mosaic_product&quot;</span><span class="p">,</span> <span class="n">ra_column_name</span><span class="o">=</span><span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="n">dec_column_name</span><span class="o">=</span><span class="s2">&quot;dec&quot;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="n">async_job</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cone_results</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get_results</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cone_results</span><span class="p">),</span> <span class="s2">&quot;results&quot;</span><span class="p">)</span>
+<span class="go">Found 2 results</span>
+</pre></div>
+</div>
+<p>To return an unlimited number of rows set <code class="docutils literal notranslate"><span class="pre">Euclid.ROW_LIMIT</span></code> to -1.</p>
+</section>
+<section id="query-object">
+<h4>1.3. Query object<a class="headerlink" href="#query-object" title="Link to this heading">¶</a></h4>
+<p>This query searches for all the objects contained in an arbitrary rectangular projection of the sky.</p>
+<p>WARNING: This method implements the ADQL BOX function that is deprecated in the latest version of the standard
+(ADQL 2.1,  see: <a class="reference external" href="https://ivoa.net/documents/ADQL/20231107/PR-ADQL-2.1-20231107.html#tth_sEc4.2.9">https://ivoa.net/documents/ADQL/20231107/PR-ADQL-2.1-20231107.html#tth_sEc4.2.9</a>).</p>
+<p>The following example searches for all the sources contained in an squared region of side = 0.1 degrees around a specific point in ra/dec coordinates. The results are sorted by distance (<code class="docutils literal notranslate"><span class="pre">dist</span></code>) in ascending order.</p>
+<p>The method returns the job results as astropy.table</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Search for objects around a given position with the default catalog catalogue.mer_catalogue</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">coord</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="mf">60.3372780005097</span><span class="p">,</span> <span class="n">dec</span><span class="o">=-</span><span class="mf">49.93184727724773</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">),</span> <span class="n">frame</span><span class="o">=</span><span class="s1">&#39;icrs&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">query_object</span><span class="p">(</span><span class="n">coordinate</span><span class="o">=</span><span class="n">coord</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">),</span> <span class="n">height</span><span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found a total of&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">table</span><span class="p">),</span> <span class="s2">&quot;query results&quot;</span><span class="p">)</span>
+<span class="go">Found a total of 2000 query results</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+<span class="go">         dist         avg_trans_wave_g_ext_decam avg_trans_wave_g_ext_hsc avg_trans_wave_g_ext_jpcam avg_trans_wave_g_ext_lsst avg_trans_wave_h avg_trans_wave_i_ext_decam ... sersic_fract_z_ext_panstarrs_disk_sersic sersic_fract_z_ext_panstarrs_disk_sersic_err she_flag spurious_flag     spurious_prob      variable_flag vis_det</span>
+<span class="go">--------------------- -------------------------- ------------------------ -------------------------- ------------------------- ---------------- -------------------------- ... ---------------------------------------- -------------------------------------------- -------- ------------- ---------------------- ------------- -------</span>
+<span class="go">3.566798805594703e-06            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0    0.15743961930274963            --       1</span>
+<span class="go">0.0004459918667892947            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0   0.004427384119480848            --       1</span>
+<span class="go">0.0011813971416470212            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0     0.1833316683769226            --       1</span>
+<span class="go">0.0015542789169486976            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0    0.12239421904087067            --       0</span>
+<span class="go">0.0015885047273778879            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0 0.00021384040883276612            --       1</span>
+<span class="go">                  ...                        ...                      ...                        ...                       ...              ...                        ... ...                                      ...                                          ...      ...           ...                    ...           ...     ...</span>
+<span class="go">  0.03958455791235079            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0     0.1343534141778946            --       0</span>
+<span class="go">  0.03958823626200475            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0 0.00015592691488564014            --       1</span>
+<span class="go">  0.03959898295410331            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0     0.0365927591919899            --       1</span>
+<span class="go"> 0.039605684988334174            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0     0.0831669270992279            --       0</span>
+<span class="go">  0.03960602180308949            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             1     0.6376287937164307            --       1</span>
+<span class="go"> 0.039606556762811496            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0   0.012528697960078716            --       1</span>
+<span class="go">  0.03962541836711639            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0   0.003399776993319392            --       1</span>
+<span class="go">Length = 2000 rows</span>
+</pre></div>
+</div>
+<p>Synchronous queries like this one return a limited number of rows -&gt; 2000</p>
+<p>The previous query can be executed as an asynchronous version:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">coord</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="mf">60.3372780005097</span><span class="p">,</span> <span class="n">dec</span><span class="o">=-</span><span class="mf">49.93184727724773</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">),</span> <span class="n">frame</span><span class="o">=</span><span class="s1">&#39;icrs&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">width</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">height</span><span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table_async</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">query_object</span><span class="p">(</span><span class="n">coordinate</span><span class="o">=</span><span class="n">coord</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span> <span class="n">async_job</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">INFO: Query finished. [astroquery.utils.tap.core]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found a total of&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">table_async</span><span class="p">),</span> <span class="s2">&quot;query results&quot;</span><span class="p">)</span>
+<span class="go">Found a total of 2895 query results</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">table_async</span><span class="p">)</span>
+<span class="go">         dist         avg_trans_wave_g_ext_decam avg_trans_wave_g_ext_hsc avg_trans_wave_g_ext_jpcam avg_trans_wave_g_ext_lsst avg_trans_wave_h avg_trans_wave_i_ext_decam ... sersic_fract_z_ext_panstarrs_disk_sersic sersic_fract_z_ext_panstarrs_disk_sersic_err she_flag spurious_flag     spurious_prob      variable_flag vis_det</span>
+<span class="go">--------------------- -------------------------- ------------------------ -------------------------- ------------------------- ---------------- -------------------------- ... ---------------------------------------- -------------------------------------------- -------- ------------- ---------------------- ------------- -------</span>
+<span class="go">3.566798805594703e-06            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0    0.15743961930274963            --       1</span>
+<span class="go">0.0004459918667892947            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0   0.004427384119480848            --       1</span>
+<span class="go">0.0011813971416470212            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0     0.1833316683769226            --       1</span>
+<span class="go">0.0015542789169486976            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0    0.12239421904087067            --       0</span>
+<span class="go">0.0015885047273778879            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0 0.00021384040883276612            --       1</span>
+<span class="go">                  ...                        ...                      ...                        ...                       ...              ...                        ... ...                                      ...                                          ...      ...           ...                    ...           ...     ...</span>
+<span class="go">  0.03958455791235079            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0     0.1343534141778946            --       0</span>
+<span class="go">  0.03958823626200475            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0 0.00015592691488564014            --       1</span>
+<span class="go">  0.03959898295410331            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0     0.0365927591919899            --       1</span>
+<span class="go"> 0.039605684988334174            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0     0.0831669270992279            --       0</span>
+<span class="go">  0.03960602180308949            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             1     0.6376287937164307            --       1</span>
+<span class="go"> 0.039606556762811496            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0   0.012528697960078716            --       1</span>
+<span class="go">  0.03962541836711639            4826.7998046875                       --                         --                        --               --             7826.669921875 ...                                       --                                           --       --             0   0.003399776993319392            --       1</span>
+<span class="go">Length = 2000 rows</span>
+</pre></div>
+</div>
+</section>
+<section id="synchronous-query">
+<h4>1.4. Synchronous query<a class="headerlink" href="#synchronous-query" title="Link to this heading">¶</a></h4>
+<p>The results of a synchronous query are stored at the user side (i.e., they are not saved in the server). These queries
+can only be used when the amount of data to be retrieved (number of rows) is small, otherwise, a timeout error can be raised.
+The output of the synchronous queries is limited to 2000 rows. If you need more than that, you must use asynchronous queries.
+The results of asynchronous queries can be saved in memory (default) or in a file but are also stored on the server/archive
+so you can access the results by logging in on the archive website too.</p>
+<p>Query without saving results in a file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#query content: getting some galaxies from the mer catalogue</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">launch_job</span><span class="p">(</span><span class="s2">&quot;SELECT right_ascension, declination, segmentation_area, fluxerr_vis_1fwhm_aper, ellipticity, kron_radius FROM catalogue.mer_catalogue  WHERE ellipticity &gt; 0 ORDER BY ellipticity ASC&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source_results_table</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get_results</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">source_results_table</span><span class="p">),</span> <span class="s2">&quot; query results&quot;</span><span class="p">)</span>
+<span class="go">Found 2000  query results</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The results table includes the following&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">source_results_table</span><span class="o">.</span><span class="n">colnames</span><span class="p">),</span> <span class="s2">&quot;columns: &quot;</span><span class="p">,</span> <span class="n">source_results_table</span><span class="o">.</span><span class="n">colnames</span><span class="p">)</span>
+<span class="go">The results table includes the following 6 columns:  [&#39;right_ascension&#39;, &#39;declination&#39;, &#39;segmentation_area&#39;, &#39;fluxerr_vis_1fwhm_aper&#39;, &#39;ellipticity&#39;, &#39;kron_radius&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">source_results_table</span><span class="p">[:</span><span class="mi">15</span><span class="p">])</span>
+<span class="go"> right_ascension       declination     segmentation_area fluxerr_vis_1fwhm_aper      ellipticity          kron_radius</span>
+<span class="go">------------------ ------------------- ----------------- ---------------------- ---------------------- ------------------</span>
+<span class="go">  60.3372780005097  -49.93184727724773                45   0.024313488975167274 1.1569118214538321e-05 10.145233154296875</span>
+<span class="go"> 59.92581284609097 -48.117835930359156               165   0.035201895982027054 4.3500345782376826e-05 10.814051628112793</span>
+<span class="go"> 62.91963955425831  -45.60370330289406             43783                    nan  5.609192521660589e-05  884.3989868164062</span>
+<span class="go"> 54.38946012012026 -28.843720993232775               213    0.03697587549686432  6.897230923641473e-05  11.36937141418457</span>
+<span class="go"> 267.3583266451287  63.994872950197674                31    0.01883346401154995  8.067921589827165e-05 10.564066886901855</span>
+<span class="go">52.507667893100944 -29.445192357858655                44   0.020872678607702255 0.00010451683920109645 10.120616912841797</span>
+<span class="go"> 61.43102565450044  -48.13296805386111                53   0.023762457072734833 0.00010995510092470795 10.149212837219238</span>
+<span class="go">274.03172675714404   65.86352270374569               134    0.03499231114983559 0.00011172338417964056 10.804966926574707</span>
+<span class="go"> 271.4749139468259   68.66799925831447               725    0.07235158979892731 0.00013952785229776055 15.325024604797363</span>
+<span class="go"> 64.08716465009101  -47.39574129846509                21   0.025711175054311752  0.0001506721746409312  8.137764930725098</span>
+<span class="go"> 62.46388138426946 -48.771499634650795               293    0.04792384058237076  0.0001519227953394875  12.14012336730957</span>
+<span class="go"> 59.12696116576496  -50.70917518433447                35   0.021673062816262245 0.00015204095689114183  13.88205337524414</span>
+<span class="go"> 64.00922297351093 -47.458008931760105               221     0.0443091057240963 0.00015916737902443856 11.836610794067383</span>
+<span class="go"> 63.12619441593158  -46.21602917569897                36   0.023102710023522377 0.00016669274191372097  9.809906959533691</span>
+<span class="go">   270.19726289254   68.13460591203628               157    0.03000682406127453 0.00018387728778179735 10.963176727294922</span>
+</pre></div>
+</div>
+<p>The method returns a Job object.</p>
+<p>Query saving results in a file (you may use ‘output_format’ to specify the results’ data format. Available formats are:
+‘votable’, ‘votable_plain’, ‘fits’, ‘csv’ and ‘json’, default is ‘votable’):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">launch_job</span><span class="p">(</span><span class="s2">&quot;SELECT right_ascension, declination, segmentation_area, fluxerr_vis_1fwhm_aper, ellipticity, kron_radius FROM catalogue.mer_catalogue  WHERE ellipticity &gt; 0 ORDER BY ellipticity ASC&quot;</span><span class="p">,</span> <span class="n">dump_to_file</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;votable&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">outputFile</span><span class="p">)</span>
+<span class="go">1668863838419O-result.vot.gz</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get_results</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="go">&lt;Table length=2000&gt;</span>
+<span class="go"> right_ascension       declination     segmentation_area fluxerr_vis_1fwhm_aper      ellipticity          kron_radius</span>
+<span class="go">     float64             float64             int32              float64                float64              float64</span>
+<span class="go">------------------ ------------------- ----------------- ---------------------- ---------------------- ------------------</span>
+<span class="go">  60.3372780005097  -49.93184727724773                45   0.024313488975167274 1.1569118214538321e-05 10.145233154296875</span>
+<span class="go"> 59.92581284609097 -48.117835930359156               165   0.035201895982027054 4.3500345782376826e-05 10.814051628112793</span>
+<span class="go"> 62.91963955425831  -45.60370330289406             43783                     --  5.609192521660589e-05  884.3989868164062</span>
+<span class="go"> 54.38946012012026 -28.843720993232775               213    0.03697587549686432  6.897230923641473e-05  11.36937141418457</span>
+<span class="go"> 267.3583266451287  63.994872950197674                31    0.01883346401154995  8.067921589827165e-05 10.564066886901855</span>
+<span class="go">               ...                 ...               ...                    ...                    ...                ...</span>
+<span class="go"> 274.4463705921747   64.52235051000498               139     0.0359811969101429  0.0021674882154911757 11.007905006408691</span>
+<span class="go">275.12508717512287   65.27789133746404                89   0.017870161682367325  0.0021674996241927147  9.524261474609375</span>
+<span class="go">62.343396630172755  -49.57660112316788               164   0.023227984085679054   0.002168711507692933  21.94918441772461</span>
+<span class="go"> 60.42143918751039 -47.698201261387545               124    0.03315594792366028  0.0021696146577596664 10.711515426635742</span>
+<span class="go">  59.5694307527783  -47.00910465608437               162   0.030248118564486504  0.0021698300261050463 11.478931427001953</span>
+</pre></div>
+</div>
+<p>You can inspect the status of the job by typing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+<span class="go">&lt;Table length=2000&gt;</span>
+<span class="go">         name           dtype  n_bad</span>
+<span class="go">---------------------- ------- -----</span>
+<span class="go">       right_ascension float64     0</span>
+<span class="go">           declination float64     0</span>
+<span class="go">     segmentation_area   int32     0</span>
+<span class="go">fluxerr_vis_1fwhm_aper float64    67</span>
+<span class="go">           ellipticity float64     0</span>
+<span class="go">           kron_radius float64     0</span>
+<span class="go">Jobid: None</span>
+<span class="go">Phase: COMPLETED</span>
+<span class="go">Owner: None</span>
+<span class="go">Output file: 1</span>
+</pre></div>
+</div>
+<p>Note: to obtain the current location, type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="asynchronous-query">
+<h4>1.5. Asynchronous query<a class="headerlink" href="#asynchronous-query" title="Link to this heading">¶</a></h4>
+<p>Asynchronous queries save all results on the server side, which means they take up the user’s file quota in the archive.
+These queries can be accessed at any time on the archive website. For anonymous users, results are kept for three days.
+For authenticated users, the asynchronous results are kept at the server side forever (until the user decides to remove them).
+Make sure to delete the results you don’t need anymore every once in a while to make sure you don’t reach the archive user
+quota. When that happens, all future jobs/queries will start failing. You can delete the jobs on the archive website
+(and soon through python too).</p>
+<p>The results of the execution of the queries can be stored locally in memory (by default) or in a file. The following
+command stores the result in memory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># query content: getting the mosaic file name corresponding to the first source in the last query</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output_folder</span><span class="o">=</span><span class="s2">&quot;my_temp_folder&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;SELECT file_name, file_path, datalabs_path, mosaic_product_oid, tile_index, instrument_name, filter_name, ra, dec FROM sedm.mosaic_product WHERE (instrument_name=&#39;VIS&#39;) AND (((mosaic_product.fov IS NOT NULL AND INTERSECTS(CIRCLE(&#39;ICRS&#39;, 60.3372780005097, -49.93184727724773,&quot;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="mf">0.5</span><span class="o">/</span><span class="mi">60</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;), mosaic_product.fov)=1))) ORDER BY mosaic_product.tile_index ASC&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job_async</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">launch_job_async</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">dump_to_file</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">+</span> <span class="s2">&quot;async_result.csv&quot;</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Started async job with id:&quot;</span><span class="p">,</span> <span class="n">job_async</span><span class="o">.</span><span class="n">jobid</span><span class="p">)</span>
+<span class="go">Started async job with id: 1738523825791TIDR</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#to check on the status of the async job</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">job_async</span><span class="p">)</span>
+<span class="go">Jobid: 1738523825791TIDR</span>
+<span class="go">Phase: COMPLETED</span>
+<span class="go">Owner: None</span>
+<span class="go">Output file: example_outputs/async_result.csv</span>
+<span class="go">Results: None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mosaic_file_results_table</span> <span class="o">=</span> <span class="n">job_async</span><span class="o">.</span><span class="n">get_results</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">mosaic_file_results_table</span><span class="p">),</span> <span class="s2">&quot; query results&quot;</span><span class="p">)</span>
+<span class="go">Found 1  query results</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">mosaic_file_results_table</span><span class="p">)</span>
+<span class="go">                                   file_name                                                          file_path                                   datalabs_path              mosaic_product_oid tile_index instrument_name filter_name     ra      dec</span>
+<span class="go">-------------------------------------------------------------------------------- --------------------------------------------------- --------------------------------------- ------------------ ---------- --------------- ----------- ---------- -----</span>
+<span class="go">EUC_MER_BGSUB-MOSAIC-VIS_TILE102019591-BDF6EF_20241018T164804.324145Z_00.00.fits /euclid/repository_idr/iqr1/Q1_R1/MER/102019591/VIS /data/euclid_q1/Q1_R1/MER/102019591/VIS               1081  102019591             VIS         VIS 60.0509927 -50.0</span>
+</pre></div>
+</div>
+<p>To get all the asynchronous jobs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">joblist</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">list_async_jobs</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">joblist</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="go">Jobid: 1730889961292TIDR</span>
+<span class="go">Phase: COMPLETED</span>
+<span class="go">Owner: None</span>
+<span class="go">Output file: None</span>
+<span class="go">Results: None</span>
+
+<span class="go">Jobid: 1730889844173TIDR</span>
+<span class="go">Phase: COMPLETED</span>
+<span class="go">Owner: None</span>
+<span class="go">Output file: None</span>
+<span class="go">Results: None</span>
+</pre></div>
+</div>
+<p>To remove asynchronous jobs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">remove_jobs</span><span class="p">([</span><span class="s2">&quot;job_id_1&quot;</span><span class="p">,</span> <span class="s2">&quot;job_id_2&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="synchronous-query-on-an-on-the-fly-uploaded-table">
+<h4>1.6. Synchronous query on an ‘on-the-fly’ uploaded table<a class="headerlink" href="#synchronous-query-on-an-on-the-fly-uploaded-table" title="Link to this heading">¶</a></h4>
+<p>‘On-the-fly’ queries allow you to submit a votable and perform a query using that table all in one command; unlike tables
+uploaded with the methods described in section <a class="reference internal" href="#uploading-table-to-user-space"><span class="std std-ref">2.5. Uploading table to user space</span></a>, these tables will be deleted after the query is complete.</p>
+<p>You have to provide the local path to the file you want to upload. In the following example, the file ‘my_table.xml’ is
+located to the relative location where your python program is running. See note below.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">upload_resource</span> <span class="o">=</span> <span class="s1">&#39;my_table.xml&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">j</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">launch_job</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="s2">&quot;select * from tap_upload.table_test&quot;</span><span class="p">,</span>
+<span class="gp">... </span><span class="n">upload_resource</span><span class="o">=</span><span class="n">upload_resource</span><span class="p">,</span> <span class="n">upload_table_name</span><span class="o">=</span><span class="s2">&quot;table_test&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">j</span><span class="o">.</span><span class="n">get_results</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">pprint</span><span class="p">()</span>
+<span class="go">source_id alpha delta</span>
+<span class="go">--------- ----- -----</span>
+<span class="go">        a   1.0   2.0</span>
+<span class="go">        b   3.0   4.0</span>
+<span class="go">        c   5.0   6.0</span>
+</pre></div>
+</div>
+<p>Note: to obtain the current location, type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+<span class="go">/Current/directory/path</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="authenticated-access">
+<h3>2. Authenticated access<a class="headerlink" href="#authenticated-access" title="Link to this heading">¶</a></h3>
+<p>Authenticated users are able to access to TAP+ capabilities (shared tables, persistent jobs, etc.) In order to
+authenticate a user, <code class="docutils literal notranslate"><span class="pre">login</span></code> method must be called. After a successful authentication, the user will be authenticated
+until the <code class="docutils literal notranslate"><span class="pre">logout</span></code> method is called.</p>
+<p>All previous methods (<code class="docutils literal notranslate"><span class="pre">query_object</span></code>, <code class="docutils literal notranslate"><span class="pre">cone_search</span></code>, <code class="docutils literal notranslate"><span class="pre">load_table</span></code>, <code class="docutils literal notranslate"><span class="pre">load_tables</span></code>, <code class="docutils literal notranslate"><span class="pre">launch_job</span></code>) explained for
+non authenticated users are applicable for authenticated ones.</p>
+<p>The main differences are:</p>
+<ul class="simple">
+<li><p>Asynchronous results are kept at the server side forever (until the user decides to remove one of them).</p></li>
+<li><p>Users can access to share tables.</p></li>
+</ul>
+<section id="login-logout">
+<h4>2.1. Login/Logout<a class="headerlink" href="#login-logout" title="Link to this heading">¶</a></h4>
+<p>There are several ways to log in to the Euclid archive.</p>
+<p><strong>Login through graphic interface</strong></p>
+<p><em>Note: The Python Tkinter module is required to use the login_gui method.</em></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login_gui</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Login through command line</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">User</span><span class="p">:</span> <span class="n">user</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Password</span><span class="p">:</span> <span class="n">pwd</span> <span class="p">(</span><span class="ow">not</span> <span class="n">visible</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="s1">&#39;userName&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s1">&#39;userPassword&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It is possible to use a file where the credentials are stored:</p>
+<p><em>The file must contain user and password in two different lines.</em></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">credentials_file</span><span class="o">=</span><span class="s1">&#39;my_credentials_file&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To perform a logout:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">logout</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h4>2.2. Getting public tables metadata<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h4>
+<p>To get the list of products associated with a given EUCLID observation_id or tile_index (for mosaic):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">product_list_results</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">get_product_list</span><span class="p">(</span><span class="n">tile_index</span><span class="o">=</span><span class="s2">&quot;102018211&quot;</span><span class="p">,</span> <span class="n">product_type</span><span class="o">=</span><span class="s2">&quot;DpdMerBksMosaic&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">product_list_results</span><span class="p">),</span> <span class="s2">&quot;results&quot;</span><span class="p">)</span>
+<span class="go">Found 12 results</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">product_list_results</span><span class="p">)</span>
+<span class="go">                                    file_name                                      mosaic_product_oid tile_index instrument_name filter_name category second_type     ra       dec   technique</span>
+<span class="go">                                      str255                                             int64          int64         str255        str255    str255     str255    float64   float64   str255</span>
+<span class="go">---------------------------------------------------------------------------------- ------------------ ---------- --------------- ----------- -------- ----------- ---------- ------- ---------</span>
+<span class="go">EUC_MER_BGSUB-MOSAIC-DES-I_TILE102018211-31E2C9_20241018T143048.358037Z_00.00.fits               1399  102018211           DECAM     DECAM_i  SCIENCE         SKY 57.9990741   -51.5     IMAGE</span>
+<span class="go">  EUC_MER_BGSUB-MOSAIC-VIS_TILE102018211-ACBD03_20241018T142710.276838Z_00.00.fits               1395  102018211             VIS         VIS  SCIENCE         SKY 57.9990741   -51.5     IMAGE</span>
+<span class="go">EUC_MER_BGSUB-MOSAIC-DES-G_TILE102018211-D9D163_20241018T143010.768685Z_00.00.fits               1394  102018211           DECAM     DECAM_g  SCIENCE         SKY 57.9990741   -51.5     IMAGE</span>
+<span class="go">EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102018211-42F1AD_20241018T142558.469987Z_00.00.fits               1396  102018211            NISP       NIR_H  SCIENCE         SKY 57.9990741   -51.5     IMAGE</span>
+<span class="go">EUC_MER_BGSUB-MOSAIC-NIR-J_TILE102018211-E044A1_20241018T142600.459089Z_00.00.fits               1393  102018211            NISP       NIR_J  SCIENCE         SKY 57.9990741   -51.5     IMAGE</span>
+<span class="go">EUC_MER_BGSUB-MOSAIC-NIR-Y_TILE102018211-E5CAE1_20241018T142558.172837Z_00.00.fits               1397  102018211            NISP       NIR_Y  SCIENCE         SKY 57.9990741   -51.5     IMAGE</span>
+<span class="go">EUC_MER_BGSUB-MOSAIC-DES-R_TILE102018211-1078B7_20241018T142927.232351Z_00.00.fits               1401  102018211           DECAM     DECAM_r  SCIENCE         SKY 57.9990741   -51.5     IMAGE</span>
+<span class="go">EUC_MER_BGSUB-MOSAIC-DES-Z_TILE102018211-83C32F_20241018T143526.104818Z_00.00.fits               1398  102018211           DECAM     DECAM_z  SCIENCE         SKY 57.9990741   -51.5     IMAGE</span>
+</pre></div>
+</div>
+<p>The method returns a list of products as an astropy.table.</p>
+<p>It is possible to download a product given its file name or product id:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1">#makeing a folder for the output files</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output_folder</span><span class="o">=</span> <span class="s1">&#39;example_outputs/&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_folder</span><span class="p">):</span>
+<span class="go">       os.makedirs(output_folder)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example_file_name</span> <span class="o">=</span> <span class="s2">&quot;EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102158889-ED035A_20241024T212936.705156Z_00.00.fits&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Getting file:&quot;</span><span class="p">,</span> <span class="n">example_file_name</span><span class="p">)</span>
+<span class="go">Getting file: EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102158889-ED035A_20241024T212936.705156Z_00.00.fits</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">get_product</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="n">example_file_name</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">+</span> <span class="n">example_file_name</span><span class="p">,</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">Retrieving data.</span>
+<span class="go">Data request: TAPCLIENT=ASTROQUERY&amp;RELEASE=sedm&amp;FILE_NAME=EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102158889-ED035A_20241024T212936.705156Z_00.00.fits&amp;RETRIEVAL_TYPE=FILE</span>
+<span class="go">------&gt;https</span>
+<span class="go">host = easidr.esac.esa.int:443</span>
+<span class="go">context = /sas-dd/data</span>
+<span class="go">Content-type = application/x-www-form-urlencoded</span>
+<span class="go">200</span>
+<span class="go">Reading...</span>
+<span class="go">Done.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#display the downloaded product (since this is a calibrated frame the different detectors are stored as different extensions - we are displaying only one extension)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.visualization</span> <span class="kn">import</span> <span class="n">astropy_mpl_style</span><span class="p">,</span> <span class="n">ImageNormalize</span><span class="p">,</span> <span class="n">PercentileInterval</span><span class="p">,</span> <span class="n">AsinhStretch</span><span class="p">,</span> <span class="n">LogStretch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hdul</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">fits</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="go">WARNING: File may have been truncated: actual file length (103579232) is smaller than the expected size (1474565760) [astropy.io.fits.file]</span>
+<span class="go">Filename: example_notebook_outputs/EUC_MER_BGSUB-MOSAIC-DES-I_TILE102018211-31E2C9_20241018T143048.358037Z_00.00.fits</span>
+<span class="go">No.    Name      Ver    Type      Cards   Dimensions   Format</span>
+<span class="go">  0  PRIMARY       1 PrimaryHDU      48   (19200, 19200)   float32</span>
+<span class="go">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image_data</span> <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="go">&lt;Figure size 800x600 with 0 Axes&gt;</span>
+<span class="go">&lt;Figure size 800x600 with 0 Axes&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image_data</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">ImageNormalize</span><span class="p">(</span><span class="n">image_data</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">PercentileInterval</span><span class="p">(</span><span class="mf">99.9</span><span class="p">),</span> <span class="n">stretch</span><span class="o">=</span><span class="n">AsinhStretch</span><span class="p">()))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">colorbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102158889-ED035A_20241024T212936.705156Z_00.00.png"><img alt="EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102158889-ED035A_20241024T212936.705156Z_00.00.fits" class="align-center" src="../../_images/EUC_MER_BGSUB-MOSAIC-NIR-H_TILE102158889-ED035A_20241024T212936.705156Z_00.00.png" style="width: 553.0px; height: 500.0px;" />
+</a>
+<p>The method downloads the fits file(s) and returns the local path where the product(s) is saved.</p>
+<p>To download the products for a given EUCLID observation_id (observations) or tile_index (mosaics):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1">#downloading all products for observation id: 102018211</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mos_id</span> <span class="o">=</span> <span class="mi">1399</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">get_observation_products</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">mos_id</span><span class="p">,</span> <span class="n">product_type</span><span class="o">=</span><span class="s1">&#39;mosaic&#39;</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="s2">&quot;VIS&quot;</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_folder</span><span class="si">}</span><span class="s2">/products_</span><span class="si">{</span><span class="n">mos_id</span><span class="si">}</span><span class="s2">.fits&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="go">For big files the download may require a long time.</span>
+</pre></div>
+</div>
+</section>
+<section id="cutout-search">
+<h4>2.3. Cutout search<a class="headerlink" href="#cutout-search" title="Link to this heading">¶</a></h4>
+<p>To download a cutout given its file path, instrument and obs_id, and the cutout region, the method downloads the fits file of the cutout and returns a list containing the local path where the cutout is saved:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># the map cone_results was previously obtained by the query executed in section 2.1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="k">as</span> <span class="nn">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example_file</span> <span class="o">=</span> <span class="n">cone_results</span><span class="p">[</span><span class="n">cone_results</span><span class="p">[</span><span class="s1">&#39;instrument_name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;VIS&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># getting the arguments from the cone search result table automatically</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">file_path</span><span class="o">=</span><span class="n">example_file</span><span class="p">[</span><span class="s2">&quot;file_path&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">example_file</span><span class="p">[</span><span class="s2">&quot;file_name&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">instrument</span><span class="o">=</span><span class="n">example_file</span><span class="p">[</span><span class="s2">&quot;instrument_name&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs_id</span><span class="o">=</span><span class="n">example_file</span><span class="p">[</span><span class="s2">&quot;tile_index&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">radius</span><span class="o">=</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">arcmin</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">coord</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="s2">&quot;17h51m07.4s +65d31m50.8s&quot;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s1">&#39;icrs&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output_folder</span><span class="o">=</span> <span class="s1">&#39;example_outputs/&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">output_folder</span><span class="p">):</span>
+<span class="go">       os.makedirs(output_folder)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output_file</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">+</span> <span class="s1">&#39;cutouts/astroquery_cutout_example.fits&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">saved_cutout_filepath</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">get_cutout</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="n">file_path</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="n">instrument</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">obs_id</span><span class="p">,</span> <span class="n">coordinate</span><span class="o">=</span><span class="n">coord</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="n">output_file</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cutout saved at&quot;</span><span class="p">,</span> <span class="n">saved_cutout_filepath</span><span class="p">)</span>
+<span class="go">Cutout saved at [&#39;example_outputs/cutouts/astroquery_cutout_example.fits&#39;]</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#looking at the cutout we made</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hdul</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">saved_cutout_filepath</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">fits</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">saved_cutout_filepath</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="go">Filename: example_notebook_outputs/cutouts/astroquery_cutout_example.fits</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image_data</span> <span class="o">=</span> <span class="n">hdul</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+<span class="go">No.    Name      Ver    Type      Cards   Dimensions   Format</span>
+<span class="go">0  PRIMARY       1 PrimaryHDU      49   (241, 241)   float32</span>
+<span class="go">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image_data</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">ImageNormalize</span><span class="p">(</span><span class="n">image_data</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">PercentileInterval</span><span class="p">(</span><span class="mf">99.5</span><span class="p">),</span> <span class="n">stretch</span><span class="o">=</span><span class="n">AsinhStretch</span><span class="p">()))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/astroquery_cutout_example.png"><img alt="astroquery_cutout_example.fits" class="align-center" src="../../_images/astroquery_cutout_example.png" style="width: 602.0px; height: 505.0px;" />
+</a>
+<p>Below is the equivalent version but copying arguments manually (for clarity).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;EUC_MER_BGSUB-MOSAIC-VIS_TILE101158889-D08FBD_20240113T021028.995617Z_00.00.fits&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">saved_cutout_filepath</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">get_cutout</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="n">file_path</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="s2">&quot;VIS&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;101158889&quot;</span><span class="p">,</span> <span class="n">coordinate</span><span class="o">=</span><span class="n">coord</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="s1">&#39;example_outputs/test_cutout_example.fits&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cutout saved at&quot;</span><span class="p">,</span> <span class="n">saved_cutout_filepath</span><span class="p">)</span>
+<span class="go">Cutout saved at [&#39;example_outputs/cutouts/astroquery_cutout_example.fits&#39;]</span>
+</pre></div>
+</div>
+</section>
+<section id="listing-shared-tables">
+<h4>2.4. Listing shared tables<a class="headerlink" href="#listing-shared-tables" title="Link to this heading">¶</a></h4>
+<p>In the Euclid archive user tables can be shared among user groups.</p>
+<p>To obtain a list of the tables shared to a user type the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tables</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">load_tables</span><span class="p">(</span><span class="n">only_names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">include_shared_tables</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">:</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">get_qualified_name</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="uploading-table-to-user-space">
+<span id="id2"></span><h4>2.5. Uploading table to user space<a class="headerlink" href="#uploading-table-to-user-space" title="Link to this heading">¶</a></h4>
+<p>It is now possible to store a table in the private user space. The table to be uploaded can
+be in a <a class="reference external" href="https://www.ivoa.net/documents/VOTable/">VOTable</a> located at a given URL, a table stored in a local file in the user machine,
+a pre-computed Astropy table file or a job executed in the Euclid archive.</p>
+<p>Each user has a database schema described as: ‘user_&lt;user_login_name&gt;’. For instance, if a
+login name is ‘joe’, the database schema is ‘user_joe’. Your uploaded table can be
+referenced as ‘user_joe.table_name’</p>
+</section>
+<section id="uploading-table-from-url">
+<h4>2.5.1. Uploading table from URL<a class="headerlink" href="#uploading-table-from-url" title="Link to this heading">¶</a></h4>
+<p>An already generated VOTable, accessible through a URL, can be uploaded to Euclid archive.</p>
+<p>The following example launches a query to Vizier TAP (‘url’ parameter). The result is a
+VOTable that can be uploaded to the user’s private area.</p>
+<p>Your schema name will be automatically added to the provided table name:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Provide a URL pointing to valid VOTable resource</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">url</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync/?&quot;</span>
+<span class="gp">... </span>       <span class="s2">&quot;REQUEST=doQuery&amp;lang=ADQL&amp;FORMAT=votable&amp;&quot;</span>
+<span class="gp">... </span>       <span class="s2">&quot;QUERY=select+*+from+TAP_SCHEMA.columns+where+table_name=&#39;II/336/apass9&#39;&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">upload_table</span><span class="p">(</span><span class="n">upload_resource</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;table_test_from_url&quot;</span><span class="p">,</span>
+<span class="gp">... </span><span class="n">table_description</span><span class="o">=</span><span class="s2">&quot;Some description&quot;</span><span class="p">)</span>
+<span class="go">Job &#39;1539932326689O&#39; created to upload table &#39;table_test_from_url&#39;.</span>
+</pre></div>
+</div>
+<p>Now, you can query your table as follows (a full qualified table name must be provided,
+i.e.: <em>user_&lt;your_login_name&gt;.&lt;table_name&gt;</em>. Note that if the &lt;table_name&gt; contains capital letters, it must be
+surrounded by quotation marks, i.e.: <em>user_&lt;your_login_name&gt;.”&lt;table_name&gt;”</em>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">full_qualified_table_name</span> <span class="o">=</span> <span class="s1">&#39;user_&lt;your_login_name&gt;.table_test_from_url&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;select * from &#39;</span> <span class="o">+</span> <span class="n">full_qualified_table_name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">launch_job</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get_results</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="uploading-table-from-file">
+<h4>2.5.2. Uploading table from file<a class="headerlink" href="#uploading-table-from-file" title="Link to this heading">¶</a></h4>
+<p>A file containing a table (votable, fits or csv) can be uploaded to the user’s private area.</p>
+<p>The parameter ‘format’ must be provided when the input file is not a votable file.</p>
+<p>Your schema name will be automatically added to the provided table name.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">upload_table</span><span class="p">(</span><span class="n">upload_resource</span><span class="o">=</span><span class="s2">&quot;1535553556177O-result.vot&quot;</span><span class="p">,</span> <span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;table_test_from_file&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;VOTable&quot;</span><span class="p">)</span>
+<span class="go">Sending file: 1535553556177O-result.vot</span>
+<span class="go">Uploaded table &#39;table_test_from_file&#39;.</span>
+</pre></div>
+</div>
+<p>Now, you can query your table as follows (a full qualified table name must be provided,
+i.e.: <em>user_&lt;your_login_name&gt;.&lt;table_name&gt;</em>. Note that if the &lt;table_name&gt; contains capital letters, it must be
+surrounded by quotation marks, i.e.: <em>user_&lt;your_login_name&gt;.”&lt;table_name&gt;”</em>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">full_qualified_table_name</span> <span class="o">=</span> <span class="s1">&#39;user_&lt;your_login_name&gt;.table_test_from_file&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;select * from &#39;</span> <span class="o">+</span> <span class="n">full_qualified_table_name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">launch_job</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get_results</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="uploading-table-from-an-astropy-table">
+<h4>2.5.3. Uploading table from an astropy Table<a class="headerlink" href="#uploading-table-from-an-astropy-table" title="Link to this heading">¶</a></h4>
+<p>A votable can be uploaded to the server in order to be used in a query. Your schema name will be automatically added to the provided table name.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">],</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">,</span><span class="s1">&#39;col2&#39;</span><span class="p">],</span> <span class="n">meta</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;meta&#39;</span><span class="p">:</span><span class="s1">&#39;first table&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Upload</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">upload_table</span><span class="p">(</span><span class="n">upload_resource</span><span class="o">=</span><span class="n">table</span><span class="p">,</span> <span class="n">table_name</span><span class="o">=</span><span class="s1">&#39;table_test_from_astropy&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now, you can query your table as follows (a full qualified table name must be provided,
+i.e.: <em>user_&lt;your_login_name&gt;.&lt;table_name&gt;</em>. Note that if the &lt;table_name&gt; contains capital letters, it must be
+surrounded by quotation marks, i.e.: <em>user_&lt;your_login_name&gt;.”&lt;table_name&gt;”</em>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">full_qualified_table_name</span> <span class="o">=</span> <span class="s1">&#39;user_&lt;your_login_name&gt;.table_test_from_astropy&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;select * from &#39;</span> <span class="o">+</span> <span class="n">full_qualified_table_name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">launch_job</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get_results</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="uploading-table-from-job">
+<h4>2.5.4. Uploading table from job<a class="headerlink" href="#uploading-table-from-job" title="Link to this heading">¶</a></h4>
+<p>The results generated by an <em>asynchronous</em> job (from a query executed in the Euclid archive) can be
+ingested in a table in the user’s private area.</p>
+<p>The following example generates a job in the Euclid archive and then, the results are ingested in a
+table named: user_&lt;your_login_name&gt;.’t’&lt;job_id&gt;:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job_1</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">launch_job_async</span><span class="p">(</span><span class="s2">&quot;select top 10 * from Eucliddr3.Euclid_source&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">upload_table_from_job</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">job_1</span><span class="p">)</span>
+<span class="go">Created table &#39;t1539932994481O&#39; from job: &#39;1539932994481O&#39;.</span>
+</pre></div>
+</div>
+<p>Now, you can query your table as follows (a full qualified table name must be provided,
+i.e.: <em>user_&lt;your_login_name&gt;.”t&lt;job_id&gt;”</em>. Note that the previous table name must be
+surrounded by quotation marks since it contains capital letters.):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">full_qualified_table_name</span> <span class="o">=</span> <span class="s1">&#39;user_&lt;your_login_name&gt;.&quot;t1710251325268O&quot;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;select * from &#39;</span> <span class="o">+</span> <span class="n">full_qualified_table_name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">launch_job</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get_results</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="deleting-table">
+<h4>2.6. Deleting table<a class="headerlink" href="#deleting-table" title="Link to this heading">¶</a></h4>
+<p>A table from the user’s private area can be deleted as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login_gui</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">delete_user_table</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;table_test_from_file&quot;</span><span class="p">)</span>
+<span class="go">Table &#39;table_test_from_file&#39; deleted.</span>
+</pre></div>
+</div>
+</section>
+<section id="updating-table-metadata">
+<h4>2.7. Updating table metadata<a class="headerlink" href="#updating-table-metadata" title="Link to this heading">¶</a></h4>
+<p>It can be useful for the user to modify the metadata of a given table. For example, a user
+might want to change the description (UCD) of a column, or the flags that give extra information
+about a certain column. This is possible using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login_gui</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">update_user_table</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">list_of_changes</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where the list of changes is a list of 3 items:</p>
+<p>[“column name to be changed”, “metadata parameter to be changed”, “new value”]</p>
+<p>The metadata parameter to be changed can be ‘utype’, ‘ucd’, ‘flags’ or ‘indexed’:</p>
+<ul class="simple">
+<li><p>values for ‘utype’ and ‘ucd’ are free text. See <a class="reference external" href="https://www.ivoa.net/documents/VOTable/">VOTable</a> specification (sections UType and UCD), <a class="reference external" href="https://www.ivoa.net/documents/latest/UCD.html">UCD</a> specification and <a class="reference external" href="https://www.ivoa.net/documents/Notes/UTypesUsage/index.html">UTypes</a> usage.</p></li>
+<li><p>value for ‘flags’ can be ‘Ra’, ‘Dec’, ‘Mag’, ‘Flux’ and ‘PK’.</p></li>
+<li><p>value for ‘indexed’ is a boolean indicating whether the column is indexed or not.</p></li>
+</ul>
+<p>It is possible to apply multiple changes at once.
+This is done by putting each of the changes in a list. See example below.</p>
+<p>In this case, we have a table (user_joe.table), with several columns: ‘recno’, ‘nobs’, ‘raj2000’ and ‘dej2000’.</p>
+<p>We want to set:</p>
+<ul class="simple">
+<li><p>‘ucd’ of ‘recno’ column to ‘ucd sample’</p></li>
+<li><p>‘utype’ of ‘nobs’ column to ‘utype sample’</p></li>
+<li><p>‘flags’ of ‘raj2000’ column to ‘Ra’</p></li>
+<li><p>‘flags’ of ‘dej2000’ column to ‘Dec’</p></li>
+</ul>
+<p>We can type the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login_gui</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">update_user_table</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;user_joe.table&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                       <span class="n">list_of_changes</span><span class="o">=</span><span class="p">[[</span><span class="s2">&quot;recno&quot;</span><span class="p">,</span> <span class="s2">&quot;ucd&quot;</span><span class="p">,</span> <span class="s2">&quot;ucd sample&quot;</span><span class="p">],</span>
+<span class="gp">... </span>                                        <span class="p">[</span><span class="s2">&quot;nobs&quot;</span><span class="p">,</span><span class="s2">&quot;utype&quot;</span><span class="p">,</span><span class="s2">&quot;utype sample&quot;</span><span class="p">],</span>
+<span class="gp">... </span>                                        <span class="p">[</span><span class="s2">&quot;raj2000&quot;</span><span class="p">,</span><span class="s2">&quot;flags&quot;</span><span class="p">,</span><span class="s2">&quot;Ra&quot;</span><span class="p">],</span>
+<span class="gp">... </span>                                        <span class="p">[</span><span class="s2">&quot;dej2000&quot;</span><span class="p">,</span><span class="s2">&quot;flags&quot;</span><span class="p">,</span><span class="s2">&quot;Dec&quot;</span><span class="p">]])</span>
+<span class="go">Retrieving table &#39;user_joe.table&#39;</span>
+<span class="go">Parsing table &#39;user_joe.table&#39;...</span>
+<span class="go">Done.</span>
+<span class="go">Table &#39;user_joe.table&#39; updated.</span>
+</pre></div>
+</div>
+</section>
+<section id="cross-match">
+<h4>2.8. Cross match<a class="headerlink" href="#cross-match" title="Link to this heading">¶</a></h4>
+<p>It is possible to run a geometric cross-match between the ra/dec coordinates of two tables
+using the crossmatch function provided by the archive. In order to do so, the user must be
+logged in. This is required because the cross match operation will generate a join table
+in the user private area. That table contains the identifiers of both tables and the separation,
+in degrees, between ra/dec coordinates of each source in the first table and its associated
+source in the second table. Later, the table can be used to obtain the actual data from both tables.</p>
+<p>In order to perform a cross match, both tables must have defined RA and Dec columns
+(ra/dec column flags must be set: see previous section to know how to assign those flags).</p>
+<p>The following example uploads a table and then, the table is used in a cross match:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">file</span> <span class="ow">or</span> <span class="n">astropy</span><span class="o">.</span><span class="n">table</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">upload_table</span><span class="p">(</span><span class="n">upload_resource</span><span class="o">=</span><span class="n">table</span><span class="p">,</span> <span class="n">table_name</span><span class="o">=</span><span class="s1">&#39;my_sources&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># the table will be uploaded into the user private space into the database</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># the table can be referenced as &lt;database user schema&gt;.&lt;table_name&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">full_qualified_table_name</span> <span class="o">=</span> <span class="s1">&#39;user_&lt;your_login_name&gt;.my_sources&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xmatch_table_name</span> <span class="o">=</span> <span class="s1">&#39;xmatch_table&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">cross_match</span><span class="p">(</span><span class="n">full_qualified_table_name_a</span><span class="o">=</span><span class="n">full_qualified_table_name</span><span class="p">,</span>
+<span class="gp">... </span>                 <span class="n">full_qualified_table_name_b</span><span class="o">=</span><span class="s1">&#39;Eucliddr3.Euclid_source&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                 <span class="n">results_table_name</span><span class="o">=</span><span class="n">xmatch_table_name</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Once you have your cross match finished, you can obtain the results:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xmatch_table</span> <span class="o">=</span> <span class="s1">&#39;user_&lt;your_login_name&gt;.&#39;</span> <span class="o">+</span> <span class="n">xmatch_table_name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SELECT c.separation*3600 AS separation_arcsec, a.*, b.* FROM Eucliddr3.Euclid_source AS a, &quot;</span>
+<span class="gp">... </span>         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">full_qualified_table_name</span><span class="si">}</span><span class="s2"> AS b, </span><span class="si">{</span><span class="n">xmatch_table</span><span class="si">}</span><span class="s2"> AS c WHERE c.Euclid_source_source_id = a.source_id AND &quot;</span>
+<span class="gp">... </span>         <span class="sa">f</span><span class="s2">&quot;c.my_sources_my_sources_oid = b.my_sources_oid&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">launch_job</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get_results</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Cross-matching catalogues is one of the most popular operations executed in the Euclid archive.</p>
+</section>
+<section id="tables-sharing">
+<h4>2.9. Tables sharing<a class="headerlink" href="#tables-sharing" title="Link to this heading">¶</a></h4>
+<p>It is possible to share tables with other users. You have to create a group, populate that
+group with users, and share your table to that group. Then, any user belonging to that group
+will be able to access your shared table in a query.</p>
+</section>
+<section id="creating-a-group">
+<h4>2.9.1. Creating a group<a class="headerlink" href="#creating-a-group" title="Link to this heading">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">share_group_create</span><span class="p">(</span><span class="n">group_name</span><span class="o">=</span><span class="s2">&quot;my_group&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;description&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="removing-a-group">
+<h4>2.9.2. Removing a group<a class="headerlink" href="#removing-a-group" title="Link to this heading">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">share_group_delete</span><span class="p">(</span><span class="n">group_name</span><span class="o">=</span><span class="s2">&quot;my_group&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="listing-groups">
+<h4>2.9.3. Listing groups<a class="headerlink" href="#listing-groups" title="Link to this heading">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">groups</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">load_groups</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">group</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="adding-users-to-a-group">
+<h4>2.9.4. Adding users to a group<a class="headerlink" href="#adding-users-to-a-group" title="Link to this heading">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">share_group_add_user</span><span class="p">(</span><span class="n">group_name</span><span class="o">=</span><span class="s2">&quot;my_group&quot;</span><span class="p">,</span><span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;&lt;user_login_name&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="removing-users-from-a-group">
+<h4>2.9.5. Removing users from a group<a class="headerlink" href="#removing-users-from-a-group" title="Link to this heading">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">share_group_delete_user</span><span class="p">(</span><span class="n">group_name</span><span class="o">=</span><span class="s2">&quot;my_group&quot;</span><span class="p">,</span><span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;&lt;user_login_name&gt;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="sharing-a-table-to-a-group">
+<h4>2.9.6. Sharing a table to a group<a class="headerlink" href="#sharing-a-table-to-a-group" title="Link to this heading">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">share_table</span><span class="p">(</span><span class="n">group_name</span><span class="o">=</span><span class="s2">&quot;my_group&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                 <span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;user_&lt;user_login_name&gt;.my_table&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                 <span class="n">description</span><span class="o">=</span><span class="s2">&quot;description&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="stop-sharing-a-table">
+<h4>2.9.7. Stop sharing a table<a class="headerlink" href="#stop-sharing-a-table" title="Link to this heading">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">share_table_stop</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;user_&lt;user_login_name&gt;.my_table&quot;</span><span class="p">,</span> <span class="n">group_name</span><span class="o">=</span><span class="s2">&quot;my_group&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="datalink-service-authenticated">
+<h3>3. Datalink service (Authenticated)<a class="headerlink" href="#datalink-service-authenticated" title="Link to this heading">¶</a></h3>
+<p><a class="reference external" href="https://www.ivoa.net/documents/DataLink/">DataLink</a> is a data access protocol compliant with the <a class="reference external" href="https://www.ivoa.net">IVOA</a> architecture that provides a linking mechanism between
+datasets offered by different services. In practice, it can be seen and used as a web service providing the list of additional
+data products available for each object outside the main catalogue(s). For more information about the products served via
+DataLink in the Euclid ESA Archive we recommend reading the Archive DataLink tutorials available at <a class="reference external" href="https://eas.esac.esa.int/sas/">https://eas.esac.esa.int/sas/</a>.</p>
+<p>The DataLink products are restricted to authenticated users via the <a class="reference internal" href="../../api/astroquery.utils.tap.TapPlus.html#astroquery.utils.tap.TapPlus.load_data" title="astroquery.utils.tap.TapPlus.load_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_data</span></code></a> method.
+From SAS the Datalink service can be used to access and download 1D Spectra data.</p>
+<p>To find out the resources associated with a given source:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Euclid</span><span class="o">.</span><span class="n">login</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;2707008224650763513&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">datalink</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">get_datalinks</span><span class="p">(</span><span class="n">ids</span><span class="o">=</span><span class="n">ids</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">datalink</span><span class="p">)</span>
+<span class="go">           ID            linking_parameter                                          access_url                                         service_def error_message semantics     description     content_type content_length</span>
+<span class="go">                                                                                                                                                                                                                 byte</span>
+<span class="go">------------------------ ----------------- ------------------------------------------------------------------------------------------- ----------- ------------- --------- ------------------- ------------ --------------</span>
+<span class="go">sedm 2707008224650763513         SOURCE_ID https://eas.esac.esa.int/sas-dd/data?ID=sedm+2707008224650763513&amp;RETRIEVAL_TYPE=SPECTRA_RGS                               #this  Spectra Red Source                          --</span>
+<span class="go">sedm 2707008224650763513         SOURCE_ID https://eas.esac.esa.int/sas-dd/data?ID=sedm+2707008224650763513&amp;RETRIEVAL_TYPE=SPECTRA_BGS                               #this Spectra Blue Source                          --</span>
+</pre></div>
+</div>
+<p>The query below retrieves a random sample of Euclid sources having spectra.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.esa.euclid</span> <span class="kn">import</span> <span class="n">Euclid</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;SELECT TOP 2000 * FROM catalogue.spectra_source&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">launch_job_async</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get_results</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Table size (rows): </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="go">Table size (rows): 2000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="go">combined_spectra_fk combined_spectra_product_fk            datalabs_path                 dec_obj      dith_num                           file_name                           ... hdu_index      ra_obj           source_id      spectra_source_oid to_be_published</span>
+<span class="go">------------------- --------------------------- ----------------------------------- ----------------- -------- ------------------------------------------------------------- ... --------- ---------------- ------------------- ------------------ ---------------</span>
+<span class="go">                161                        6170 /data/euclid_q1/Q1_R1/SIR/102159190  66.2272115578693        3 EUC_SIR_W-COMBSPEC_102159190_2024-11-05T16:27:45.906227Z.fits ...       355 267.261146414289 2672611464662272115              66161               1</span>
+<span class="go">                161                        6170 /data/euclid_q1/Q1_R1/SIR/102159190   66.230432248046        4 EUC_SIR_W-COMBSPEC_102159190_2024-11-05T16:27:45.906227Z.fits ...       557 267.319331443563 2673193314662304322              66179               1</span>
+<span class="go">                161                        6170 /data/euclid_q1/Q1_R1/SIR/102159190  66.2259968885041        4 EUC_SIR_W-COMBSPEC_102159190_2024-11-05T16:27:45.906227Z.fits ...       679  267.39974379438 2673997437662259968              66185               1</span>
+<span class="go">                161                        6170 /data/euclid_q1/Q1_R1/SIR/102159190  66.2258832168495        4 EUC_SIR_W-COMBSPEC_102159190_2024-11-05T16:27:45.906227Z.fits ...      1132 267.610835873887 2676108358662258832              66216               1</span>
+<span class="go">                161                        6170 /data/euclid_q1/Q1_R1/SIR/102159190  66.2267511367135        4 EUC_SIR_W-COMBSPEC_102159190_2024-11-05T16:27:45.906227Z.fits ...      1561  267.82310164423 2678231016662267511              66245               1</span>
+<span class="go">                161                        6170 /data/euclid_q1/Q1_R1/SIR/102159190  66.2306295177874        4 EUC_SIR_W-COMBSPEC_102159190_2024-11-05T16:27:45.906227Z.fits ...      1608 267.840533186228 2678405331662306295              66249               1</span>
+<span class="go">                161                        6170 /data/euclid_q1/Q1_R1/SIR/102159190  66.2258188827905        4 EUC_SIR_W-COMBSPEC_102159190_2024-11-05T16:27:45.906227Z.fits ...      1672 267.868196199085 2678681961662258188              66254               1</span>
+<span class="go">                161                        6170 /data/euclid_q1/Q1_R1/SIR/102159190  66.2302887578947        3 EUC_SIR_W-COMBSPEC_102159190_2024-11-05T16:27:45.906227Z.fits ...      2121 268.121362468449 2681213624662302887              66283               1</span>
+<span class="go">                161                        6168 /data/euclid_q1/Q1_R1/SIR/102159190  66.2180692869346        3 EUC_SIR_W-COMBSPEC_102159190_2024-11-05T16:27:08.615108Z.fits ...       320 267.232306764858 2672323067662180692              65811               1</span>
+<span class="go">                161                        6168 /data/euclid_q1/Q1_R1/SIR/102159190  66.2163449302499        4 EUC_SIR_W-COMBSPEC_102159190_2024-11-05T16:27:08.615108Z.fits ...       678 267.390646814535 2673906468662163449              65836               1</span>
+<span class="go">                161                        6168 /data/euclid_q1/Q1_R1/SIR/102159190  66.2177524156252        4 EUC_SIR_W-COMBSPEC_102159190_2024-11-05T16:27:08.615108Z.fits ...       787 267.444077136233 2674440771662177524              65843               1</span>
+<span class="go">                ...                         ...                                 ...               ...      ...                                                           ... ...       ...              ...                 ...                ...             ...</span>
+<span class="go">                180                        7517 /data/euclid_q1/Q1_R1/SIR/102042287 -29.5639947358353        2 EUC_SIR_W-COMBSPEC_102042287_2024-11-05T17:42:15.562399Z.fits ...        58 54.5720898250079 -545720898295639947             264701               1</span>
+<span class="go">                161                        6203 /data/euclid_q1/Q1_R1/SIR/102159190  66.2431257852549        2 EUC_SIR_W-COMBSPEC_102159190_2024-11-05T16:34:19.265698Z.fits ...        88 267.227375121186 2672273751662431257              67437               1</span>
+<span class="go">Length = 2000 rows</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;source ids:&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;source_id&#39;</span><span class="p">])</span>
+<span class="go">&lt;Column name=&#39;source_id&#39; dtype=&#39;int64&#39; length=200&gt;</span>
+<span class="go">2672611464662272115</span>
+<span class="go">2673193314662304322</span>
+<span class="go">2673997437662259968</span>
+<span class="go">2676108358662258832</span>
+<span class="go">                ...</span>
+<span class="go">2671568248661962869</span>
+<span class="go">2673081407661969815</span>
+<span class="go">2673195636661993590</span>
+</pre></div>
+</div>
+<p>The following example shows how to retrieve the DataLink products (1D Spectra) associated with the previous sources (IDs).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">files</span> <span class="o">=</span> <span class="n">Euclid</span><span class="o">.</span><span class="n">get_spectrum</span><span class="p">(</span><span class="n">retrieval_type</span><span class="o">=</span><span class="s1">&#39;SPECTRA_BGS&#39;</span><span class="p">,</span> <span class="n">source_id</span><span class="o">=</span><span class="s1">&#39;2675005060662306333&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">fits</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>  
+<span class="go">Filename: /home/astroquery/temp_20250225_204959/2675005060662306333.fits</span>
+<span class="go">No.    Name      Ver    Type      Cards   Dimensions   Format</span>
+<span class="go">  0  PRIMARY       1 PrimaryHDU       4   ()</span>
+<span class="go">  1  2675005060662306333    1 BinTableHDU     35   531R x 6C   [1E, 1E, 1J, 1E, 1E, 1I]</span>
+<span class="go">None</span>
+</pre></div>
+</div>
+<p>A fits file is made if no file name is provided.</p>
+</section>
+</section>
+<section id="reference-api">
+<h2>Reference/API<a class="headerlink" href="#reference-api" title="Link to this heading">¶</a></h2>
+<section id="module-astroquery.esa.euclid">
+<span id="astroquery-esa-euclid-package"></span><h3>astroquery.esa.euclid Package<a class="headerlink" href="#module-astroquery.esa.euclid" title="Link to this heading">¶</a></h3>
+<p>European Space Astronomy Centre (ESAC)
+European Space Agency (ESA)</p>
+<section id="classes">
+<h4>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h4>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../api/astroquery.esa.euclid.EuclidClass.html#astroquery.esa.euclid.EuclidClass" title="astroquery.esa.euclid.EuclidClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EuclidClass</span></code></a>(*[, environment, ...])</p></td>
+<td><p>Constructor for EuclidClass.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../api/astroquery.esa.euclid.Conf.html#astroquery.esa.euclid.Conf" title="astroquery.esa.euclid.Conf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Conf</span></code></a>()</p></td>
+<td><p>Configuration parameters for <a class="reference internal" href="#module-astroquery.esa.euclid" title="astroquery.esa.euclid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.esa.euclid</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">ESA EUCLID Archive (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.esa.euclid</span></code>)</a><ul>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+<li><a class="reference internal" href="#euclid-science-archive-systems">0. Euclid science archive systems</a></li>
+<li><a class="reference internal" href="#non-authenticated-access">1. Non authenticated access</a><ul>
+<li><a class="reference internal" href="#getting-public-tables-metadata">1.1. Getting public tables metadata</a></li>
+<li><a class="reference internal" href="#cone-search">1.2. Cone search</a></li>
+<li><a class="reference internal" href="#query-object">1.3. Query object</a></li>
+<li><a class="reference internal" href="#synchronous-query">1.4. Synchronous query</a></li>
+<li><a class="reference internal" href="#asynchronous-query">1.5. Asynchronous query</a></li>
+<li><a class="reference internal" href="#synchronous-query-on-an-on-the-fly-uploaded-table">1.6. Synchronous query on an ‘on-the-fly’ uploaded table</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#authenticated-access">2. Authenticated access</a><ul>
+<li><a class="reference internal" href="#login-logout">2.1. Login/Logout</a></li>
+<li><a class="reference internal" href="#id1">2.2. Getting public tables metadata</a></li>
+<li><a class="reference internal" href="#cutout-search">2.3. Cutout search</a></li>
+<li><a class="reference internal" href="#listing-shared-tables">2.4. Listing shared tables</a></li>
+<li><a class="reference internal" href="#uploading-table-to-user-space">2.5. Uploading table to user space</a></li>
+<li><a class="reference internal" href="#uploading-table-from-url">2.5.1. Uploading table from URL</a></li>
+<li><a class="reference internal" href="#uploading-table-from-file">2.5.2. Uploading table from file</a></li>
+<li><a class="reference internal" href="#uploading-table-from-an-astropy-table">2.5.3. Uploading table from an astropy Table</a></li>
+<li><a class="reference internal" href="#uploading-table-from-job">2.5.4. Uploading table from job</a></li>
+<li><a class="reference internal" href="#deleting-table">2.6. Deleting table</a></li>
+<li><a class="reference internal" href="#updating-table-metadata">2.7. Updating table metadata</a></li>
+<li><a class="reference internal" href="#cross-match">2.8. Cross match</a></li>
+<li><a class="reference internal" href="#tables-sharing">2.9. Tables sharing</a></li>
+<li><a class="reference internal" href="#creating-a-group">2.9.1. Creating a group</a></li>
+<li><a class="reference internal" href="#removing-a-group">2.9.2. Removing a group</a></li>
+<li><a class="reference internal" href="#listing-groups">2.9.3. Listing groups</a></li>
+<li><a class="reference internal" href="#adding-users-to-a-group">2.9.4. Adding users to a group</a></li>
+<li><a class="reference internal" href="#removing-users-from-a-group">2.9.5. Removing users from a group</a></li>
+<li><a class="reference internal" href="#sharing-a-table-to-a-group">2.9.6. Sharing a table to a group</a></li>
+<li><a class="reference internal" href="#stop-sharing-a-table">2.9.7. Stop sharing a table</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#datalink-service-authenticated">3. Datalink service (Authenticated)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#reference-api">Reference/API</a><ul>
+<li><a class="reference internal" href="#module-astroquery.esa.euclid">astroquery.esa.euclid Package</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="../../_sources/esa/euclid/euclid.rst.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 02 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>IntegralClass &#8212; astroquery v0.4.8.dev10179</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+    
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=1d6242bd"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Conf" href="astroquery.esa.integral.Conf.html" />
+    <link rel="prev" title="ESA Integral Science Legacy Archive (ISLA) (astroquery.esa.integral)" href="../esa/integral/integral.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astroquery.esa.integral.Conf.html" title="Conf">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../esa/integral/integral.html" title="ESA Integral Science Legacy Archive (ISLA) (astroquery.esa.integral)">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">astroquery v0.4.8.dev10179</a>
+	 &#187;
+      </li>
+      <li><a href="../esa/integral/integral.html" accesskey="U">ESA Integral Science Legacy Archive (ISLA) (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.esa.integral</span></code>)</a> &#187;</li>
+      
+      <li>IntegralClass</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="integralclass">
+<h1>IntegralClass<a class="headerlink" href="#integralclass" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">astroquery.esa.integral.</span></span><span class="sig-name descname"><span class="pre">IntegralClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">auth_session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astroquery.query.BaseVOQuery.html#astroquery.query.BaseVOQuery" title="astroquery.query.BaseVOQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseVOQuery</span></code></a>, <a class="reference internal" href="astroquery.query.BaseQuery.html#astroquery.query.BaseQuery" title="astroquery.query.BaseQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseQuery</span></code></a></p>
+<p>Class to init ESA Integral Module and communicate with isla</p>
+<p class="rubric">Attributes Summary</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.tap" title="astroquery.esa.integral.IntegralClass.tap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tap</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.download_science_windows" title="astroquery.esa.integral.IntegralClass.download_science_windows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_science_windows</span></code></a>(*[, ...])</p></td>
+<td><p>Method to download science windows associated to one of these parameters: science_windows, observation_id, revolution or proposal</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_bands" title="astroquery.esa.integral.IntegralClass.get_bands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bands</span></code></a>()</p></td>
+<td><p>Get the bands available in ISLA</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_epochs" title="astroquery.esa.integral.IntegralClass.get_epochs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_epochs</span></code></a>(*[, target_name, instrument, band])</p></td>
+<td><p>Retrieve the INTEGRAL epochs associated to a target and an instrument or a band</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_instrument_band_map" title="astroquery.esa.integral.IntegralClass.get_instrument_band_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_instrument_band_map</span></code></a>()</p></td>
+<td><p>Maps the bands and instruments included in ISLA</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_instruments" title="astroquery.esa.integral.IntegralClass.get_instruments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_instruments</span></code></a>()</p></td>
+<td><p>Get the instruments available in ISLA</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_job" title="astroquery.esa.integral.IntegralClass.get_job"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_job</span></code></a>(jobid)</p></td>
+<td><p>Returns the job corresponding to an ID.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_job_list" title="astroquery.esa.integral.IntegralClass.get_job_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_job_list</span></code></a>(*[, phases, after, last, ...])</p></td>
+<td><p>Returns all the asynchronous jobs</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_long_term_timeseries" title="astroquery.esa.integral.IntegralClass.get_long_term_timeseries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_long_term_timeseries</span></code></a>(target_name, *[, ...])</p></td>
+<td><p>Method to download long term timeseries associated to an epoch and instrument or band</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_mosaic" title="astroquery.esa.integral.IntegralClass.get_mosaic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mosaic</span></code></a>(epoch[, instrument, band, path, ...])</p></td>
+<td><p>Method to download mosaics associated to an epoch and instrument or band</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_observations" title="astroquery.esa.integral.IntegralClass.get_observations"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_observations</span></code></a>(*[, target_name, ...])</p></td>
+<td><p>Retrieve the INTEGRAL observations associated to target name, time range and/or revolution</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_short_term_timeseries" title="astroquery.esa.integral.IntegralClass.get_short_term_timeseries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_short_term_timeseries</span></code></a>(target_name, epoch)</p></td>
+<td><p>Method to download short term timeseries associated to an epoch and instrument or band</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_source_metadata" title="astroquery.esa.integral.IntegralClass.get_source_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_source_metadata</span></code></a>(target_name)</p></td>
+<td><p>Retrieve the metadata associated to an INTEGRAL target</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_sources" title="astroquery.esa.integral.IntegralClass.get_sources"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_sources</span></code></a>(target_name, *[, async_job, ...])</p></td>
+<td><p>Retrieve the coordinates of an INTEGRAL source</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_spectra" title="astroquery.esa.integral.IntegralClass.get_spectra"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_spectra</span></code></a>(target_name, epoch[, ...])</p></td>
+<td><p>Method to download mosaics associated to an epoch and instrument or band</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_table" title="astroquery.esa.integral.IntegralClass.get_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_table</span></code></a>(table)</p></td>
+<td><p>Gets the specified table from ISLA TAP</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_tables" title="astroquery.esa.integral.IntegralClass.get_tables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_tables</span></code></a>(*[, only_names])</p></td>
+<td><p>Gets all public tables within ISLA TAP</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_timeline" title="astroquery.esa.integral.IntegralClass.get_timeline"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_timeline</span></code></a>(coordinates, *[, radius])</p></td>
+<td><p>Retrieve the INTEGRAL timeline associated to coordinates and radius</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.login" title="astroquery.esa.integral.IntegralClass.login"><code class="xref py py-obj docutils literal notranslate"><span class="pre">login</span></code></a>(*[, user, password])</p></td>
+<td><p>Performs a login.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.logout" title="astroquery.esa.integral.IntegralClass.logout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logout</span></code></a>()</p></td>
+<td><p>Performs a logout.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.query_tap" title="astroquery.esa.integral.IntegralClass.query_tap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_tap</span></code></a>(query, *[, async_job, ...])</p></td>
+<td><p>Launches a synchronous or asynchronous job to query the ISLA tap</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.tap">
+<span class="sig-name descname"><span class="pre">tap</span></span><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.tap" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.download_science_windows">
+<span class="sig-name descname"><span class="pre">download_science_windows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">science_windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">revolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proposal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_fits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.download_science_windows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.download_science_windows" title="Link to this definition">¶</a></dt>
+<dd><p>Method to download science windows associated to one of these parameters:
+science_windows, observation_id, revolution or proposal</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>science_windows</strong><span class="classifier">list of str, optional</span></dt><dd><p>Science Windows to download</p>
+</dd>
+<dt><strong>observation_id: str, optional</strong></dt><dd><p>Observation ID associated to science windows</p>
+</dd>
+<dt><strong>revolution: str, optional</strong></dt><dd><p>Revolution associated to science windows</p>
+</dd>
+<dt><strong>proposal: str, optional</strong></dt><dd><p>Proposal ID associated to science windows</p>
+</dd>
+<dt><strong>output_file: str, optional</strong></dt><dd><p>File name and path for the downloaded file</p>
+</dd>
+<dt><strong>cache: bool, optional, default False</strong></dt><dd><p>Flag to determine if the file is stored in the cache or not</p>
+</dd>
+<dt><strong>read_fits: bool, optional, default True</strong></dt><dd><p>Open the downloaded file and parse the existing FITS files</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>If read_fits=True, a list with objects containing filename, path and FITS file opened with the</dt><dd></dd>
+<dt>science windows. If read_fits=False, the path of the downloaded file</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.get_bands">
+<span class="sig-name descname"><span class="pre">get_bands</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.get_bands"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.get_bands" title="Link to this definition">¶</a></dt>
+<dd><p>Get the bands available in ISLA</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.get_epochs">
+<span class="sig-name descname"><span class="pre">get_epochs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.get_epochs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.get_epochs" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve the INTEGRAL epochs associated to a target and an instrument or a band</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>target_name</strong><span class="classifier">str, optional</span></dt><dd><p>target name to be requested, mandatory</p>
+</dd>
+<dt><strong>instrument</strong><span class="classifier">str, optional</span></dt><dd><p>Possible values are in isla.instruments object</p>
+</dd>
+<dt><strong>band</strong><span class="classifier">str, optional</span></dt><dd><p>Possible values are in isla.bandsobject</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>An astropy.table object containing the available epochs</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.get_instrument_band_map">
+<span class="sig-name descname"><span class="pre">get_instrument_band_map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.get_instrument_band_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.get_instrument_band_map" title="Link to this definition">¶</a></dt>
+<dd><p>Maps the bands and instruments included in ISLA</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.get_instruments">
+<span class="sig-name descname"><span class="pre">get_instruments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.get_instruments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.get_instruments" title="Link to this definition">¶</a></dt>
+<dd><p>Get the instruments available in ISLA</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.get_job">
+<span class="sig-name descname"><span class="pre">get_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.get_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.get_job" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the job corresponding to an ID. Note that the caller must be able to see
+the job in the current security context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>jobid</strong><span class="classifier">str, mandatory</span></dt><dd><p>ID of the job to view</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>JobSummary corresponding to the job ID</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.get_job_list">
+<span class="sig-name descname"><span class="pre">get_job_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phases</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">short_description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.get_job_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.get_job_list" title="Link to this definition">¶</a></dt>
+<dd><p>Returns all the asynchronous jobs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>phases</strong><span class="classifier">list of str</span></dt><dd><p>Union of job phases to filter the results by.</p>
+</dd>
+<dt><strong>after</strong><span class="classifier">datetime</span></dt><dd><p>Return only jobs created after this datetime</p>
+</dd>
+<dt><strong>last</strong><span class="classifier">int</span></dt><dd><p>Return only the most recent number of jobs</p>
+</dd>
+<dt><strong>short_description</strong><span class="classifier">flag - True or False</span></dt><dd><p>If True, the jobs in the list will contain only the information
+corresponding to the TAP ShortJobDescription object (job ID, phase,
+run ID, owner ID and creation ID) whereas if False, a separate GET
+call to each job is performed for the complete job description</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>A list of Job objects</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.get_long_term_timeseries">
+<span class="sig-name descname"><span class="pre">get_long_term_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_fits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.get_long_term_timeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.get_long_term_timeseries" title="Link to this definition">¶</a></dt>
+<dd><p>Method to download long term timeseries associated to an epoch and instrument or band</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>target_name</strong><span class="classifier">str, mandatory</span></dt><dd><p>target name to be requested, mandatory</p>
+</dd>
+<dt><strong>instrument</strong><span class="classifier">str</span></dt><dd><p>Possible values are in isla.instruments object</p>
+</dd>
+<dt><strong>band</strong><span class="classifier">str</span></dt><dd><p>Possible values are in isla.bandsobject</p>
+</dd>
+<dt><strong>path: str, optional</strong></dt><dd><p>Path for the downloaded file</p>
+</dd>
+<dt><strong>filename: str, optional</strong></dt><dd><p>Filename for the downloaded file</p>
+</dd>
+<dt><strong>cache: bool, optional, default False</strong></dt><dd><p>Flag to determine if the file is stored in the cache or not</p>
+</dd>
+<dt><strong>read_fits: bool, optional, default True</strong></dt><dd><p>Open the downloaded file and parse the existing FITS files</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>If read_fits=True, a list with objects containing filename, path and FITS file opened with long</dt><dd></dd>
+<dt>term timeseries. If read_fits=False, the path of the downloaded file</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.get_mosaic">
+<span class="sig-name descname"><span class="pre">get_mosaic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_fits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.get_mosaic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.get_mosaic" title="Link to this definition">¶</a></dt>
+<dd><p>Method to download mosaics associated to an epoch and instrument or band</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>epoch</strong><span class="classifier">str, mandatory</span></dt><dd><p>reference epoch for the short term timeseries</p>
+</dd>
+<dt><strong>instrument</strong><span class="classifier">str</span></dt><dd><p>Possible values are in isla.instruments object</p>
+</dd>
+<dt><strong>band</strong><span class="classifier">str</span></dt><dd><p>Possible values are in isla.bandsobject</p>
+</dd>
+<dt><strong>cache: bool, optional, default False</strong></dt><dd><p>Flag to determine if the file is stored in the cache or not</p>
+</dd>
+<dt><strong>path: str, optional</strong></dt><dd><p>Path for the downloaded file</p>
+</dd>
+<dt><strong>filename: str, optional</strong></dt><dd><p>Filename for the downloaded file</p>
+</dd>
+<dt><strong>read_fits: bool, optional, default True</strong></dt><dd><p>Open the downloaded file and parse the existing FITS files</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>If read_fits=True, a list with objects containing filename, path and FITS file opened with mosaics.</dt><dd></dd>
+<dt>If read_fits=False, a list of paths of the downloaded files</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.get_observations">
+<span class="sig-name descname"><span class="pre">get_observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_revno</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_revno</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">async_job</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.get_observations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.get_observations" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve the INTEGRAL observations associated to target name, time range and/or revolution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>target_name: str, optional</strong></dt><dd><p>target name to be requested</p>
+</dd>
+<dt><strong>coordinates: str or SkyCoord, optional</strong></dt><dd><p>coordinates of the center in the cone search</p>
+</dd>
+<dt><strong>radius: float or quantity, optional, default value 14 degrees</strong></dt><dd><p>radius in degrees (int, float) or quantity of the cone_search</p>
+</dd>
+<dt><strong>start_time: str in UTC or datetime, optional</strong></dt><dd><p>start time of the observation</p>
+</dd>
+<dt><strong>end_time: str in UTC or datetime, optional</strong></dt><dd><p>end time of the observation</p>
+</dd>
+<dt><strong>start_revno: string, optional</strong></dt><dd><p>start revolution number, as a four-digit string with leading zeros
+e.g. 0352</p>
+</dd>
+<dt><strong>end_revno: string, optional</strong></dt><dd><p>end revolution number, as a four-digit string with leading zeros
+e.g. 0353</p>
+</dd>
+<dt><strong>async_job</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>executes the query (job) in asynchronous/synchronous mode (default
+synchronous)</p>
+</dd>
+<dt><strong>output_file</strong><span class="classifier">str, optional, default None</span></dt><dd><p>file name where the results are saved if dumpToFile is True.
+If this parameter is not provided, the jobid is used instead</p>
+</dd>
+<dt><strong>output_format</strong><span class="classifier">str, optional, default ‘votable’</span></dt><dd><p>results format</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>flag to display information about the process</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>An astropy.table object containing the results</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.get_short_term_timeseries">
+<span class="sig-name descname"><span class="pre">get_short_term_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_fits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.get_short_term_timeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.get_short_term_timeseries" title="Link to this definition">¶</a></dt>
+<dd><p>Method to download short term timeseries associated to an epoch and instrument or band</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>target_name</strong><span class="classifier">str, mandatory</span></dt><dd><p>target name to be requested, mandatory</p>
+</dd>
+<dt><strong>epoch</strong><span class="classifier">str, mandatory</span></dt><dd><p>reference epoch for the short term timeseries</p>
+</dd>
+<dt><strong>instrument</strong><span class="classifier">str, optional</span></dt><dd><p>Possible values are in isla.instruments object</p>
+</dd>
+<dt><strong>band</strong><span class="classifier">str, optional</span></dt><dd><p>Possible values are in isla.bandsobject</p>
+</dd>
+<dt><strong>path: str, optional</strong></dt><dd><p>Path for the downloaded file</p>
+</dd>
+<dt><strong>filename: str, optional</strong></dt><dd><p>Filename for the downloaded file</p>
+</dd>
+<dt><strong>cache: bool, optional, default False</strong></dt><dd><p>Flag to determine if the file is stored in the cache or not</p>
+</dd>
+<dt><strong>read_fits: bool, optional, default True</strong></dt><dd><p>Open the downloaded file and parse the existing FITS files</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>If read_fits=True, a list with objects containing filename, path and FITS file opened with short</dt><dd></dd>
+<dt>term timeseries. If read_fits=False, the path of the downloaded file</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.get_source_metadata">
+<span class="sig-name descname"><span class="pre">get_source_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.get_source_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.get_source_metadata" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve the metadata associated to an INTEGRAL target</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>target_name</strong><span class="classifier">str, mandatory</span></dt><dd><p>target name to be requested, mandatory</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>An object containing te metadata from the target</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.get_sources">
+<span class="sig-name descname"><span class="pre">get_sources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">async_job</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.get_sources"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.get_sources" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve the coordinates of an INTEGRAL source</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>target_name</strong><span class="classifier">str, mandatory</span></dt><dd><p>target name to be requested, mandatory</p>
+</dd>
+<dt><strong>async_job</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>executes the query (job) in asynchronous/synchronous mode (default
+synchronous)</p>
+</dd>
+<dt><strong>output_file</strong><span class="classifier">str, optional, default None</span></dt><dd><p>file name where the results are saved if dumpToFile is True.
+If this parameter is not provided, the jobid is used instead</p>
+</dd>
+<dt><strong>output_format</strong><span class="classifier">str, optional, default ‘votable’</span></dt><dd><p>results format</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>An astropy.table object containing the results</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.get_spectra">
+<span class="sig-name descname"><span class="pre">get_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instrument</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_fits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.get_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.get_spectra" title="Link to this definition">¶</a></dt>
+<dd><p>Method to download mosaics associated to an epoch and instrument or band</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>target_name</strong><span class="classifier">str, mandatory</span></dt><dd><p>target name to be requested, mandatory</p>
+</dd>
+<dt><strong>epoch</strong><span class="classifier">str, mandatory</span></dt><dd><p>reference epoch for the short term timeseries</p>
+</dd>
+<dt><strong>instrument</strong><span class="classifier">str</span></dt><dd><p>Possible values are in isla.instruments object</p>
+</dd>
+<dt><strong>band</strong><span class="classifier">str</span></dt><dd><p>Possible values are in isla.bandsobject</p>
+</dd>
+<dt><strong>path: str, optional</strong></dt><dd><p>Path for the downloaded file</p>
+</dd>
+<dt><strong>filename: str, optional</strong></dt><dd><p>Filename for the downloaded file</p>
+</dd>
+<dt><strong>cache: bool, optional, default False</strong></dt><dd><p>Flag to determine if the file is stored in the cache or not</p>
+</dd>
+<dt><strong>read_fits: bool, optional, default True</strong></dt><dd><p>Open the downloaded file and parse the existing FITS files</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>If read_fits=True, a list with objects containing filename, path and FITS file opened with spectra.</dt><dd></dd>
+<dt>If read_fits=False, a list of paths of the downloaded files</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.get_table">
+<span class="sig-name descname"><span class="pre">get_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.get_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.get_table" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the specified table from ISLA TAP</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>table</strong><span class="classifier">str, mandatory</span></dt><dd><p>full qualified table name (i.e. schema name + table name)</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>A table object</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.get_tables">
+<span class="sig-name descname"><span class="pre">get_tables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.get_tables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.get_tables" title="Link to this definition">¶</a></dt>
+<dd><p>Gets all public tables within ISLA TAP</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>only_names</strong><span class="classifier">bool, optional, default False</span></dt><dd><p>True to load table names only</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>A list of table objects</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.get_timeline">
+<span class="sig-name descname"><span class="pre">get_timeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coordinates</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.get_timeline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.get_timeline" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve the INTEGRAL timeline associated to coordinates and radius</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>coordinates: str or SkyCoord, mandatory</strong></dt><dd><p>RA and Dec of the source</p>
+</dd>
+<dt><strong>radius: float or quantity, optional, default value 14 degrees</strong></dt><dd><p>radius in degrees (int, float) or quantity of the cone_search</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>An object containing:</dt><dd><p>totalItems: a counter for the number of items retrieved
+fraFC:
+totEffExpo:
+timeline: An astropy.table object containing the results for scwExpo, scwRevs, scwTimes and scwOffAxis</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.login">
+<span class="sig-name descname"><span class="pre">login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.login"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.login" title="Link to this definition">¶</a></dt>
+<dd><p>Performs a login.
+TAP+ only
+User and password shall be used</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>user</strong><span class="classifier">str, mandatory, default None</span></dt><dd><p>Username. If no value is provided, a prompt to type it will appear</p>
+</dd>
+<dt><strong>password</strong><span class="classifier">str, mandatory, default None</span></dt><dd><p>User password. If no value is provided, a prompt to type it will appear</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.logout">
+<span class="sig-name descname"><span class="pre">logout</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.logout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.logout" title="Link to this definition">¶</a></dt>
+<dd><p>Performs a logout.
+TAP+ only</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="astroquery.esa.integral.IntegralClass.query_tap">
+<span class="sig-name descname"><span class="pre">query_tap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">async_job</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'votable'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/astroquery/esa/integral/core.html#IntegralClass.query_tap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#astroquery.esa.integral.IntegralClass.query_tap" title="Link to this definition">¶</a></dt>
+<dd><p>Launches a synchronous or asynchronous job to query the ISLA tap</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>query</strong><span class="classifier">str, mandatory</span></dt><dd><p>query (adql) to be executed</p>
+</dd>
+<dt><strong>async_job</strong><span class="classifier">bool, optional, default ‘False’</span></dt><dd><p>executes the query (job) in asynchronous/synchronous mode (default
+synchronous)</p>
+</dd>
+<dt><strong>output_file</strong><span class="classifier">str, optional, default None</span></dt><dd><p>file name where the results are saved if dumpToFile is True.
+If this parameter is not provided, the jobid is used instead</p>
+</dd>
+<dt><strong>output_format</strong><span class="classifier">str, optional, default ‘votable’</span></dt><dd><p>results format</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>An astropy.table object containing the results</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">IntegralClass</a><ul>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass"><code class="docutils literal notranslate"><span class="pre">IntegralClass</span></code></a><ul>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.tap"><code class="docutils literal notranslate"><span class="pre">IntegralClass.tap</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.download_science_windows"><code class="docutils literal notranslate"><span class="pre">IntegralClass.download_science_windows()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_bands"><code class="docutils literal notranslate"><span class="pre">IntegralClass.get_bands()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_epochs"><code class="docutils literal notranslate"><span class="pre">IntegralClass.get_epochs()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_instrument_band_map"><code class="docutils literal notranslate"><span class="pre">IntegralClass.get_instrument_band_map()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_instruments"><code class="docutils literal notranslate"><span class="pre">IntegralClass.get_instruments()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_job"><code class="docutils literal notranslate"><span class="pre">IntegralClass.get_job()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_job_list"><code class="docutils literal notranslate"><span class="pre">IntegralClass.get_job_list()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_long_term_timeseries"><code class="docutils literal notranslate"><span class="pre">IntegralClass.get_long_term_timeseries()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_mosaic"><code class="docutils literal notranslate"><span class="pre">IntegralClass.get_mosaic()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_observations"><code class="docutils literal notranslate"><span class="pre">IntegralClass.get_observations()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_short_term_timeseries"><code class="docutils literal notranslate"><span class="pre">IntegralClass.get_short_term_timeseries()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_source_metadata"><code class="docutils literal notranslate"><span class="pre">IntegralClass.get_source_metadata()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_sources"><code class="docutils literal notranslate"><span class="pre">IntegralClass.get_sources()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_spectra"><code class="docutils literal notranslate"><span class="pre">IntegralClass.get_spectra()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_table"><code class="docutils literal notranslate"><span class="pre">IntegralClass.get_table()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_tables"><code class="docutils literal notranslate"><span class="pre">IntegralClass.get_tables()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.get_timeline"><code class="docutils literal notranslate"><span class="pre">IntegralClass.get_timeline()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.login"><code class="docutils literal notranslate"><span class="pre">IntegralClass.login()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.logout"><code class="docutils literal notranslate"><span class="pre">IntegralClass.logout()</span></code></a></li>
+<li><a class="reference internal" href="#astroquery.esa.integral.IntegralClass.query_tap"><code class="docutils literal notranslate"><span class="pre">IntegralClass.query_tap()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="../_sources/api/astroquery.esa.integral.IntegralClass.rst.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 02 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>

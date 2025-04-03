@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>astroquery.esa.euclid.core &#8212; astroquery v0.4.8.dev10177</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    
+    <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../../../../_static/documentation_options.js?v=51006566"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../../../../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../../../../_static/copybutton.js"></script>
+    <link rel="icon" href="../../../../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../../index.html">astroquery v0.4.8.dev10177</a>
+	 &#187;
+      </li>
+      <li><a href="../../../index.html" >Module code</a> &#187;</li>
+      <li><a href="../euclid.html" accesskey="U">astroquery.esa.euclid</a> &#187;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for astroquery.esa.euclid.core</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">===============</span>
+<span class="sd">Euclid TAP plus</span>
+<span class="sd">===============</span>
+<span class="sd">European Space Astronomy Centre (ESAC)</span>
+<span class="sd">European Space Agency (ESA)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">binascii</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tarfile</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span>
+<span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">Angle</span>
+<span class="kn">from</span> <span class="nn">astropy.units</span> <span class="kn">import</span> <span class="n">Quantity</span>
+<span class="kn">from</span> <span class="nn">requests.exceptions</span> <span class="kn">import</span> <span class="n">HTTPError</span>
+
+<span class="kn">from</span> <span class="nn">astroquery</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">astroquery.utils</span> <span class="kn">import</span> <span class="n">commons</span>
+<span class="kn">from</span> <span class="nn">astroquery.utils.tap</span> <span class="kn">import</span> <span class="n">TapPlus</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">conf</span>
+
+
+<div class="viewcode-block" id="EuclidClass">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.euclid.EuclidClass.html#astroquery.esa.euclid.EuclidClass">[docs]</a>
+<span class="k">class</span> <span class="nc">EuclidClass</span><span class="p">(</span><span class="n">TapPlus</span><span class="p">):</span>
+    <span class="n">__ERROR_MSG_REQUESTED_OBSERVATION_ID</span> <span class="o">=</span> <span class="s2">&quot;Missing required argument: &#39;observation_id&#39;&quot;</span>
+    <span class="n">__ERROR_MSG_REQUESTED_TILE_ID</span> <span class="o">=</span> <span class="s2">&quot;Missing required argument: &#39;tile_id&#39;&quot;</span>
+    <span class="n">__ERROR_MSG_REQUESTED_OBSERVATION_ID_AND_TILE_ID</span> <span class="o">=</span> <span class="s2">&quot;Incompatible: &#39;observation_id&#39; and &#39;tile_id&#39;. Use only one.&quot;</span>
+    <span class="n">__ERROR_MSG_REQUESTED_PRODUCT_TYPE</span> <span class="o">=</span> <span class="s2">&quot;Missing required argument: &#39;product_type&#39;&quot;</span>
+    <span class="n">__ERROR_MSG_REQUESTED_GENERIC</span> <span class="o">=</span> <span class="s2">&quot;Missing required argument&quot;</span>
+    <span class="n">__ERROR_MSG_REQUESTED_RADIUS</span> <span class="o">=</span> <span class="s2">&quot;Radius cannot be greater than 30 arcminutes&quot;</span>
+    <span class="n">EUCLID_MESSAGES</span> <span class="o">=</span> <span class="s2">&quot;notification?action=GetNotifications&quot;</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Proxy class to default TapPlus object (pointing to the Euclid archive)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ROW_LIMIT</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">ROW_LIMIT</span>
+
+    <span class="n">__VALID_DATALINK_RETRIEVAL_TYPES</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">VALID_DATALINK_RETRIEVAL_TYPES</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">environment</span><span class="o">=</span><span class="s1">&#39;PDR&#39;</span><span class="p">,</span> <span class="n">tap_plus_conn_handler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">datalink_handler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cutout_handler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">show_server_messages</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for EuclidClass.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        environment : str, mandatory if no tap, data or cutout hosts is specified, default &#39;PDR&#39;</span>
+<span class="sd">            The Euclid Science Archive environment: &#39;PDR&#39;, &#39;IDR&#39;, &#39;OTF&#39; and &#39;REG&#39;</span>
+<span class="sd">        tap_plus_conn_handler : tap connection handler object, optional, default None</span>
+<span class="sd">            HTTP(s) connection hander (creator). If no handler is provided, a new one is created.</span>
+<span class="sd">        datalink_handler : dataliink connection handler object, optional, default None</span>
+<span class="sd">            HTTP(s) connection hander (creator). If no handler is provided, a new one is created.</span>
+<span class="sd">        cutout_handler : cutout connection handler object, optional, default None</span>
+<span class="sd">            HTTP(s) connection hander (creator). If no handler is provided, a new one is created.</span>
+<span class="sd">        verbose : bool, optional, default &#39;True&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+<span class="sd">        show_server_messages : bool, optional, default &#39;True&#39;</span>
+<span class="sd">            show the messages to inform users about the status of Euclid TAP</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">environment</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">conf</span><span class="o">.</span><span class="n">ENVIRONMENTS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid environment </span><span class="si">{</span><span class="n">environment</span><span class="si">}</span><span class="s2">. Valid values: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">ENVIRONMENTS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">environment</span> <span class="o">=</span> <span class="n">environment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_table</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">ENVIRONMENTS</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">][</span><span class="s1">&#39;main_table&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_table_ra</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">ENVIRONMENTS</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">][</span><span class="s1">&#39;main_table_ra_column&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_table_dec</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">ENVIRONMENTS</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">][</span><span class="s1">&#39;main_table_dec_column&#39;</span><span class="p">]</span>
+
+        <span class="n">url_server</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">ENVIRONMENTS</span><span class="p">[</span><span class="n">environment</span><span class="p">][</span><span class="s1">&#39;url_server&#39;</span><span class="p">]</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">EuclidClass</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url_server</span><span class="p">,</span>
+                                          <span class="n">server_context</span><span class="o">=</span><span class="s1">&#39;tap-server&#39;</span><span class="p">,</span>
+                                          <span class="n">tap_context</span><span class="o">=</span><span class="s2">&quot;tap&quot;</span><span class="p">,</span>
+                                          <span class="n">upload_context</span><span class="o">=</span><span class="s2">&quot;Upload&quot;</span><span class="p">,</span>
+                                          <span class="n">table_edit_context</span><span class="o">=</span><span class="s2">&quot;TableTool&quot;</span><span class="p">,</span>
+                                          <span class="n">data_context</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span>
+                                          <span class="n">datalink_context</span><span class="o">=</span><span class="s2">&quot;datalink&quot;</span><span class="p">,</span>
+                                          <span class="n">connhandler</span><span class="o">=</span><span class="n">tap_plus_conn_handler</span><span class="p">,</span>
+                                          <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                                          <span class="n">client_id</span><span class="o">=</span><span class="s1">&#39;ASTROQUERY&#39;</span><span class="p">,</span>
+                                          <span class="n">use_names_over_ids</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">USE_NAMES_OVER_IDS</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">datalink_handler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__eucliddata</span> <span class="o">=</span> <span class="n">TapPlus</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url_server</span><span class="p">,</span>
+                                        <span class="n">server_context</span><span class="o">=</span><span class="s2">&quot;sas-dd&quot;</span><span class="p">,</span>
+                                        <span class="n">tap_context</span><span class="o">=</span><span class="s2">&quot;tap-server&quot;</span><span class="p">,</span>
+                                        <span class="n">upload_context</span><span class="o">=</span><span class="s2">&quot;Upload&quot;</span><span class="p">,</span>
+                                        <span class="n">table_edit_context</span><span class="o">=</span><span class="s2">&quot;TableTool&quot;</span><span class="p">,</span>
+                                        <span class="n">data_context</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span>
+                                        <span class="n">datalink_context</span><span class="o">=</span><span class="s2">&quot;datalink&quot;</span><span class="p">,</span>
+                                        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                                        <span class="n">client_id</span><span class="o">=</span><span class="s1">&#39;ASTROQUERY&#39;</span><span class="p">,</span>
+                                        <span class="n">use_names_over_ids</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">USE_NAMES_OVER_IDS</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__eucliddata</span> <span class="o">=</span> <span class="n">datalink_handler</span>
+
+        <span class="k">if</span> <span class="n">cutout_handler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__euclidcutout</span> <span class="o">=</span> <span class="n">TapPlus</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url_server</span><span class="p">,</span>
+                                          <span class="n">server_context</span><span class="o">=</span><span class="s2">&quot;sas-cutout&quot;</span><span class="p">,</span>
+                                          <span class="n">tap_context</span><span class="o">=</span><span class="s2">&quot;tap-server&quot;</span><span class="p">,</span>
+                                          <span class="n">upload_context</span><span class="o">=</span><span class="s2">&quot;Upload&quot;</span><span class="p">,</span>
+                                          <span class="n">table_edit_context</span><span class="o">=</span><span class="s2">&quot;TableTool&quot;</span><span class="p">,</span>
+                                          <span class="n">data_context</span><span class="o">=</span><span class="s2">&quot;cutout&quot;</span><span class="p">,</span>
+                                          <span class="n">datalink_context</span><span class="o">=</span><span class="s2">&quot;datalink&quot;</span><span class="p">,</span>
+                                          <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                                          <span class="n">client_id</span><span class="o">=</span><span class="s1">&#39;ASTROQUERY&#39;</span><span class="p">,</span>
+                                          <span class="n">use_names_over_ids</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">USE_NAMES_OVER_IDS</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__euclidcutout</span> <span class="o">=</span> <span class="n">cutout_handler</span>
+
+        <span class="k">if</span> <span class="n">show_server_messages</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_status_messages</span><span class="p">()</span>
+
+<div class="viewcode-block" id="EuclidClass.launch_job">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.euclid.EuclidClass.html#astroquery.esa.euclid.EuclidClass.launch_job">[docs]</a>
+    <span class="k">def</span> <span class="nf">launch_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dump_to_file</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                   <span class="n">upload_resource</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">upload_table_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Description</span>
+<span class="sd">        -----------</span>
+<span class="sd">        Launches a synchronous job</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query : str, mandatory</span>
+<span class="sd">            query to be executed</span>
+<span class="sd">        name : str, optional, default None</span>
+<span class="sd">            custom name defined by the user for the job that is going to be created</span>
+<span class="sd">        dump_to_file : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            if True, the results are saved in a file instead of using memory</span>
+<span class="sd">        output_file : str, optional, default None</span>
+<span class="sd">            File name where the results are saved if dump_to_file is True.</span>
+<span class="sd">            If this parameter is not provided, the job id is used instead</span>
+<span class="sd">        output_format : str, optional, default &#39;csv&#39;</span>
+<span class="sd">            output format for the output file</span>
+<span class="sd">        verbose : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+<span class="sd">        upload_resource: str, optional, default None</span>
+<span class="sd">            resource to be uploaded to UPLOAD_SCHEMA</span>
+<span class="sd">        upload_table_name: str, required if uploadResource is provided, default None</span>
+<span class="sd">            resource temporary table name associated to the uploaded resource</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        A Job object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">launch_job</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                      <span class="n">output_file</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span>
+                                      <span class="n">output_format</span><span class="o">=</span><span class="n">output_format</span><span class="p">,</span>
+                                      <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                                      <span class="n">dump_to_file</span><span class="o">=</span><span class="n">dump_to_file</span><span class="p">,</span>
+                                      <span class="n">upload_resource</span><span class="o">=</span><span class="n">upload_resource</span><span class="p">,</span>
+                                      <span class="n">upload_table_name</span><span class="o">=</span><span class="n">upload_table_name</span><span class="p">,</span>
+                                      <span class="n">format_with_results_compressed</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;votable_gzip&#39;</span><span class="p">,))</span>
+
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Query failed: </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s1">: HTTP error: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exx</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Query failed: </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">exx</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EuclidClass.launch_job_async">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.euclid.EuclidClass.html#astroquery.esa.euclid.EuclidClass.launch_job_async">[docs]</a>
+    <span class="k">def</span> <span class="nf">launch_job_async</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dump_to_file</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span>
+                         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">upload_resource</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">upload_table_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">autorun</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Description</span>
+<span class="sd">        -----------</span>
+<span class="sd">        Launches an asynchronous job</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        query : str, mandatory</span>
+<span class="sd">            query to be executed</span>
+<span class="sd">        name : str, optional, default None</span>
+<span class="sd">            custom name defined by the user for the job that is going to be created</span>
+<span class="sd">        dump_to_file : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            if True, the results are saved in a file instead of using memory</span>
+<span class="sd">        output_file : str, optional, default None</span>
+<span class="sd">            file name where the results are saved if dump_to_file is True.</span>
+<span class="sd">            if this parameter is not provided, the jobid is used instead</span>
+<span class="sd">        output_format : str, optional, default &#39;csv&#39;</span>
+<span class="sd">            format of the results for the output file</span>
+<span class="sd">        verbose : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+<span class="sd">        background : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            when the job is executed in asynchronous mode, this flag specifies whether</span>
+<span class="sd">            the execution will wait until results are available</span>
+<span class="sd">        upload_resource: str, optional, default None</span>
+<span class="sd">            resource to be uploaded to UPLOAD_SCHEMA</span>
+<span class="sd">        upload_table_name: str, required if uploadResource is provided, default None</span>
+<span class="sd">            resource temporary table name associated to the uploaded resource</span>
+<span class="sd">        autorun : boolean, optional, default True</span>
+<span class="sd">            if &#39;True&#39;, sets &#39;phase&#39; parameter to &#39;RUN&#39;,</span>
+<span class="sd">            so the framework can start the job.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        A Job object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">launch_job_async</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span>
+                                            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                                            <span class="n">output_file</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span>
+                                            <span class="n">output_format</span><span class="o">=</span><span class="n">output_format</span><span class="p">,</span>
+                                            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                                            <span class="n">dump_to_file</span><span class="o">=</span><span class="n">dump_to_file</span><span class="p">,</span>
+                                            <span class="n">background</span><span class="o">=</span><span class="n">background</span><span class="p">,</span>
+                                            <span class="n">upload_resource</span><span class="o">=</span><span class="n">upload_resource</span><span class="p">,</span>
+                                            <span class="n">upload_table_name</span><span class="o">=</span><span class="n">upload_table_name</span><span class="p">,</span>
+                                            <span class="n">autorun</span><span class="o">=</span><span class="n">autorun</span><span class="p">,</span>
+                                            <span class="n">format_with_results_compressed</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;votable_gzip&#39;</span><span class="p">,))</span>
+
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Query failed: </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s1">: HTTP error: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exx</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Query failed: </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">exx</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EuclidClass.query_object">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.euclid.EuclidClass.html#astroquery.esa.euclid.EuclidClass.query_object">[docs]</a>
+    <span class="k">def</span> <span class="nf">query_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coordinate</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">async_job</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Description</span>
+<span class="sd">        -----------</span>
+<span class="sd">        Searches for objects around a given position with the default catalog sascat_pvpr01.mer_final_cat_pvpr01</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        coordinate : astropy.coordinate, mandatory</span>
+<span class="sd">            coordinates center point</span>
+<span class="sd">        radius : astropy.units, required if no &#39;width&#39; nor &#39;height&#39; are provided</span>
+<span class="sd">            radius (deg)</span>
+<span class="sd">        width : astropy.units, required if no &#39;radius&#39; is provided</span>
+<span class="sd">            box width</span>
+<span class="sd">        height : astropy.units, required if no &#39;radius&#39; is provided</span>
+<span class="sd">            box height</span>
+<span class="sd">        async_job : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            executes the query (job) in asynchronous/synchronous mode (default</span>
+<span class="sd">            synchronous)</span>
+<span class="sd">        verbose : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+<span class="sd">        columns: list, optional, default None</span>
+<span class="sd">            if empty, all columns will be selected</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The job results (astropy.table)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">coord</span> <span class="o">=</span> <span class="n">commons</span><span class="o">.</span><span class="n">parse_coordinates</span><span class="p">(</span><span class="n">coordinate</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">radius</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">job</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cone_search</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">async_job</span><span class="o">=</span><span class="n">async_job</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ra_hours</span><span class="p">,</span> <span class="n">dec</span> <span class="o">=</span> <span class="n">commons</span><span class="o">.</span><span class="n">coord_to_radec</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span>
+            <span class="n">ra</span> <span class="o">=</span> <span class="n">ra_hours</span> <span class="o">*</span> <span class="mf">15.0</span>  <span class="c1"># Converts to degrees</span>
+            <span class="n">width_quantity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_quantity_input</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">)</span>
+            <span class="n">height_quantity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_quantity_input</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">)</span>
+            <span class="n">width_deg</span> <span class="o">=</span> <span class="n">width_quantity</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">units</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span>
+            <span class="n">height_deg</span> <span class="o">=</span> <span class="n">height_quantity</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">units</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SELECT DISTANCE(POINT(&#39;ICRS&#39;,&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_table_ra</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_table_dec</span> <span class="o">+</span> <span class="s2">&quot;), </span><span class="se">\</span>
+<span class="s2">                POINT(&#39;ICRS&#39;,&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ra</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dec</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)) AS dist, * </span><span class="se">\</span>
+<span class="s2">                FROM &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_table</span> <span class="o">+</span> <span class="s2">&quot; WHERE CONTAINS(</span><span class="se">\</span>
+<span class="s2">                POINT(&#39;ICRS&#39;,&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_table_ra</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_table_dec</span> <span class="o">+</span> <span class="s2">&quot;),</span><span class="se">\</span>
+<span class="s2">                BOX(&#39;ICRS&#39;,&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ra</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dec</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">width_deg</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">height_deg</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                     <span class="o">+</span> <span class="s2">&quot;))=1 </span><span class="se">\</span>
+<span class="s2">                ORDER BY dist ASC&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">async_job</span><span class="p">:</span>
+                <span class="n">job</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">launch_job_async</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">format_with_results_compressed</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;votable_gzip&#39;</span><span class="p">,))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">job</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">launch_job</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">format_with_results_compressed</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;votable_gzip&#39;</span><span class="p">,))</span>
+        <span class="k">return</span> <span class="n">job</span><span class="o">.</span><span class="n">get_results</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="nf">__cone_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coordinate</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">table_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ra_column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dec_column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                      <span class="n">async_job</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Cone search sorted by distance</span>
+<span class="sd">        TAP &amp; TAP+</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        coordinate : astropy.coordinate, mandatory</span>
+<span class="sd">            coordinates center point</span>
+<span class="sd">        radius : astropy.units, mandatory</span>
+<span class="sd">            radius</span>
+<span class="sd">        table_name : str, optional, default main gaia table name doing the cone search against</span>
+<span class="sd">        ra_column_name : str, optional, default ra column in main gaia table</span>
+<span class="sd">            ra column doing the cone search against</span>
+<span class="sd">        dec_column_name : str, optional, default dec column in main gaia table</span>
+<span class="sd">            dec column doing the cone search against</span>
+<span class="sd">        async_job : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            executes the job in asynchronous/synchronous mode (default</span>
+<span class="sd">            synchronous)</span>
+<span class="sd">        verbose : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+
+<span class="sd">        columns: list, optional, default None</span>
+<span class="sd">            if empty, all columns will be selected</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        A Job object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">table_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">table_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_table</span>
+            <span class="n">ra_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_table_ra</span>
+            <span class="n">dec_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_table_dec</span>
+
+        <span class="n">radius_deg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">coord</span> <span class="o">=</span> <span class="n">commons</span><span class="o">.</span><span class="n">parse_coordinates</span><span class="p">(</span><span class="n">coordinate</span><span class="p">)</span>
+        <span class="n">ra_hours</span><span class="p">,</span> <span class="n">dec</span> <span class="o">=</span> <span class="n">commons</span><span class="o">.</span><span class="n">coord_to_radec</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span>
+        <span class="n">ra</span> <span class="o">=</span> <span class="n">ra_hours</span> <span class="o">*</span> <span class="mf">15.0</span>  <span class="c1"># Converts to degrees</span>
+        <span class="k">if</span> <span class="n">radius</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">radius_deg</span> <span class="o">=</span> <span class="n">Angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__get_quantity_input</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">columns</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                SELECT</span>
+<span class="s2">                  </span><span class="si">{row_limit}</span>
+<span class="s2">                  </span><span class="si">{columns}</span><span class="s2">,</span>
+<span class="s2">                  DISTANCE(</span>
+<span class="s2">                    POINT(&#39;ICRS&#39;, </span><span class="si">{ra_column}</span><span class="s2">, </span><span class="si">{dec_column}</span><span class="s2">),</span>
+<span class="s2">                    POINT(&#39;ICRS&#39;, </span><span class="si">{ra}</span><span class="s2">, </span><span class="si">{dec}</span><span class="s2">)</span>
+<span class="s2">                  ) AS dist</span>
+<span class="s2">                FROM</span>
+<span class="s2">                  </span><span class="si">{table_name}</span>
+<span class="s2">                WHERE</span>
+<span class="s2">                  1 = CONTAINS(</span>
+<span class="s2">                    POINT(&#39;ICRS&#39;, </span><span class="si">{ra_column}</span><span class="s2">, </span><span class="si">{dec_column}</span><span class="s2">),</span>
+<span class="s2">                    CIRCLE(&#39;ICRS&#39;, </span><span class="si">{ra}</span><span class="s2">, </span><span class="si">{dec}</span><span class="s2">, </span><span class="si">{radius}</span><span class="s2">)</span>
+<span class="s2">                  )</span>
+<span class="s2">                ORDER BY</span>
+<span class="s2">                  dist ASC</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;ra_column&#39;</span><span class="p">:</span> <span class="n">ra_column_name</span><span class="p">,</span>
+                              <span class="s1">&#39;row_limit&#39;</span><span class="p">:</span> <span class="s2">&quot;TOP </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ROW_LIMIT</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ROW_LIMIT</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                              <span class="s1">&#39;dec_column&#39;</span><span class="p">:</span> <span class="n">dec_column_name</span><span class="p">,</span> <span class="s1">&#39;columns&#39;</span><span class="p">:</span> <span class="n">columns</span><span class="p">,</span> <span class="s1">&#39;ra&#39;</span><span class="p">:</span> <span class="n">ra</span><span class="p">,</span> <span class="s1">&#39;dec&#39;</span><span class="p">:</span> <span class="n">dec</span><span class="p">,</span>
+                              <span class="s1">&#39;radius&#39;</span><span class="p">:</span> <span class="n">radius_deg</span><span class="p">,</span> <span class="s1">&#39;table_name&#39;</span><span class="p">:</span> <span class="n">table_name</span><span class="p">})</span>
+
+        <span class="k">if</span> <span class="n">async_job</span><span class="p">:</span>
+            <span class="n">job</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">launch_job_async</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                                           <span class="n">format_with_results_compressed</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;votable_gzip&#39;</span><span class="p">,))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">job</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">launch_job</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">format_with_results_compressed</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;votable_gzip&#39;</span><span class="p">,))</span>
+
+        <span class="k">return</span> <span class="n">job</span>
+
+<div class="viewcode-block" id="EuclidClass.cone_search">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.euclid.EuclidClass.html#astroquery.esa.euclid.EuclidClass.cone_search">[docs]</a>
+    <span class="k">def</span> <span class="nf">cone_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coordinate</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                    <span class="n">table_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">ra_column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">dec_column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">async_job</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">background</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">dump_to_file</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Description</span>
+<span class="sd">        -----------</span>
+<span class="sd">        Cone search for a given catalog and sky position, results sorted by distance</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        coordinate : astropy.coordinate, mandatory</span>
+<span class="sd">            coordinates center point</span>
+<span class="sd">        radius : astropy.units, mandatory</span>
+<span class="sd">            radius</span>
+<span class="sd">        table_name : str, optional, default the table defined for the selected environment</span>
+<span class="sd">            Table to search</span>
+<span class="sd">        ra_column_name : str, optional, default the column name defined for the selected environment</span>
+<span class="sd">            Name of the RA column in the table</span>
+<span class="sd">        dec_column_name : str, optional, default the column name defined for the selected environment</span>
+<span class="sd">            Name of the DEC column in the table</span>
+<span class="sd">        async_job : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            executes the job in asynchronous/synchronous mode (default</span>
+<span class="sd">            synchronous)</span>
+<span class="sd">        background : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            when the job is executed in asynchronous mode, this flag specifies</span>
+<span class="sd">            whether the execution will wait until results are available</span>
+<span class="sd">        dump_to_file : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            if True, the results are saved in a file instead of using memory</span>
+<span class="sd">        output_file : str, optional, default None</span>
+<span class="sd">            file name where the results are saved if dump_to_file is True.</span>
+<span class="sd">            If this parameter is not provided, the job id is used instead</span>
+<span class="sd">        output_format : str, optional, default &#39;csv&#39;</span>
+<span class="sd">            Output format for the output file</span>
+<span class="sd">        columns: list, optional, default None</span>
+<span class="sd">            if empty, all columns will be selected</span>
+<span class="sd">        verbose : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        A Job object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">radius_deg</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">coord</span> <span class="o">=</span> <span class="n">commons</span><span class="o">.</span><span class="n">parse_coordinates</span><span class="p">(</span><span class="n">coordinate</span><span class="p">)</span>
+        <span class="n">ra_hours</span><span class="p">,</span> <span class="n">dec</span> <span class="o">=</span> <span class="n">commons</span><span class="o">.</span><span class="n">coord_to_radec</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span>
+        <span class="n">ra</span> <span class="o">=</span> <span class="n">ra_hours</span> <span class="o">*</span> <span class="mf">15.0</span>  <span class="c1"># Converts to degrees</span>
+        <span class="k">if</span> <span class="n">radius</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">radius_deg</span> <span class="o">=</span> <span class="n">Angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__get_quantity_input</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">table_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">table_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_table</span>
+            <span class="n">ra_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_table_ra</span>
+            <span class="n">dec_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_table_dec</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        if columns:</span>
+<span class="sd">            columns = &#39;,&#39;.join(map(str, columns))</span>
+<span class="sd">        else:</span>
+<span class="sd">            columns = &quot;*&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                SELECT</span>
+<span class="s2">                  </span><span class="si">{row_limit}</span>
+<span class="s2">                  </span><span class="si">{columns}</span><span class="s2">,</span>
+<span class="s2">                  DISTANCE(</span>
+<span class="s2">                    POINT(&#39;ICRS&#39;, </span><span class="si">{ra_column}</span><span class="s2">, </span><span class="si">{dec_column}</span><span class="s2">),</span>
+<span class="s2">                    POINT(&#39;ICRS&#39;, </span><span class="si">{ra}</span><span class="s2">, </span><span class="si">{dec}</span><span class="s2">)</span>
+<span class="s2">                  ) AS dist</span>
+<span class="s2">                FROM</span>
+<span class="s2">                  </span><span class="si">{table_name}</span>
+<span class="s2">                WHERE</span>
+<span class="s2">                  1 = CONTAINS(</span>
+<span class="s2">                    POINT(&#39;ICRS&#39;, </span><span class="si">{ra_column}</span><span class="s2">, </span><span class="si">{dec_column}</span><span class="s2">),</span>
+<span class="s2">                    CIRCLE(&#39;ICRS&#39;, </span><span class="si">{ra}</span><span class="s2">, </span><span class="si">{dec}</span><span class="s2">, </span><span class="si">{radius}</span><span class="s2">)</span>
+<span class="s2">                  )</span>
+<span class="s2">                ORDER BY</span>
+<span class="s2">                  dist ASC</span>
+<span class="s2">                &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;ra_column&#39;</span><span class="p">:</span> <span class="n">ra_column_name</span><span class="p">,</span>
+                              <span class="s1">&#39;row_limit&#39;</span><span class="p">:</span> <span class="s2">&quot;TOP </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ROW_LIMIT</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ROW_LIMIT</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                              <span class="s1">&#39;dec_column&#39;</span><span class="p">:</span> <span class="n">dec_column_name</span><span class="p">,</span> <span class="s1">&#39;columns&#39;</span><span class="p">:</span> <span class="n">columns</span><span class="p">,</span> <span class="s1">&#39;ra&#39;</span><span class="p">:</span> <span class="n">ra</span><span class="p">,</span> <span class="s1">&#39;dec&#39;</span><span class="p">:</span> <span class="n">dec</span><span class="p">,</span>
+                              <span class="s1">&#39;radius&#39;</span><span class="p">:</span> <span class="n">radius_deg</span><span class="p">,</span> <span class="s1">&#39;table_name&#39;</span><span class="p">:</span> <span class="n">table_name</span><span class="p">})</span>
+
+        <span class="k">if</span> <span class="n">async_job</span><span class="p">:</span>
+            <span class="n">job</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">launch_job_async</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span>
+                                           <span class="n">output_file</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span>
+                                           <span class="n">output_format</span><span class="o">=</span><span class="n">output_format</span><span class="p">,</span>
+                                           <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                                           <span class="n">dump_to_file</span><span class="o">=</span><span class="n">dump_to_file</span><span class="p">,</span>
+                                           <span class="n">background</span><span class="o">=</span><span class="n">background</span><span class="p">,</span> <span class="n">format_with_results_compressed</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;votable_gzip&#39;</span><span class="p">,))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">job</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">launch_job</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span>
+                                     <span class="n">output_file</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span>
+                                     <span class="n">output_format</span><span class="o">=</span><span class="n">output_format</span><span class="p">,</span>
+                                     <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                                     <span class="n">dump_to_file</span><span class="o">=</span><span class="n">dump_to_file</span><span class="p">,</span> <span class="n">format_with_results_compressed</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;votable_gzip&#39;</span><span class="p">,))</span>
+
+        <span class="k">return</span> <span class="n">job</span></div>
+
+
+<div class="viewcode-block" id="EuclidClass.login">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.euclid.EuclidClass.html#astroquery.esa.euclid.EuclidClass.login">[docs]</a>
+    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">credentials_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Description</span>
+<span class="sd">        -----------</span>
+<span class="sd">        Performs a login</span>
+
+<span class="sd">        User and password can be used or a file that contains username and password</span>
+<span class="sd">        (2 lines: one for username and the following one for the password)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        user : str, mandatory if &#39;file&#39; is not provided, default None</span>
+<span class="sd">            login name</span>
+<span class="sd">        password : str, mandatory if &#39;file&#39; is not provided, default None</span>
+<span class="sd">            user password</span>
+<span class="sd">        credentials_file : str, mandatory if no &#39;user&#39; &amp; &#39;password&#39; are provided</span>
+<span class="sd">            file containing user and password in two lines</span>
+<span class="sd">        verbose : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Login to Euclid TAP server: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_TapPlus__getconnhandler</span><span class="p">()</span><span class="o">.</span><span class="n">get_host_url</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="n">credentials_file</span><span class="o">=</span><span class="n">credentials_file</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Error logging in TAP server: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)))</span>
+            <span class="k">return</span>
+
+        <span class="n">tap_user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TapPlus__user</span>
+        <span class="n">tap_password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TapPlus__pwd</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Login to Euclid data service: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__eucliddata</span><span class="o">.</span><span class="n">_TapPlus__getconnhandler</span><span class="p">()</span><span class="o">.</span><span class="n">get_host_url</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__eucliddata</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">tap_user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">tap_password</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Login to Euclid cutout service: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__euclidcutout</span><span class="o">.</span><span class="n">_TapPlus__getconnhandler</span><span class="p">()</span><span class="o">.</span><span class="n">get_host_url</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__euclidcutout</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">tap_user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">tap_password</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Error logging in data or cutout services: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)))</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Logging out from TAP server&quot;</span><span class="p">)</span>
+            <span class="n">TapPlus</span><span class="o">.</span><span class="n">logout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EuclidClass.login_gui">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.euclid.EuclidClass.html#astroquery.esa.euclid.EuclidClass.login_gui">[docs]</a>
+    <span class="k">def</span> <span class="nf">login_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Description</span>
+<span class="sd">        -----------</span>
+<span class="sd">        Performs a login using a GUI dialog</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        verbose : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Login to Euclid TAP server: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_TapPlus__getconnhandler</span><span class="p">()</span><span class="o">.</span><span class="n">get_host_url</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">TapPlus</span><span class="o">.</span><span class="n">login_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Error logging in TAP server: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)))</span>
+            <span class="k">return</span>
+
+        <span class="n">tap_user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TapPlus__user</span>
+        <span class="n">tap_password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TapPlus__pwd</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Login to Euclid data server: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__eucliddata</span><span class="o">.</span><span class="n">_TapPlus__getconnhandler</span><span class="p">()</span><span class="o">.</span><span class="n">get_host_url</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__eucliddata</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">tap_user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">tap_password</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Error logging in data server: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)))</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Logging out from TAP server&quot;</span><span class="p">)</span>
+            <span class="n">TapPlus</span><span class="o">.</span><span class="n">logout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Login to Euclid cutout server: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__euclidcutout</span><span class="o">.</span><span class="n">_TapPlus__getconnhandler</span><span class="p">()</span><span class="o">.</span><span class="n">get_host_url</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__euclidcutout</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">tap_user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="n">tap_password</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Error logging in cutout server: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)))</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Logging out from TAP server&quot;</span><span class="p">)</span>
+            <span class="n">TapPlus</span><span class="o">.</span><span class="n">logout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EuclidClass.logout">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.euclid.EuclidClass.html#astroquery.esa.euclid.EuclidClass.logout">[docs]</a>
+    <span class="k">def</span> <span class="nf">logout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Description</span>
+<span class="sd">        -----------</span>
+<span class="sd">        Performs a logout</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        verbose : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">logout</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Error logging out TAP server: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)))</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Error logging out TAP server&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Euclid TAP server logout OK&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__eucliddata</span><span class="o">.</span><span class="n">logout</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Euclid data server logout OK&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Error logging out data server: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)))</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Error logging out data server&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__euclidcutout</span><span class="o">.</span><span class="n">logout</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Euclid cutout server logout OK&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Error logging out cutout server: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)))</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__get_quantity_input</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing required argument: &#39;</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2"> must be either a string or astropy.coordinates&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">Quantity</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span>
+
+<div class="viewcode-block" id="EuclidClass.is_gz_file">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.euclid.EuclidClass.html#astroquery.esa.euclid.EuclidClass.is_gz_file">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">is_gz_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">test_f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">binascii</span><span class="o">.</span><span class="n">hexlify</span><span class="p">(</span><span class="n">test_f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;1f8b&#39;</span></div>
+
+
+<div class="viewcode-block" id="EuclidClass.get_status_messages">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.euclid.EuclidClass.html#astroquery.esa.euclid.EuclidClass.get_status_messages">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_status_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Description</span>
+<span class="sd">        -----------</span>
+<span class="sd">        Retrieve the messages to inform users about</span>
+<span class="sd">        the status of Euclid TAP</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        verbose : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">sub_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">EUCLID_MESSAGES</span>
+            <span class="n">conn_handler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TapPlus__getconnhandler</span><span class="p">()</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">conn_handler</span><span class="o">.</span><span class="n">execute_tapget</span><span class="p">(</span><span class="n">sub_context</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Archive down for maintenance&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Status messages could not be retrieved&quot;</span><span class="p">)</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__set_dirs</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">observation_id</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">output_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="n">output_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s2">&quot;temp_&quot;</span> <span class="o">+</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M%S&quot;</span><span class="p">)</span>
+            <span class="n">output_file_full_path</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">observation_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output_file_full_path</span> <span class="o">=</span> <span class="n">output_file</span>
+            <span class="n">output_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">output_file_full_path</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">output_dir</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="s2">&quot;Creation of the directory </span><span class="si">%s</span><span class="s2"> failed: </span><span class="si">%s</span><span class="s2">&quot;</span>
+                          <span class="o">%</span> <span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">err</span><span class="o">.</span><span class="n">strerror</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">output_dir</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__check_file_number</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">output_file_name</span><span class="p">,</span>
+                            <span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+        <span class="n">num_files_in_dir</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">output_dir</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">num_files_in_dir</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">output_f</span> <span class="o">=</span> <span class="n">output_file_name</span>
+            <span class="n">output_full_path</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="n">output_f</span>
+
+            <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">output_full_path</span><span class="p">)</span>
+            <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output_full_path</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># r=root, d=directories, f = files</span>
+            <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">output_dir</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">file</span> <span class="o">!=</span> <span class="n">output_file_name</span><span class="p">:</span>
+                        <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">file</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__extract_file</span><span class="p">(</span><span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">is_tarfile</span><span class="p">(</span><span class="n">output_file_full_path</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">output_file_full_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">tar_ref</span><span class="p">:</span>
+                <span class="n">tar_ref</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">output_dir</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">is_zipfile</span><span class="p">(</span><span class="n">output_file_full_path</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">output_file_full_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">zip_ref</span><span class="p">:</span>
+                <span class="n">zip_ref</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">EuclidClass</span><span class="o">.</span><span class="n">is_gz_file</span><span class="p">(</span><span class="n">output_file_full_path</span><span class="p">):</span>
+            <span class="c1"># single file: return it</span>
+            <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output_file_full_path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">files</span>
+
+<div class="viewcode-block" id="EuclidClass.get_observation_products">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.euclid.EuclidClass.html#astroquery.esa.euclid.EuclidClass.get_observation_products">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_observation_products</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="s2">&quot;sedm&quot;</span><span class="p">,</span> <span class="n">product_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">product_subtype</span><span class="o">=</span><span class="s2">&quot;STK&quot;</span><span class="p">,</span>
+                                 <span class="nb">filter</span><span class="o">=</span><span class="s2">&quot;VIS&quot;</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Description</span>
+<span class="sd">        -----------</span>
+<span class="sd">        Downloads the products for a given EUCLID observation_id (observations) or tile_index (mosaics)</span>
+<span class="sd">        For big files the download may require a long time</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        id : str, mandatory</span>
+<span class="sd">            observation identifier (observation id for observations, mosaic id for mosaics)</span>
+<span class="sd">        schema : str, optional</span>
+<span class="sd">            schema name. Default value is &#39;sedm&#39;.</span>
+<span class="sd">        product_type : str, mandatory, default None</span>
+<span class="sd">            list only products of the given type.</span>
+<span class="sd">            possible values: &#39;observation&#39;, &#39;mosaic&#39;</span>
+<span class="sd">        product_subtype : str, optional, default &#39;STK&#39;</span>
+<span class="sd">            list only products of the given subtype. Possible values: &#39;STK&#39;, &#39;ALL&#39;, &#39;PSF&#39;, &#39;BKG&#39;</span>
+<span class="sd">            for observations also &#39;DET&#39;, &#39;WGT&#39;</span>
+<span class="sd">            for mosaics also &#39;GRID_PSF&#39;, &#39;FLAG&#39;, &#39;RMS&#39;.</span>
+<span class="sd">        filter : str, optional, default &#39;VIS&#39;</span>
+<span class="sd">            list products for this instrument, only for observations. Possible values: &#39;VIS&#39;, &#39;NIR_J&#39;, &#39;NIR_H&#39;, &#39;NIR_Y&#39;</span>
+<span class="sd">        output_file : str, optional</span>
+<span class="sd">            output file, use zip extension when downloading multiple files</span>
+<span class="sd">            if no value is provided, a temporary one is created</span>
+<span class="sd">        verbose : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The fits file(s) are downloaded, and the local path where the product(s) are saved is returned</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__ERROR_MSG_REQUESTED_OBSERVATION_ID</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">product_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__ERROR_MSG_REQUESTED_PRODUCT_TYPE</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">product_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">conf</span><span class="o">.</span><span class="n">PRODUCT_TYPES</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid product type </span><span class="si">{</span><span class="n">product_type</span><span class="si">}</span><span class="s2">. Valid values: </span><span class="si">{</span><span class="n">conf</span><span class="o">.</span><span class="n">PRODUCT_TYPES</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">params_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;TYPE&#39;</span><span class="p">:</span> <span class="n">product_subtype</span><span class="p">,</span> <span class="s1">&#39;RETRIEVAL_ACCESS&#39;</span><span class="p">:</span> <span class="s1">&#39;DIRECT&#39;</span><span class="p">,</span> <span class="s1">&#39;TAPCLIENT&#39;</span><span class="p">:</span> <span class="s1">&#39;ASTROQUERY&#39;</span><span class="p">,</span>
+                       <span class="s1">&#39;RELEASE&#39;</span><span class="p">:</span> <span class="n">schema</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">product_type</span> <span class="o">==</span> <span class="s1">&#39;observation&#39;</span><span class="p">:</span>
+            <span class="n">params_dict</span><span class="p">[</span><span class="s1">&#39;FILTER&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">filter</span>
+            <span class="n">params_dict</span><span class="p">[</span><span class="s1">&#39;RETRIEVAL_TYPE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;OBSERVATION&#39;</span>
+            <span class="n">params_dict</span><span class="p">[</span><span class="s1">&#39;OBS_ID&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="k">if</span> <span class="n">product_type</span> <span class="o">==</span> <span class="s1">&#39;mosaic&#39;</span><span class="p">:</span>
+            <span class="n">params_dict</span><span class="p">[</span><span class="s1">&#39;MSC_ID&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">id</span>
+            <span class="n">params_dict</span><span class="p">[</span><span class="s1">&#39;RETRIEVAL_TYPE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;MOSAIC&#39;</span>
+
+        <span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">output_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__set_dirs</span><span class="p">(</span><span class="n">output_file</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span> <span class="n">observation_id</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__eucliddata</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">params_dict</span><span class="o">=</span><span class="n">params_dict</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot retrieve products for observation </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">. HTTP error: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exx</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cannot retrieve products for observation </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">exx</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__extract_file</span><span class="p">(</span><span class="n">output_file_full_path</span><span class="o">=</span><span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">files</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__check_file_number</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">output_file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">output_file_full_path</span><span class="p">),</span>
+                                 <span class="n">output_file_full_path</span><span class="o">=</span><span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">files</span></div>
+
+
+    <span class="k">def</span> <span class="nf">__get_tile_catalogue_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">tile_index</span><span class="p">,</span> <span class="n">product_type</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">         Description</span>
+<span class="sd">         -----------</span>
+<span class="sd">         Get the list of products of a given EUCLID tile_index (mosaics)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tile_index : str, mandatory</span>
+<span class="sd">            tile index for products searchable by tile.</span>
+
+<span class="sd">        Searchable products by tile_index: &#39;DpdMerBksMosaic&#39;, &#39;dpdPhzPfOutputForL3&#39;, &#39;dpdPhzPfOutputCatalog&#39;,</span>
+<span class="sd">            &#39;dpdMerFinalCatalog&#39;,&#39;dpdSpePfOutputCatalog&#39;, &#39;dpdSheLensMcChains&#39;, &#39;dpdHealpixBitMaskVMPZ&#39;,</span>
+<span class="sd">            &#39;dpdHealpixFootprintMaskVMPZ&#39;, &#39;dpdHealpixCoverageVMPZ&#39;, &#39;dpdHealpixDepthMapVMPZ&#39;,&#39;dpdHealpixInfoMapVMPZ&#39;,</span>
+<span class="sd">            &#39;dpdSheBiasParams&#39;, &#39;dpdSheLensMcFinalCatalog&#39;, &#39;dpdSheLensMcRawCatalog&#39;, &#39;dpdSheMetaCalFinalCatalog&#39;,</span>
+<span class="sd">            &#39;dpdSheMetaCalRawCatalog&#39;, &#39;dpdSleDetectionOutput&#39;, &#39;dpdSleModelOutput&#39;, &#39;DpdSirCombinedSpectra&#39;,</span>
+<span class="sd">            &#39;DpdMerSegmentationMap&#39;</span>
+<span class="sd">        product_type : str, mandatory, default None</span>
+<span class="sd">            Available product types:</span>
+
+<span class="sd">                #. MER</span>
+<span class="sd">                     DpdMerSegmentationMap: Segmentation Map Product</span>
+<span class="sd">                     DpdMerBksMosaic: Background-Subtracted Mosaic Product</span>
+<span class="sd">                     dpdMerFinalCatalog: Final Catalog Product</span>
+<span class="sd">                #. PHZ</span>
+<span class="sd">                    dpdPhzPfOutputCatalog: PHZ PF output catalog product for Deep tiles</span>
+<span class="sd">                    dpdPhzPfOutputForL3: PHZ PF output catalog product for LE3</span>
+<span class="sd">                #. SPE</span>
+<span class="sd">                    dpdSpePfOutputCatalog: SPE PF output catalog product</span>
+<span class="sd">                #. SHE</span>
+<span class="sd">                    dpdSheLensMcChains: Shear LensMc Chains</span>
+<span class="sd">                    dpdSheBiasParams: Shear Bias Parameters Data Product</span>
+<span class="sd">                    dpdSheLensMcFinalCatalog: Shear LensMc Final Catalog</span>
+<span class="sd">                    dpdSheMetaCalFinalCatalog: Shear MetaCal Final Catalog</span>
+<span class="sd">                    dpdSheMetaCalRawCatalog: Shear LensMc Raw Catalog</span>
+<span class="sd">                    dpdSheLensMcRawCatalog: Shear LensMc Raw Catalog</span>
+<span class="sd">                #. VMPZ-ID</span>
+<span class="sd">                    dpdHealpixBitMaskVMPZ: Input Product: Bit Mask Parameters</span>
+<span class="sd">                    dpdHealpixFootprintMaskVMPZ: Output Product: HEALPix Footprint Mask</span>
+<span class="sd">                    dpdHealpixCoverageVMPZ: Output Product: HEALPix Coverage Mask</span>
+<span class="sd">                    dpdHealpixDepthMapVMPZ: Input Product: Depth Maps Parameters</span>
+<span class="sd">                    dpdHealpixInfoMapVMPZ: Input Product: Information Map Parameters</span>
+<span class="sd">                #. SLE</span>
+<span class="sd">                    dpdSleDetectionOutput: SLE Detection Output</span>
+<span class="sd">                    dpdSleModelOutput: SLE Model Output</span>
+<span class="sd">                #. SIR</span>
+<span class="sd">                    DpdSirCombinedSpectra: Combined Spectra Product</span>
+<span class="sd">        verbose : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The list of products (astropy.table)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">tile_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__ERROR_MSG_REQUESTED_TILE_ID</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">product_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__ERROR_MSG_REQUESTED_PRODUCT_TYPE</span><span class="p">)</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">product_type</span> <span class="ow">in</span> <span class="n">conf</span><span class="o">.</span><span class="n">MOSAIC_PRODUCTS</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;SELECT DISTINCT mosaic_product.file_name, mosaic_product.mosaic_product_oid, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;mosaic_product.tile_index, mosaic_product.instrument_name, mosaic_product.filter_name, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;mosaic_product.category, mosaic_product.second_type, mosaic_product.ra, mosaic_product.dec, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;mosaic_product.release_name, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;mosaic_product.technique FROM sedm.mosaic_product WHERE mosaic_product.tile_index = &#39;</span><span class="si">{</span><span class="n">tile_index</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;AND &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;mosaic_product.product_type = &#39;</span><span class="si">{</span><span class="n">product_type</span><span class="si">}</span><span class="s2">&#39;;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">product_type</span> <span class="ow">in</span> <span class="n">conf</span><span class="o">.</span><span class="n">BASIC_DOWNLOAD_DATA_PRODUCTS</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;SELECT basic_download_data.basic_download_data_oid, basic_download_data.product_type, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;basic_download_data.product_id, CAST(basic_download_data.observation_id_list as text) AS &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;observation_id_list, CAST(basic_download_data.tile_index_list as text) AS tile_index_list, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;CAST(basic_download_data.patch_id_list as text) AS patch_id_list, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;CAST(basic_download_data.filter_name as text) AS filter_name, basic_download_data.release_name FROM &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;sedm.basic_download_data WHERE &#39;</span><span class="si">{</span><span class="n">tile_index</span><span class="si">}</span><span class="s2">&#39;=ANY(tile_index_list) AND product_type = &#39;&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">product_type</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;ORDER BY observation_id_list ASC;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">product_type</span> <span class="ow">in</span> <span class="n">conf</span><span class="o">.</span><span class="n">COMBINED_SPECTRA_PRODUCTS</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;SELECT combined_spectra.combined_spectra_oid, combined_spectra.lambda_range, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;combined_spectra.tile_index, combined_spectra.stc_s, combined_spectra.product_type, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;combined_spectra.product_id, combined_spectra.observation_id_list FROM sedm.combined_spectra &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;WHERE combined_spectra.tile_index = &#39;</span><span class="si">{</span><span class="n">tile_index</span><span class="si">}</span><span class="s2">&#39; AND combined_spectra.product_type = &#39;&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">product_type</span><span class="si">}</span><span class="s2">&#39;;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">product_type</span> <span class="ow">in</span> <span class="n">conf</span><span class="o">.</span><span class="n">MER_SEGMENTATION_MAP_PRODUCTS</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;SELECT mer_segmentation_map.file_name, mer_segmentation_map.segmentation_map_oid, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;mer_segmentation_map.ra, mer_segmentation_map.dec, mer_segmentation_map.stc_s, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;mer_segmentation_map.tile_index, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;CAST(mer_segmentation_map.observation_id_list as TEXT) AS observation_id_list, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;mer_segmentation_map.product_type, mer_segmentation_map.product_id FROM sedm.mer_segmentation_map &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;WHERE mer_segmentation_map.tile_index = &#39;</span><span class="si">{</span><span class="n">tile_index</span><span class="si">}</span><span class="s2">&#39; AND &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;mer_segmentation_map.product_type = &#39;</span><span class="si">{</span><span class="n">product_type</span><span class="si">}</span><span class="s2">&#39;;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">query</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid product type </span><span class="si">{</span><span class="n">product_type</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="n">job</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">launch_job</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;votable_plain&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                                 <span class="n">format_with_results_compressed</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;votable_gzip&#39;</span><span class="p">,))</span>
+        <span class="k">return</span> <span class="n">job</span><span class="o">.</span><span class="n">get_results</span><span class="p">()</span>
+
+<div class="viewcode-block" id="EuclidClass.get_product_list">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.euclid.EuclidClass.html#astroquery.esa.euclid.EuclidClass.get_product_list">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_product_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">observation_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tile_index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">product_type</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Description</span>
+<span class="sd">        -----------</span>
+<span class="sd">        Get the list of products of a given EUCLID id searching by observation_id or tile_index.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        observation_id : str, mandatory</span>
+<span class="sd">            observation id for observations. It is not compatible with parameter tile_index.</span>
+
+<span class="sd">            Searchable products by observation_id: &#39;dpdVisRawFrame&#39;, &#39;dpdNispRawFrame&#39;,</span>
+<span class="sd">            ,&#39;DpdVisCalibratedQuadFrame&#39;,&#39;DpdVisCalibratedFrameCatalog&#39;, &#39;DpdVisStackedFrame&#39;,</span>
+<span class="sd">            &#39;DpdVisStackedFrameCatalog&#39;,</span>
+<span class="sd">            &#39;DpdNirCalibratedFrame&#39;, &#39;DpdNirCalibratedFrameCatalog&#39;, &#39;DpdNirStackedFrameCatalog&#39;, &#39;DpdNirStackedFrame&#39;,</span>
+<span class="sd">            &#39;DpdMerSegmentationMap&#39;, &#39;dpdMerFinalCatalog&#39;,</span>
+<span class="sd">            &#39;dpdPhzPfOutputCatalog&#39;, &#39;dpdPhzPfOutputForL3&#39;,</span>
+<span class="sd">            &#39;dpdSpePfOutputCatalog&#39;,</span>
+<span class="sd">            &#39;dpdSheLensMcChains&#39;,&#39;dpdSheBiasParams&#39;, &#39;dpdSheLensMcFinalCatalog&#39;,&#39;dpdSheLensMcRawCatalog&#39;,</span>
+<span class="sd">            &#39;dpdSheMetaCalFinalCatalog&#39;, &#39;dpdSheMetaCalRawCatalog&#39;,</span>
+<span class="sd">            &#39;dpdHealpixBitMaskVMPZ&#39;, &#39;dpdHealpixFootprintMaskVMPZ&#39;, &#39;dpdHealpixCoverageVMPZ&#39;,</span>
+<span class="sd">            &#39;dpdHealpixDepthMapVMPZ&#39;, &#39;dpdHealpixInfoMapVMPZ&#39;,</span>
+<span class="sd">            &#39;dpdSleDetectionOutput&#39;,&#39;dpdSleModelOutput&#39;,</span>
+<span class="sd">            &#39;DpdSirCombinedSpectra&#39;,&#39;dpdSirScienceFrame&#39;</span>
+
+<span class="sd">        tile_index : str, mandatory</span>
+<span class="sd">            tile index for products searchable by tile. It is not compatible with parameter observation_id.</span>
+
+<span class="sd">            Searchable products by tile_index:</span>
+<span class="sd">            &#39;DpdMerSegmentationMap&#39;, &#39;dpdMerFinalCatalog&#39;, &#39;DpdMerBksMosaic&#39;,</span>
+<span class="sd">            &#39;dpdPhzPfOutputCatalog&#39;,&#39;dpdPhzPfOutputForL3&#39;,</span>
+<span class="sd">            &#39;dpdSpePfOutputCatalog&#39;,</span>
+<span class="sd">            &#39;dpdSheLensMcChains&#39;, &#39;dpdSheBiasParams&#39;,  &#39;dpdSheLensMcFinalCatalog&#39;, &#39;dpdSheLensMcRawCatalog&#39;,</span>
+<span class="sd">            &#39;dpdSheMetaCalFinalCatalog&#39;, &#39;dpdSheMetaCalRawCatalog&#39;,</span>
+<span class="sd">            &#39;dpdHealpixBitMaskVMPZ&#39;, &#39;dpdHealpixFootprintMaskVMPZ&#39;, &#39;dpdHealpixCoverageVMPZ&#39;,</span>
+<span class="sd">            &#39;dpdHealpixDepthMapVMPZ&#39;,&#39;dpdHealpixInfoMapVMPZ&#39;,</span>
+<span class="sd">            dpdSleDetectionOutput&#39;, &#39;dpdSleModelOutput&#39;,</span>
+<span class="sd">            &#39;DpdSirCombinedSpectra&#39;</span>
+
+<span class="sd">        product_type : str, mandatory, default None</span>
+<span class="sd">            Available product types:</span>
+
+<span class="sd">            #. Euclid LE1 observations:</span>
+
+<span class="sd">                #. VIS</span>
+<span class="sd">                    DpdVisRawFrame: Vis Raw Frame Product</span>
+<span class="sd">                #. NISP</span>
+<span class="sd">                    DpdNispRawFrame: NISP Raw Frame Product</span>
+
+<span class="sd">            #. Euclid LE2/LE3 products:</span>
+
+<span class="sd">                #. VIS</span>
+<span class="sd">                    DpdVisCalibratedQuadFrame: VIS Calibrated Frame Product</span>
+<span class="sd">                    DpdVisCalibratedFrameCatalog: VIS Calibrated Frame Catalog</span>
+<span class="sd">                    DpdVisStackedFrame: Vis Stacked Frame Product   - This product is not available in Q1</span>
+<span class="sd">                    DpdVisStackedFrameCatalog: Vis Stacked Catalogue Product    - This product is not available in Q1</span>
+<span class="sd">                #. NIR</span>
+<span class="sd">                    DpdNirCalibratedFrame: NIR Calibrated Frame</span>
+<span class="sd">                    DpdNirCalibratedFrameCatalog: NIR Calibrated Frame Catalog</span>
+<span class="sd">                    DpdNirStackedFrame: NIR Stacked Frame   - This product is not available in Q1</span>
+<span class="sd">                    DpdNirStackedFrameCatalog: NIR Stacked Frame Catalog    - This product is not available in Q1</span>
+<span class="sd">                #. MER</span>
+<span class="sd">                     DpdMerSegmentationMap: Segmentation Map Product</span>
+<span class="sd">                     DpdMerBksMosaic: Background-Subtracted Mosaic Product</span>
+<span class="sd">                     dpdMerFinalCatalog: Final Catalog Product   \</span>
+<span class="sd">                                         - We suggest to use ADQL to retrieve data from this dataset.</span>
+<span class="sd">                #. PHZ      - We suggest to use ADQL to retrieve data from these products.</span>
+<span class="sd">                    dpdPhzPfOutputCatalog: PHZ PF output catalog product for weak lensing</span>
+<span class="sd">                    dpdPhzPfOutputForL3: PHZ PF output catalog product for LE3</span>
+<span class="sd">                #. SPE      - We suggest to use ADQL to retrieve data from this product.</span>
+<span class="sd">                    dpdSpePfOutputCatalog: SPE PF output catalog product</span>
+<span class="sd">                #. SHE      - None of these product are available in Q1</span>
+<span class="sd">                    dpdSheLensMcChains: Shear LensMc Chains</span>
+<span class="sd">                    dpdSheBiasParams: Shear Bias Parameters Data Product</span>
+<span class="sd">                    dpdSheLensMcFinalCatalog: Shear LensMc Final Catalog</span>
+<span class="sd">                    dpdSheLensMcRawCatalog: Shear LensMc Raw Catalog</span>
+<span class="sd">                    dpdSheMetaCalFinalCatalog: Shear MetaCal Final Catalog</span>
+<span class="sd">                    dpdSheMetaCalRawCatalog: Shear LensMc Raw Catalog</span>
+<span class="sd">                #. VMPZ-ID</span>
+<span class="sd">                    dpdHealpixBitMaskVMPZ: Input Product: Bit Mask Parameters</span>
+<span class="sd">                    dpdHealpixFootprintMaskVMPZ: Output Product: HEALPix Footprint Mask</span>
+<span class="sd">                    dpdHealpixCoverageVMPZ: Output Product: HEALPix Coverage Mask</span>
+<span class="sd">                    dpdHealpixDepthMapVMPZ: Input Product: Depth Maps Parameters</span>
+<span class="sd">                    dpdHealpixInfoMapVMPZ: Input Product: Information Map Parameters</span>
+<span class="sd">                #. SLE      - None of these product are available in Q1</span>
+<span class="sd">                    dpdSleDetectionOutput: SLE Detection Output</span>
+<span class="sd">                    dpdSleModelOutput: SLE Model Output</span>
+<span class="sd">                #. SIR</span>
+<span class="sd">                    DpdSirCombinedSpectra: Combined Spectra Product \</span>
+<span class="sd">                                           - We suggest to use ADQL to retrieve data (spectra) from this dataset.</span>
+<span class="sd">                    dpdSirScienceFrame: Science Frame Product</span>
+<span class="sd">        verbose : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The list of products (astropy.table)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">product_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__ERROR_MSG_REQUESTED_PRODUCT_TYPE</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">observation_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">tile_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__ERROR_MSG_REQUESTED_OBSERVATION_ID_AND_TILE_ID</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">observation_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">tile_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__ERROR_MSG_REQUESTED_OBSERVATION_ID</span> <span class="o">+</span> <span class="s2">&quot;; &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ERROR_MSG_REQUESTED_TILE_ID</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">tile_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_tile_catalogue_list</span><span class="p">(</span><span class="n">tile_index</span><span class="o">=</span><span class="n">tile_index</span><span class="p">,</span> <span class="n">product_type</span><span class="o">=</span><span class="n">product_type</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">product_type</span> <span class="ow">in</span> <span class="n">conf</span><span class="o">.</span><span class="n">OBSERVATION_STACK_PRODUCTS</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SELECT observation_stack.file_name, observation_stack.observation_stack_oid, &quot;</span>
+                     <span class="sa">f</span><span class="s2">&quot;observation_stack.observation_id, observation_stack.ra, observation_stack.dec, &quot;</span>
+                     <span class="sa">f</span><span class="s2">&quot;observation_stack.instrument_name, observation_stack.filter_name, &quot;</span>
+                     <span class="s2">&quot;observation_stack.release_name, observation_stack.category, observation_stack.second_type, &quot;</span>
+                     <span class="sa">f</span><span class="s2">&quot;observation_stack.technique, observation_stack.product_type, observation_stack.start_time, &quot;</span>
+                     <span class="sa">f</span><span class="s2">&quot;observation_stack.duration FROM sedm.observation_stack WHERE &quot;</span>
+                     <span class="sa">f</span><span class="s2">&quot; observation_stack.observation_id = &#39;</span><span class="si">{</span><span class="n">observation_id</span><span class="si">}</span><span class="s2">&#39; AND observation_stack.product_type = &#39;&quot;</span>
+                     <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">product_type</span><span class="si">}</span><span class="s2">&#39;;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">product_type</span> <span class="ow">in</span> <span class="n">conf</span><span class="o">.</span><span class="n">BASIC_DOWNLOAD_DATA_PRODUCTS</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;SELECT basic_download_data.basic_download_data_oid, basic_download_data.product_type, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;basic_download_data.product_id, CAST(basic_download_data.observation_id_list as text) AS &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;observation_id_list, CAST(basic_download_data.tile_index_list as text) AS tile_index_list, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;CAST(basic_download_data.patch_id_list as text) AS patch_id_list, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;CAST(basic_download_data.filter_name as text) AS filter_name, basic_download_data.release_name FROM &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;sedm.basic_download_data WHERE &#39;</span><span class="si">{</span><span class="n">observation_id</span><span class="si">}</span><span class="s2">&#39;=ANY(observation_id_list) AND product_type = &#39;&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">product_type</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;ORDER BY observation_id_list ASC;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">product_type</span> <span class="ow">in</span> <span class="n">conf</span><span class="o">.</span><span class="n">MER_SEGMENTATION_MAP_PRODUCTS</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;SELECT mer_segmentation_map.file_name, mer_segmentation_map.segmentation_map_oid, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;mer_segmentation_map.ra, mer_segmentation_map.dec, mer_segmentation_map.stc_s, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;mer_segmentation_map.tile_index, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;mer_segmentation_map.product_type, mer_segmentation_map.product_id FROM sedm.mer_segmentation_map &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;WHERE ( observation_id_list = &#39;</span><span class="si">{</span><span class="n">observation_id</span><span class="si">}</span><span class="s2">&#39; OR observation_id_list like &#39;</span><span class="si">{</span><span class="n">observation_id</span><span class="si">}</span><span class="s2">,&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;%&#39; OR observation_id_list &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;like &#39;%,</span><span class="si">{</span><span class="n">observation_id</span><span class="si">}</span><span class="s2">&#39; OR CAST(observation_id_list as TEXT) like &#39;%,</span><span class="si">{</span><span class="n">observation_id</span><span class="si">}</span><span class="s2">,%&#39; ) AND &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;mer_segmentation_map.product_type = &#39;</span><span class="si">{</span><span class="n">product_type</span><span class="si">}</span><span class="s2">&#39;;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">product_type</span> <span class="ow">in</span> <span class="n">conf</span><span class="o">.</span><span class="n">RAW_FRAME_PRODUCTS</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">product_type</span> <span class="o">==</span> <span class="s2">&quot;dpdNispRawFrame&quot;</span><span class="p">:</span>
+                <span class="n">instrument_name</span> <span class="o">=</span> <span class="s2">&quot;NISP&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">instrument_name</span> <span class="o">=</span> <span class="s2">&quot;VIS&quot;</span>
+
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;SELECT raw_frame.file_name, raw_frame.rawframe_oid, raw_frame.observation_id, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;raw_frame.instrument_name, raw_frame.data_set_release, raw_frame.filter_name, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;raw_frame.observation_mode, raw_frame.grism_wheel_pos, raw_frame.cal_block_id, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;raw_frame.cal_block_variant, raw_frame.ra, raw_frame.dec, raw_frame.obs_time_utc, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;raw_frame.exposure_time FROM sedm.raw_frame WHERE raw_frame.observation_id = &#39;</span><span class="si">{</span><span class="n">observation_id</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;AND raw_frame.instrument_name = &#39;</span><span class="si">{</span><span class="n">instrument_name</span><span class="si">}</span><span class="s2">&#39;;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">product_type</span> <span class="ow">in</span> <span class="n">conf</span><span class="o">.</span><span class="n">CALIBRATED_FRAME_PRODUCTS</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;SELECT calibrated_frame.file_name, calibrated_frame.calibrated_frame_oid, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;calibrated_frame.observation_id, calibrated_frame.instrument_name, calibrated_frame.filter_name, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;calibrated_frame.ra, calibrated_frame.dec, calibrated_frame.stc_s, calibrated_frame.start_time, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;calibrated_frame.end_time, calibrated_frame.duration &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;FROM sedm.calibrated_frame WHERE calibrated_frame.observation_id = &#39;</span><span class="si">{</span><span class="n">observation_id</span><span class="si">}</span><span class="s2">&#39; AND &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;calibrated_frame.product_type = &#39;</span><span class="si">{</span><span class="n">product_type</span><span class="si">}</span><span class="s2">&#39;;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">product_type</span> <span class="ow">in</span> <span class="n">conf</span><span class="o">.</span><span class="n">FRAME_CATALOG_PRODUCTS</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;SELECT frame_catalog.file_name, frame_catalog.catalog_oid, frame_catalog.observation_id, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;frame_catalog.instrument_name, frame_catalog.filter_name, frame_catalog.ra, frame_catalog.dec, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;frame_catalog.datarange_start_time, frame_catalog.datarange_end_time, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;frame_catalog.product_type, frame_catalog.product_id FROM sedm.frame_catalog &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;WHERE frame_catalog.observation_id = &#39;</span><span class="si">{</span><span class="n">observation_id</span><span class="si">}</span><span class="s2">&#39; AND frame_catalog.product_type = &#39;&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">product_type</span><span class="si">}</span><span class="s2">&#39;;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">product_type</span> <span class="ow">in</span> <span class="n">conf</span><span class="o">.</span><span class="n">COMBINED_SPECTRA_PRODUCTS</span><span class="p">:</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;SELECT combined_spectra.combined_spectra_oid, combined_spectra.lambda_range, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;combined_spectra.tile_index, combined_spectra.stc_s, combined_spectra.product_type, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;combined_spectra.product_id FROM sedm.combined_spectra &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;WHERE ( observation_id_list = &#39;</span><span class="si">{</span><span class="n">observation_id</span><span class="si">}</span><span class="s2">&#39; OR observation_id_list like &#39;</span><span class="si">{</span><span class="n">observation_id</span><span class="si">}</span><span class="s2"> %&#39; &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;OR observation_id_list &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;like &#39;% </span><span class="si">{</span><span class="n">observation_id</span><span class="si">}</span><span class="s2">&#39; OR observation_id_list like &#39;% </span><span class="si">{</span><span class="n">observation_id</span><span class="si">}</span><span class="s2"> %&#39; ) AND &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;combined_spectra.product_type = &#39;</span><span class="si">{</span><span class="n">product_type</span><span class="si">}</span><span class="s2">&#39;;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">product_type</span> <span class="ow">in</span> <span class="n">conf</span><span class="o">.</span><span class="n">SIR_SCIENCE_FRAME_PRODUCTS</span><span class="p">:</span>
+            <span class="n">instrument_name</span> <span class="o">=</span> <span class="s2">&quot;NISP&quot;</span>
+
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;SELECT sir_science_frame.file_name, sir_science_frame.science_frame_oid, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;sir_science_frame.observation_id, sir_science_frame.instrument_name, sir_science_frame.stc_s, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;sir_science_frame.prod_sdc FROM sedm.sir_science_frame &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;WHERE sir_science_frame.observation_id = &#39;</span><span class="si">{</span><span class="n">observation_id</span><span class="si">}</span><span class="s2">&#39; AND sir_science_frame.instrument_name = &#39;&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">instrument_name</span><span class="si">}</span><span class="s2">&#39;;&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">query</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid product type </span><span class="si">{</span><span class="n">product_type</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="n">job</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">launch_job</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;votable_plain&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                                 <span class="n">format_with_results_compressed</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;votable_gzip&#39;</span><span class="p">,))</span>
+        <span class="k">return</span> <span class="n">job</span><span class="o">.</span><span class="n">get_results</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="EuclidClass.get_product">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.euclid.EuclidClass.html#astroquery.esa.euclid.EuclidClass.get_product">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_product</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">file_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">product_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="s1">&#39;sedm&#39;</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Description</span>
+<span class="sd">        -----------</span>
+<span class="sd">        Downloads a product given its file name or product id</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_name : str, optional, default None</span>
+<span class="sd">            file name for the product. More than one can be specified between comma. Either file_name or product_id</span>
+<span class="sd">            is mandatory</span>
+<span class="sd">        product_id : str, optional, default None</span>
+<span class="sd">            product id. More than one can be specified between comma. Either file_name or product_id is mandatory</span>
+<span class="sd">        schema : str, optional, default &#39;sedm&#39;</span>
+<span class="sd">            the data release name (schema) in which the product should be searched</span>
+<span class="sd">        output_file : str, optional</span>
+<span class="sd">            output file, use zip extension when downloading multiple files</span>
+<span class="sd">            if no value is provided, a temporary one is created</span>
+<span class="sd">        verbose : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The fits file(s) are downloaded, and the local path where the product(s) are saved is returned</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">product_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;file_name&#39; and &#39;product_id&#39; are both None&quot;</span><span class="p">)</span>
+
+        <span class="n">params_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;TAPCLIENT&#39;</span><span class="p">:</span> <span class="s1">&#39;ASTROQUERY&#39;</span><span class="p">,</span> <span class="s1">&#39;RELEASE&#39;</span><span class="p">:</span> <span class="n">schema</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">file_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">params_dict</span><span class="p">[</span><span class="s1">&#39;FILE_NAME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">file_name</span>
+            <span class="n">params_dict</span><span class="p">[</span><span class="s1">&#39;RETRIEVAL_TYPE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;FILE&#39;</span>
+        <span class="k">if</span> <span class="n">product_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">params_dict</span><span class="p">[</span><span class="s1">&#39;PRODUCT_ID&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">product_id</span>
+            <span class="n">params_dict</span><span class="p">[</span><span class="s1">&#39;RETRIEVAL_TYPE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;PRODUCT_ID&#39;</span>
+
+        <span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">output_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__set_dirs</span><span class="p">(</span><span class="n">output_file</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span> <span class="n">observation_id</span><span class="o">=</span><span class="s1">&#39;temp&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__eucliddata</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">params_dict</span><span class="o">=</span><span class="n">params_dict</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot retrieve products for file_name </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> or product_id </span><span class="si">{</span><span class="n">product_id</span><span class="si">}</span><span class="s2">. HTTP error: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exx</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot retrieve products for file_name </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> or product_id </span><span class="si">{</span><span class="n">product_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">exx</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__extract_file</span><span class="p">(</span><span class="n">output_file_full_path</span><span class="o">=</span><span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">files</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__check_file_number</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">output_file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">output_file_full_path</span><span class="p">),</span>
+                                 <span class="n">output_file_full_path</span><span class="o">=</span><span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">files</span></div>
+
+
+<div class="viewcode-block" id="EuclidClass.get_cutout">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.euclid.EuclidClass.html#astroquery.esa.euclid.EuclidClass.get_cutout">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_cutout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">file_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">coordinate</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                   <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Description</span>
+<span class="sd">        -----------</span>
+<span class="sd">        Downloads a cutout given its file path, instrument and obs_id, and the cutout region</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_path : str, mandatory, default None</span>
+<span class="sd">            file path for the product on the server</span>
+<span class="sd">        instrument : str, mandatory, default None</span>
+<span class="sd">            instrument for the product, can be &#39;VIS&#39; or &#39;NISP&#39;</span>
+<span class="sd">        id : str, mandatory, default None</span>
+<span class="sd">            the observation id or tile index for MER products</span>
+<span class="sd">        coordinate : astropy.coordinate, mandatory</span>
+<span class="sd">            coordinates center point</span>
+<span class="sd">        radius : astropy.units, mandatory</span>
+<span class="sd">            the radius of the cutout to generate</span>
+<span class="sd">        output_file : str, optional</span>
+<span class="sd">            output file. If no value is provided, a temporary one is created</span>
+<span class="sd">        verbose : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The fits file is downloaded, and the local path where the cutout is saved is returned</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">file_path</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">instrument</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">coordinate</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">radius</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__ERROR_MSG_REQUESTED_GENERIC</span><span class="p">)</span>
+
+        <span class="c1"># Parse POS</span>
+        <span class="n">radius_deg</span> <span class="o">=</span> <span class="n">Angle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__get_quantity_input</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">radius_deg</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__ERROR_MSG_REQUESTED_RADIUS</span><span class="p">)</span>
+        <span class="n">coord</span> <span class="o">=</span> <span class="n">commons</span><span class="o">.</span><span class="n">parse_coordinates</span><span class="p">(</span><span class="n">coordinate</span><span class="p">)</span>
+        <span class="n">ra_hours</span><span class="p">,</span> <span class="n">dec</span> <span class="o">=</span> <span class="n">commons</span><span class="o">.</span><span class="n">coord_to_radec</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span>
+        <span class="n">ra</span> <span class="o">=</span> <span class="n">ra_hours</span> <span class="o">*</span> <span class="mf">15.0</span>  <span class="c1"># Converts to degrees</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;CIRCLE,</span><span class="si">{ra}</span><span class="s2">,</span><span class="si">{dec}</span><span class="s2">,</span><span class="si">{radius}</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;ra&#39;</span><span class="p">:</span> <span class="n">ra</span><span class="p">,</span> <span class="s1">&#39;dec&#39;</span><span class="p">:</span> <span class="n">dec</span><span class="p">,</span> <span class="s1">&#39;radius&#39;</span><span class="p">:</span> <span class="n">radius_deg</span><span class="p">})</span>
+
+        <span class="n">params_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;TAPCLIENT&#39;</span><span class="p">:</span> <span class="s1">&#39;ASTROQUERY&#39;</span><span class="p">,</span> <span class="s1">&#39;FILEPATH&#39;</span><span class="p">:</span> <span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;COLLECTION&#39;</span><span class="p">:</span> <span class="n">instrument</span><span class="p">,</span> <span class="s1">&#39;OBSID&#39;</span><span class="p">:</span> <span class="nb">id</span><span class="p">,</span>
+                       <span class="s1">&#39;POS&#39;</span><span class="p">:</span> <span class="n">pos</span><span class="p">}</span>
+
+        <span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">output_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__set_dirs</span><span class="p">(</span><span class="n">output_file</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span> <span class="n">observation_id</span><span class="o">=</span><span class="s1">&#39;temp&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__euclidcutout</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">params_dict</span><span class="o">=</span><span class="n">params_dict</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot retrieve the product for file_path </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">, obsId </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">, and collection </span><span class="si">{</span><span class="n">instrument</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;HTTP error: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exx</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot retrieve the product for file_path </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">, obsId </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">, and collection </span><span class="si">{</span><span class="n">instrument</span><span class="si">}</span><span class="s2">: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">exx</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__extract_file</span><span class="p">(</span><span class="n">output_file_full_path</span><span class="o">=</span><span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">files</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__check_file_number</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">output_file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">output_file_full_path</span><span class="p">),</span>
+                                 <span class="n">output_file_full_path</span><span class="o">=</span><span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">files</span></div>
+
+
+<div class="viewcode-block" id="EuclidClass.get_spectrum">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.euclid.EuclidClass.html#astroquery.esa.euclid.EuclidClass.get_spectrum">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_spectrum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">source_id</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="s1">&#39;sedm&#39;</span><span class="p">,</span> <span class="n">retrieval_type</span><span class="o">=</span><span class="s2">&quot;ALL&quot;</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Description</span>
+<span class="sd">        -----------</span>
+<span class="sd">        Downloads a spectrum with datalink.</span>
+
+<span class="sd">        The spectrum associated with the source_id is downloaded as a compressed fits file, and the files it contains</span>
+<span class="sd">        are returned in a list. The compressed fits file is saved in the local path given by output_file. If this</span>
+<span class="sd">        parameter is not set, the result is saved in the file &quot;&lt;working</span>
+<span class="sd">        directory&gt;/temp_&lt;%Y%m%d_%H%M%S&gt;/&lt;source_id&gt;.fits.zip&quot;. In any case, the content of the zip file is</span>
+<span class="sd">        automatically extracted.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        source_id : str, mandatory, default None</span>
+<span class="sd">            source id for the spectrum</span>
+<span class="sd">        schema : str, mandatory, default &#39;sedm&#39;</span>
+<span class="sd">            the data release</span>
+<span class="sd">        retrieval_type : str, optional, default &#39;ALL&#39; to retrieve all data from the list of sources</span>
+<span class="sd">            retrieval type identifier. Possible values are: &#39;SPECTRA_BGS&#39; for the blue spectrum and &#39;SPECTRA_RGS&#39; for</span>
+<span class="sd">            the red one.</span>
+<span class="sd">        output_file : str, optional</span>
+<span class="sd">            output file name. If no value is provided, a temporary one is created with the name</span>
+<span class="sd">            &quot;&lt;working directory&gt;/temp_&lt;%Y%m%d_%H%M%S&gt;/&lt;source_id&gt;.fits&quot;</span>
+<span class="sd">        verbose : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        A list of files: the files contained in the downloaded compressed fits file. The format of the file is</span>
+<span class="sd">        SPECTRA_&lt;colour&gt;-&lt;schema&gt; &lt;source_id&gt;.fits&#39;, where &lt;colour&gt; is BGS or RGS, and &lt;schema&gt; and &lt;source_id&gt; are</span>
+<span class="sd">        taken from the input parameters.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">source_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">schema</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__ERROR_MSG_REQUESTED_GENERIC</span><span class="p">)</span>
+
+        <span class="n">rt</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">retrieval_type</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">rt</span> <span class="o">!=</span> <span class="s1">&#39;ALL&#39;</span> <span class="ow">and</span> <span class="n">rt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__VALID_DATALINK_RETRIEVAL_TYPES</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid argument value for &#39;retrieval_type&#39;. Found </span><span class="si">{</span><span class="n">retrieval_type</span><span class="si">}</span><span class="s2">, &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;expected: &#39;ALL&#39; or any of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__VALID_DATALINK_RETRIEVAL_TYPES</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">params_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">id_value</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="si">{schema}</span><span class="s2"> </span><span class="si">{source_id}</span><span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;schema&#39;</span><span class="p">:</span> <span class="n">schema</span><span class="p">,</span> <span class="s1">&#39;source_id&#39;</span><span class="p">:</span> <span class="n">source_id</span><span class="p">})</span>
+        <span class="n">params_dict</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">id_value</span>
+        <span class="n">params_dict</span><span class="p">[</span><span class="s1">&#39;SCHEMA&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
+        <span class="n">params_dict</span><span class="p">[</span><span class="s1">&#39;RETRIEVAL_TYPE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">retrieval_type</span><span class="p">)</span>
+        <span class="n">params_dict</span><span class="p">[</span><span class="s1">&#39;USE_ZIP_ALWAYS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;true&#39;</span>
+        <span class="n">params_dict</span><span class="p">[</span><span class="s1">&#39;TAPCLIENT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ASTROQUERY&#39;</span>
+
+        <span class="n">fits_file</span> <span class="o">=</span> <span class="n">source_id</span> <span class="o">+</span> <span class="s1">&#39;.fits.zip&#39;</span>
+
+        <span class="k">if</span> <span class="n">output_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">output_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.zip&#39;</span><span class="p">):</span>
+                <span class="n">output_file</span> <span class="o">=</span> <span class="n">output_file</span> <span class="o">+</span> <span class="s1">&#39;.zip&#39;</span>
+
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">output_file</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;output file: </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">output_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__set_dirs</span><span class="p">(</span><span class="n">output_file</span><span class="o">=</span><span class="n">output_file</span><span class="p">,</span> <span class="n">observation_id</span><span class="o">=</span><span class="n">fits_file</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">output_dir</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The directory is not empty: </span><span class="si">{</span><span class="n">output_dir</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__eucliddata</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">params_dict</span><span class="o">=</span><span class="n">params_dict</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cannot retrieve spectrum for source_id </span><span class="si">{</span><span class="n">source_id</span><span class="si">}</span><span class="s1">, schema </span><span class="si">{</span><span class="n">schema</span><span class="si">}</span><span class="s1">. HTTP error: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exx</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cannot retrieve spectrum for source_id </span><span class="si">{</span><span class="n">source_id</span><span class="si">}</span><span class="s1">, schema </span><span class="si">{</span><span class="n">schema</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">exx</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__extract_file</span><span class="p">(</span><span class="n">output_file_full_path</span><span class="o">=</span><span class="n">output_file_full_path</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">files</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__check_file_number</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
+                                 <span class="n">output_file_name</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">output_file_full_path</span><span class="p">),</span>
+                                 <span class="n">output_file_full_path</span><span class="o">=</span><span class="n">output_file_full_path</span><span class="p">,</span>
+                                 <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">files</span></div>
+
+
+<div class="viewcode-block" id="EuclidClass.get_datalinks">
+<a class="viewcode-back" href="../../../../api/astroquery.esa.euclid.EuclidClass.html#astroquery.esa.euclid.EuclidClass.get_datalinks">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_datalinks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ids</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">linking_parameter</span><span class="o">=</span><span class="s1">&#39;SOURCE_ID&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets datalinks associated to the provided identifiers</span>
+<span class="sd">        TAP+ only</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ids : str, int, list of str or list of int, mandatory</span>
+<span class="sd">            list of identifiers</span>
+<span class="sd">        linking_parameter : str, optional, default SOURCE_ID, valid values: SOURCE_ID</span>
+<span class="sd">            By default, all the identifiers are considered as source_id</span>
+<span class="sd">        verbose : bool, optional, default &#39;False&#39;</span>
+<span class="sd">            flag to display information about the process</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        A table object</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__eucliddata</span><span class="o">.</span><span class="n">get_datalinks</span><span class="p">(</span><span class="n">ids</span><span class="o">=</span><span class="n">ids</span><span class="p">,</span> <span class="n">linking_parameter</span><span class="o">=</span><span class="n">linking_parameter</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="n">Euclid</span> <span class="o">=</span> <span class="n">EuclidClass</span><span class="p">()</span>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 01 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+Conf
+====
+
+.. currentmodule:: astroquery.heasarc
+
+.. autoclass:: Conf
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~Conf.S3_BUCKET
+      ~Conf.TAR_URL
+      ~Conf.VO_URL
+      ~Conf.server
+      ~Conf.timeout
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: S3_BUCKET
+   .. autoattribute:: TAR_URL
+   .. autoattribute:: VO_URL
+   .. autoattribute:: server
+   .. autoattribute:: timeout

@@ -1,0 +1,25 @@
+Conf
+====
+
+.. currentmodule:: astroquery.simbad
+
+.. autoclass:: Conf
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~Conf.default_columns
+      ~Conf.row_limit
+      ~Conf.server
+      ~Conf.servers_list
+      ~Conf.timeout
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: default_columns
+   .. autoattribute:: row_limit
+   .. autoattribute:: server
+   .. autoattribute:: servers_list
+   .. autoattribute:: timeout

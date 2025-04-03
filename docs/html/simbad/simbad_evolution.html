@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Simbad module evolutions &#8212; astroquery v0.4.8.dev10179</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-astropy.css?v=9d21690f" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css?v=7f9a90b1" />
+    
+    <script src="../_static/jquery.js?v=5d32c60e"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="../_static/documentation_options.js?v=1d6242bd"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <link rel="icon" href="../_static/astropy_logo.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="SimbadClass" href="../api/astroquery.simbad.SimbadClass.html" />
+    <link rel="prev" title="SIMBAD Queries (astroquery.simbad)" href="simbad.html" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+
+  </head><body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">query</span><span id="logotext3">:docs</span></a>
+  <ul>
+    
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="../api/astroquery.simbad.SimbadClass.html" title="SimbadClass">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="simbad.html" title="SIMBAD Queries (astroquery.simbad)">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">astroquery v0.4.8.dev10179</a>
+	 &#187;
+      </li>
+      <li><a href="simbad.html" accesskey="U">SIMBAD Queries (<code class="xref py py-obj docutils literal notranslate"><span class="pre">astroquery.simbad</span></code>)</a> &#187;</li>
+      
+      <li>Simbad module evolutions</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="simbad-module-evolutions">
+<span id="simbad-evolutions"></span><h1>Simbad module evolutions<a class="headerlink" href="#simbad-module-evolutions" title="Link to this heading">¶</a></h1>
+<section id="translating-query-criteria-into-criteria">
+<h2>Translating query_criteria into criteria<a class="headerlink" href="#translating-query-criteria-into-criteria" title="Link to this heading">¶</a></h2>
+<p>The method <code class="docutils literal notranslate"><span class="pre">query_criteria</span></code> is now deprecated in the SIMBAD module. It is replaced by
+a <code class="docutils literal notranslate"><span class="pre">criteria</span></code> argument in the following methods:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_object" title="astroquery.simbad.SimbadClass.query_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_object</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_objects" title="astroquery.simbad.SimbadClass.query_objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_objects</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_region" title="astroquery.simbad.SimbadClass.query_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_region</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_catalog" title="astroquery.simbad.SimbadClass.query_catalog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_catalog</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_bibobj" title="astroquery.simbad.SimbadClass.query_bibobj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_bibobj</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_bibcode" title="astroquery.simbad.SimbadClass.query_bibcode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_bibcode</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_objectids" title="astroquery.simbad.SimbadClass.query_objectids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_objectids</span></code></a></p></li>
+</ul>
+<p>This new argument expects a criteria formatted as a <code class="docutils literal notranslate"><span class="pre">WHERE</span></code> clause in an ADQL string,
+it consists of:</p>
+<ul class="simple">
+<li><p>logical operators <code class="docutils literal notranslate"><span class="pre">AND</span></code>, <code class="docutils literal notranslate"><span class="pre">OR</span></code>, <code class="docutils literal notranslate"><span class="pre">NOT</span></code>,</p></li>
+<li><p>comparison operators <code class="docutils literal notranslate"><span class="pre">=</span></code>, <code class="docutils literal notranslate"><span class="pre">!=</span></code> (or its alternative notation <code class="docutils literal notranslate"><span class="pre">&lt;&gt;</span></code>), <code class="docutils literal notranslate"><span class="pre">&lt;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code>,</p></li>
+<li><p>range comparison <code class="docutils literal notranslate"><span class="pre">BETWEEN</span></code> (ex: range of spectral types <code class="docutils literal notranslate"><span class="pre">sp_type</span> <span class="pre">BETWEEN</span> <span class="pre">'F3'</span> <span class="pre">AND</span> <span class="pre">'F5'</span></code>),</p></li>
+<li><p>membership check <code class="docutils literal notranslate"><span class="pre">IN</span></code> (ex: either active galaxy nucleus, or active galaxy
+nucleus candidate <code class="docutils literal notranslate"><span class="pre">otype</span> <span class="pre">IN</span> <span class="pre">('AGN',</span> <span class="pre">'AG?')</span></code>),</p></li>
+<li><p>case-sensitive string comparison: <code class="docutils literal notranslate"><span class="pre">LIKE</span></code>,</p></li>
+<li><p>null value check <code class="docutils literal notranslate"><span class="pre">IS</span> <span class="pre">NULL</span></code>, <code class="docutils literal notranslate"><span class="pre">IS</span> <span class="pre">NOT</span> <span class="pre">NULL</span></code>.</p></li>
+</ul>
+<p>This list is extracted from the section 2.2.3 of the
+<a class="reference external" href="https://ivoa.net/documents/ADQL/20231215/REC-ADQL-2.1.html">ADQL specification</a>.</p>
+<p>Here, for example, we add a criteria on the desired type of objects to a region query
+in 2° around M11:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="p">(</span><span class="n">ROW_LIMIT</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">query_region</span><span class="p">(</span><span class="s2">&quot;M11&quot;</span><span class="p">,</span> <span class="s2">&quot;2d&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                                  <span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;otype = &#39;Star..&#39;&quot;</span><span class="p">)[[</span><span class="s2">&quot;main_id&quot;</span><span class="p">,</span> <span class="s2">&quot;ra&quot;</span><span class="p">,</span> <span class="s2">&quot;dec&quot;</span><span class="p">]]</span>  
+<span class="go">&lt;Table length=20&gt;</span>
+<span class="go">          main_id                    ra                dec</span>
+<span class="go">                                    deg                deg</span>
+<span class="go">           object                 float64            float64</span>
+<span class="go">---------------------------- ------------------ ------------------</span>
+<span class="go">       ATO J283.9680-04.7022  283.9680584302754 -4.702210643396667</span>
+<span class="go">     2MASS J18553904-0441576         283.912704          -4.699355</span>
+<span class="go">     2MASS J18434437-0532364   280.934909910062 -5.543481872277222</span>
+<span class="go">             IRAS 18410-0535 280.93514361343995 -5.534989946319999</span>
+<span class="go">Gaia DR3 4255168174887091584  281.9199370352171 -4.607529439915277</span>
+<span class="go">                         ...                ...                ...</span>
+<span class="go">Gaia DR3 4255168415418002432  281.8446179288175 -4.647683641737222</span>
+<span class="go">          OGLE GD-RRLYR-8997 281.93337499999996 -4.824888888888889</span>
+<span class="go">     2MASS J18471362-0444391 281.80677257235084    -4.744217391975</span>
+<span class="go">             IRAS 18449-0454    281.89339967202     -4.85617020367</span>
+<span class="go">                   * bet Sct    281.79364256535     -4.74787304458</span>
+<span class="go">Gaia DR2 4255222566334653952  282.4900966404579 -4.434419082480556</span>
+</pre></div>
+</div>
+<p>We only retrieve objects which main type (<code class="docutils literal notranslate"><span class="pre">otype</span></code>) is a star (<code class="docutils literal notranslate"><span class="pre">Star</span></code>)
+or its descendants (<code class="docutils literal notranslate"><span class="pre">..</span></code>) – see section on <a class="reference internal" href="#object-types">Object types</a> –.</p>
+<p>If you already have a string that was a valid criteria in <code class="docutils literal notranslate"><span class="pre">query_criteria</span></code>,
+there is a helper method to translate a criteria from <code class="docutils literal notranslate"><span class="pre">query_criteria</span></code> into a string
+that will work as <code class="docutils literal notranslate"><span class="pre">criteria</span></code> in the other query methods cited above:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad.utils</span> <span class="kn">import</span> <span class="n">CriteriaTranslator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CriteriaTranslator</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;region(box, ICRS, 0 +0, 3d 1d) &amp; otype=&#39;SNR&#39;&quot;</span><span class="p">)</span>
+<span class="go">&quot;CONTAINS(POINT(&#39;ICRS&#39;, ra, dec), BOX(&#39;ICRS&#39;, 0.0, 0.0, 3.0, 1.0)) = 1 AND otypes.otype = &#39;SNR&#39;&quot;</span>
+</pre></div>
+</div>
+<p>This string can now be incorporated in any of the query methods that accept a <code class="docutils literal notranslate"><span class="pre">criteria</span></code> argument.</p>
+<p>See a more elaborated example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad.utils</span> <span class="kn">import</span> <span class="n">CriteriaTranslator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># not a galaxy, and not a globular cluster</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">old_criteria</span> <span class="o">=</span> <span class="s2">&quot;maintype != &#39;Galaxy..&#39; &amp; maintype != &#39;Cl*..&#39;&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># we add the main type and all the types that have historically been attributed to the object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">add_votable_fields</span><span class="p">(</span><span class="s2">&quot;otype&quot;</span><span class="p">,</span> <span class="s2">&quot;alltypes&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">simbad</span><span class="o">.</span><span class="n">query_catalog</span><span class="p">(</span><span class="s2">&quot;M&quot;</span><span class="p">,</span> <span class="n">criteria</span><span class="o">=</span><span class="n">CriteriaTranslator</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">old_criteria</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;catalog_id&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">[[</span><span class="s2">&quot;main_id&quot;</span><span class="p">,</span> <span class="s2">&quot;catalog_id&quot;</span><span class="p">,</span> <span class="s2">&quot;otype&quot;</span><span class="p">,</span> <span class="s2">&quot;alltypes.otypes&quot;</span><span class="p">]]</span>
+<span class="go">&lt;Table length=11&gt;</span>
+<span class="go"> main_id  catalog_id otype              alltypes.otypes</span>
+<span class="go">  object    object   object                  object</span>
+<span class="go">--------- ---------- ------ ----------------------------------------</span>
+<span class="go">    M   1      M   1    SNR                 HII|IR|Psr|Rad|SNR|X|gam</span>
+<span class="go">    M  24      M  24    As*                              As*|Cl*|GNe</span>
+<span class="go">    M  27      M  27     PN           *|G|HS?|IR|PN|UV|WD*|WD?|X|blu</span>
+<span class="go">    M  40      M  40      ?                                        ?</span>
+<span class="go">    M  42      M  42    HII                    C?*|Cl*|HII|OpC|Rad|X</span>
+<span class="go">    M  43      M  43    HII                               HII|IR|Rad</span>
+<span class="go">    M  57      M  57     PN              *|HS?|IR|PN|Rad|WD*|WD?|blu</span>
+<span class="go">NGC  6994      M  73    err                                  Cl*|err</span>
+<span class="go">    M  76      M  76     PN                          *|IR|PN|Rad|WD*</span>
+<span class="go">    M  78      M  78    RNe                          C?*|Cl*|ISM|RNe</span>
+<span class="go">    M  97      M  97     PN *|HS?|IR|NIR|Opt|PN|Rad|UV|WD*|WD?|X|blu</span>
+</pre></div>
+</div>
+<p>And we indeed get objects from the Messier catalog (as <a class="reference internal" href="../api/astroquery.simbad.SimbadClass.html#astroquery.simbad.SimbadClass.query_catalog" title="astroquery.simbad.SimbadClass.query_catalog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query_catalog</span></code></a> is
+meant to return), but with the additional criteria that these objects should be neither galaxies
+nor clusters of stars.</p>
+</section>
+<section id="object-types">
+<h2>Object types<a class="headerlink" href="#object-types" title="Link to this heading">¶</a></h2>
+<p>The example above highlights the subtlety of assigning a type for every object. The SIMBAD database
+evolves with the literature and the <code class="docutils literal notranslate"><span class="pre">otype</span></code> value reflects the most precise type that was
+identified through a literature review at the moment at which the query is done.
+All the former <code class="docutils literal notranslate"><span class="pre">otype</span></code> assignations are also stored in the <code class="docutils literal notranslate"><span class="pre">otypes</span></code> column. These can be either less
+precise or false. See in the previous example M27 that is now classified as <code class="docutils literal notranslate"><span class="pre">PN</span></code> (Planetary Nebula)
+and was in the past thought to be a <code class="docutils literal notranslate"><span class="pre">G</span></code> (Galaxy).</p>
+<p>The definitions of object types can be found either in SIMBAD’s
+<a class="reference external" href="http://simbad.cds.unistra.fr/guide/otypes.htx">documentation on object types</a>
+or with TAP queries. For example, to see the definition of <code class="docutils literal notranslate"><span class="pre">PN</span></code>, one can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">Simbad</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM otypedef WHERE otype = &#39;PN&#39;&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">[[</span><span class="s2">&quot;otype&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;is_candidate&quot;</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">]]</span>
+<span class="go">&lt;Table length=1&gt;</span>
+<span class="go">otype     label       description    is_candidate     path</span>
+<span class="go">object    object         object         int16        object</span>
+<span class="go">------ ------------ ---------------- ------------ ------------</span>
+<span class="go">    PN PlanetaryNeb Planetary Nebula            0 * &gt; Ev* &gt; PN</span>
+</pre></div>
+</div>
+<p>Where <code class="docutils literal notranslate"><span class="pre">otypedef</span></code> is the table of SIMBAD containing the definitions of object types.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">label</span></code> can also be used in a query if you want your code to be easier to read.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="s2">&quot;SELECT top 5 main_id, otype FROM basic WHERE otype = &#39;PlanetaryNeb&#39;&quot;</span><span class="p">)</span>  
+<span class="go">&lt;Table length=5&gt;</span>
+<span class="go"> main_id   otype</span>
+<span class="go">  object   object</span>
+<span class="go">---------- ------</span>
+<span class="go">   IC 4634     PN</span>
+<span class="go">PN H  2-40     PN</span>
+<span class="go">PN PC   12     PN</span>
+<span class="go"> NGC  6543     PN</span>
+<span class="go"> NGC  7027     PN</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">path</span></code> column in <code class="docutils literal notranslate"><span class="pre">otypedef</span></code> is a representation of the hierarchy of objects.
+Here <code class="docutils literal notranslate"><span class="pre">PN</span></code> (Planetary Nebula) derives from <code class="docutils literal notranslate"><span class="pre">Ev*</span></code> (Evolved Star) which itself derives
+from <code class="docutils literal notranslate"><span class="pre">*</span></code> (Star). This is the classification of objects in place in SIMBAD since 2020.
+If you don’t find an object type you used to look for in SIMBAD, you might be interested
+in this <a class="reference external" href="http://simbad.cds.unistra.fr/guide/otypes.labels.txt">table of correspondence</a>
+between old and new labels for object types.</p>
+<p>An interesting feature brought by the hierarchy of objects is the <code class="docutils literal notranslate"><span class="pre">..</span></code> notation. For example,
+<code class="docutils literal notranslate"><span class="pre">Ev*..</span></code> means any object type that derives from evolved star.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Simbad</span><span class="o">.</span><span class="n">query_tap</span><span class="p">(</span><span class="s2">&quot;SELECT top 5 main_id, otype &quot;</span>
+<span class="gp">... </span>                 <span class="s2">&quot;FROM basic WHERE otype = &#39;Ev*..&#39;&quot;</span><span class="p">)</span>  
+<span class="go">&lt;Table length=5&gt;</span>
+<span class="go">       main_id         otype</span>
+<span class="go">        object         object</span>
+<span class="go">---------------------- ------</span>
+<span class="go">       IRAS 07506-0345    pA*</span>
+<span class="go">D33 J013331.3+302946.9    cC*</span>
+<span class="go">D33 J013253.5+303810.2    Ce*</span>
+<span class="go">             [SC83] G4    Ce*</span>
+<span class="go">          SSTGC 444055    LP*</span>
+</pre></div>
+</div>
+<p>This return objects which types are indeed among the 17 types deriving from <code class="docutils literal notranslate"><span class="pre">Ev*</span></code>
+(Evolved Star). For example, <code class="docutils literal notranslate"><span class="pre">pA*</span></code> is a post-AGB Star.</p>
+</section>
+<section id="optical-filters">
+<span id="id1"></span><h2>Optical Filters<a class="headerlink" href="#optical-filters" title="Link to this heading">¶</a></h2>
+<p>Historically, there were only three optical filters in SIMBAD, <code class="docutils literal notranslate"><span class="pre">U</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>, and <code class="docutils literal notranslate"><span class="pre">V</span></code>.
+This is why one could add these columns to SIMBAD’s output with <code class="docutils literal notranslate"><span class="pre">ubv</span></code>. This is not
+the case anymore.</p>
+<p>There are two different ways to add fluxes to the result of a SIMBAD query. If you only need
+a quick access to the value of the flux without extra information, you can add the votable
+field corresponding to a specific optical filter. The list of filter names can be printed with</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">options</span> <span class="o">=</span> <span class="n">Simbad</span><span class="o">.</span><span class="n">list_votable_fields</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">options</span><span class="p">[</span><span class="n">options</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;filter name&quot;</span><span class="p">]</span>
+<span class="go">&lt;Table length=17&gt;</span>
+<span class="go"> name     description        type</span>
+<span class="go">object       object         object</span>
+<span class="go">------ ----------------- -----------</span>
+<span class="go">     U       Magnitude U filter name</span>
+<span class="go">     B       Magnitude B filter name</span>
+<span class="go">     V       Magnitude V filter name</span>
+<span class="go">     R       Magnitude R filter name</span>
+<span class="go">     I       Magnitude I filter name</span>
+<span class="go">     J       Magnitude J filter name</span>
+<span class="go">     H       Magnitude H filter name</span>
+<span class="go">     K       Magnitude K filter name</span>
+<span class="go">     u  Magnitude SDSS u filter name</span>
+<span class="go">     g  Magnitude SDSS g filter name</span>
+<span class="go">     r  Magnitude SDSS r filter name</span>
+<span class="go">     i  Magnitude SDSS i filter name</span>
+<span class="go">     z  Magnitude SDSS z filter name</span>
+<span class="go">     G  Magnitude Gaia G filter name</span>
+<span class="go"> F150W JWST NIRCam F150W filter name</span>
+<span class="go"> F200W JWST NIRCam F200W filter name</span>
+<span class="go"> F444W JWST NIRCan F444W filter name</span>
+</pre></div>
+</div>
+<p>There are currently 17 filters in SIMBAD, but more are added as new data is ingested.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is the only case-sensitive votable field, due to the fact that the filters <code class="docutils literal notranslate"><span class="pre">U</span></code>
+and <code class="docutils literal notranslate"><span class="pre">u</span></code> (for example) are distinct.</p>
+</div>
+<p>A query for fluxes would then look like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">add_votable_fields</span><span class="p">(</span><span class="s2">&quot;U&quot;</span><span class="p">,</span> <span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">query_object</span><span class="p">(</span><span class="s2">&quot;NGC 5678&quot;</span><span class="p">)[[</span><span class="s2">&quot;main_id&quot;</span><span class="p">,</span> <span class="s2">&quot;U&quot;</span><span class="p">,</span> <span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">]]</span>
+<span class="go">&lt;Table length=1&gt;</span>
+<span class="go"> main_id     U       V            B</span>
+<span class="go">  object  float64 float64      float64</span>
+<span class="go">--------- ------- ------- ------------------</span>
+<span class="go">NGC  5678      --      -- 12.100000381469727</span>
+</pre></div>
+</div>
+<p>However, this quick access does not allow to retrieve the flux error or the bibcode of the
+article from which the information is extracted. To do so, prefer the <code class="docutils literal notranslate"><span class="pre">flux</span></code> votable field:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">add_votable_fields</span><span class="p">(</span><span class="s2">&quot;flux&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">simbad</span><span class="o">.</span><span class="n">query_object</span><span class="p">(</span><span class="s2">&quot;BD-16  5701&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">[[</span><span class="s2">&quot;main_id&quot;</span><span class="p">,</span> <span class="s2">&quot;flux&quot;</span><span class="p">,</span> <span class="s2">&quot;flux_err&quot;</span><span class="p">,</span> <span class="s2">&quot;flux.filter&quot;</span><span class="p">,</span> <span class="s2">&quot;flux.bibcode&quot;</span><span class="p">]]</span>
+<span class="go">&lt;Table length=6&gt;</span>
+<span class="go">  main_id      flux   flux_err flux.filter     flux.bibcode</span>
+<span class="go">   object    float32  float32     object          object</span>
+<span class="go">----------- --------- -------- ----------- -------------------</span>
+<span class="go">BD-16  5701 10.322191 0.002762           G 2020yCat.1350....0G</span>
+<span class="go">BD-16  5701      10.6     0.06           V 2000A&amp;A...355L..27H</span>
+<span class="go">BD-16  5701     9.205    0.023           J 2003yCat.2246....0C</span>
+<span class="go">BD-16  5701     8.879    0.042           H 2003yCat.2246....0C</span>
+<span class="go">BD-16  5701     8.777     0.02           K 2003yCat.2246....0C</span>
+<span class="go">BD-16  5701     11.15     0.07           B 2000A&amp;A...355L..27H</span>
+</pre></div>
+</div>
+<p>This gives more details than the quick view. Each line corresponds to a unique filter.
+The <code class="docutils literal notranslate"><span class="pre">bibcode</span></code> column corresponds to the article in which the flux information was found.
+We could also add a criteria to restrict the filters in the output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astroquery.simbad</span> <span class="kn">import</span> <span class="n">Simbad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span> <span class="o">=</span> <span class="n">Simbad</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">simbad</span><span class="o">.</span><span class="n">add_votable_fields</span><span class="p">(</span><span class="s2">&quot;flux&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">simbad</span><span class="o">.</span><span class="n">query_object</span><span class="p">(</span><span class="s2">&quot;BD-16  5701&quot;</span><span class="p">,</span> <span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;filter IN (&#39;U&#39;, &#39;B&#39;, &#39;G&#39;)&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">[[</span><span class="s2">&quot;main_id&quot;</span><span class="p">,</span> <span class="s2">&quot;flux&quot;</span><span class="p">,</span> <span class="s2">&quot;flux_err&quot;</span><span class="p">,</span> <span class="s2">&quot;flux.filter&quot;</span><span class="p">,</span> <span class="s2">&quot;flux.bibcode&quot;</span><span class="p">]]</span>
+<span class="go">&lt;Table length=2&gt;</span>
+<span class="go">  main_id      flux   flux_err flux.filter     flux.bibcode</span>
+<span class="go">   object    float32  float32     object          object</span>
+<span class="go">----------- --------- -------- ----------- -------------------</span>
+<span class="go">BD-16  5701     11.15     0.07           B 2000A&amp;A...355L..27H</span>
+<span class="go">BD-16  5701 10.322191 0.002762           G 2020yCat.1350....0G</span>
+</pre></div>
+</div>
+<p>There was no match for <code class="docutils literal notranslate"><span class="pre">U</span></code>, but the information is there for <code class="docutils literal notranslate"><span class="pre">B</span></code> and <code class="docutils literal notranslate"><span class="pre">G</span></code>.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Simbad module evolutions</a><ul>
+<li><a class="reference internal" href="#translating-query-criteria-into-criteria">Translating query_criteria into criteria</a></li>
+<li><a class="reference internal" href="#object-types">Object types</a></li>
+<li><a class="reference internal" href="#optical-filters">Optical Filters</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="../_sources/simbad/simbad_evolution.rst.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2025, The Astroquery Developers.<br/>
+    Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
+    Last built 02 Apr 2025. <br/>
+  </p>
+</footer>
+  </body>
+</html>
