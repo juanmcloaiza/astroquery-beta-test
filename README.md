@@ -28,7 +28,8 @@ For the parts that unevitably needed changes, the updated documentation is found
 ## What to do?
 
 1. Please copy the notebook `beta-test.ipynb` to `beta-test-<your name>.ipynb`
-2. Run the notebook, experiment with it, and modify it as you wish.
-4. Give us your feedback via your prefered communication method, perhaps attaching your modified notebook.
+2. Run the notebook, experiment with it, and modify it as you wish, it is yours.
+4. Give us your feedback via your preferred communication method.
+If you want, you can open a Pull Request with your own modified notebook and your comments within it.
 
 Thanks a lot for your participation, happy testing! :)
