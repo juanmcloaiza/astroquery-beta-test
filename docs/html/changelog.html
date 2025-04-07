@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Full Changelog &#8212; astroquery v0.4.8.dev10179</title>
+    <title>Full Changelog &#8212; astroquery v0.4.8.dev10183</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/bootstrap-astropy.css?v=9d21690f" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
@@ -13,7 +13,7 @@
     
     <script src="_static/jquery.js?v=5d32c60e"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="_static/documentation_options.js?v=1d6242bd"></script>
+    <script src="_static/documentation_options.js?v=d8f3c6fe"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
@@ -61,7 +61,7 @@
 	 |
       </li>
       <li>
-	<a href="index.html">astroquery v0.4.8.dev10179</a>
+	<a href="index.html">astroquery v0.4.8.dev10183</a>
 	 &#187;
       </li>
       
@@ -87,6 +87,12 @@
 </section>
 <section id="service-fixes-and-enhancements">
 <h3>Service fixes and enhancements<a class="headerlink" href="#service-fixes-and-enhancements" title="Link to this heading">¶</a></h3>
+<section id="eso">
+<h4>eso<a class="headerlink" href="#eso" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p>Use TAP backend instead of WDB. [<a class="reference external" href="https://github.com/astropy/astroquery/issues/3141">#3141</a>]</p></li>
+</ul>
+</section>
 <section id="heasarc">
 <h4>heasarc<a class="headerlink" href="#heasarc" title="Link to this heading">¶</a></h4>
 <ul class="simple">
@@ -366,13 +372,6 @@ in the table ehst.artifact [<a class="reference external" href="https://github.c
 <h4>esasky<a class="headerlink" href="#esasky" title="Link to this heading">¶</a></h4>
 <ul class="simple">
 <li><p>Added support for eROSITA downloads. [<a class="reference external" href="https://github.com/astropy/astroquery/issues/3111">#3111</a>]</p></li>
-</ul>
-</section>
-<section id="eso">
-<h4>eso<a class="headerlink" href="#eso" title="Link to this heading">¶</a></h4>
-<ul class="simple">
-<li><p>Deprecate functions <code class="docutils literal notranslate"><span class="pre">list_surveys</span></code> and <code class="docutils literal notranslate"><span class="pre">query_surveys</span></code> in favor of <code class="docutils literal notranslate"><span class="pre">list_collections</span></code> and <code class="docutils literal notranslate"><span class="pre">query_collections</span></code>. [<a class="reference external" href="https://github.com/astropy/astroquery/issues/3138">#3138</a>]</p></li>
-<li><p>Use TAP backend instead of WDB. [<a class="reference external" href="https://github.com/astropy/astroquery/issues/3141">#3141</a>]</p></li>
 </ul>
 </section>
 <section id="id17">
@@ -2219,6 +2218,7 @@ python [<a class="reference external" href="https://github.com/astropy/astroquer
 <li><a class="reference internal" href="#new-tools-and-services">New Tools and Services</a></li>
 <li><a class="reference internal" href="#api-changes">API changes</a></li>
 <li><a class="reference internal" href="#service-fixes-and-enhancements">Service fixes and enhancements</a><ul>
+<li><a class="reference internal" href="#eso">eso</a></li>
 <li><a class="reference internal" href="#heasarc">heasarc</a></li>
 </ul>
 </li>
@@ -2276,7 +2276,6 @@ python [<a class="reference external" href="https://github.com/astropy/astroquer
 <li><a class="reference internal" href="#esa-hubble">esa.hubble</a></li>
 <li><a class="reference internal" href="#esa-jwst">esa.jwst</a></li>
 <li><a class="reference internal" href="#esasky">esasky</a></li>
-<li><a class="reference internal" href="#eso">eso</a></li>
 <li><a class="reference internal" href="#id17">gaia</a></li>
 <li><a class="reference internal" href="#gama">gama</a></li>
 <li><a class="reference internal" href="#id18">heasarc</a></li>
@@ -2570,7 +2569,7 @@ python [<a class="reference external" href="https://github.com/astropy/astroquer
   <p>
     &copy; Copyright 2025, The Astroquery Developers.<br/>
     Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
-    Last built 02 Apr 2025. <br/>
+    Last built 07 Apr 2025. <br/>
   </p>
 </footer>
   </body>
