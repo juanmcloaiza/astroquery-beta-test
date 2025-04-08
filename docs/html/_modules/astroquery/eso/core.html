@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>astroquery.eso.core &#8212; astroquery v0.4.8.dev10183</title>
+    <title>astroquery.eso.core &#8212; astroquery v0.4.8.dev10184</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-astropy.css?v=9d21690f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=fd3f3429" />
@@ -12,7 +12,7 @@
     
     <script src="../../../_static/jquery.js?v=5d32c60e"></script>
     <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-    <script src="../../../_static/documentation_options.js?v=d8f3c6fe"></script>
+    <script src="../../../_static/documentation_options.js?v=137a5633"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script type="text/javascript" src="../../../_static/sidebar.js"></script>
@@ -47,7 +47,7 @@
     <h3>Navigation</h3>
     <ul>
       <li>
-	<a href="../../../index.html">astroquery v0.4.8.dev10183</a>
+	<a href="../../../index.html">astroquery v0.4.8.dev10184</a>
 	 &#187;
       </li>
       <li><a href="../../index.html" >Module code</a> &#187;</li>
@@ -450,7 +450,7 @@
             <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
             <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
             <span class="n">allowed_values</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-            <span class="n">ra</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">cone_ra</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cone_dec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cone_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">top</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">count_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -473,12 +473,15 @@
         <span class="k">if</span> <span class="p">((</span><span class="s1">&#39;box&#39;</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">)</span>
             <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;coord1&#39;</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">)</span>
                 <span class="ow">or</span> <span class="p">(</span><span class="s1">&#39;coord2&#39;</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">)):</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s1">&#39;box, coord1 and coord2 are deprecated; use ra, dec and radius instead&#39;</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;box, coord1 and coord2 are deprecated; &#39;</span>
+                       <span class="s1">&#39;use cone_ra, cone_dec and cone_radius instead&#39;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">are_coords_valid</span><span class="p">(</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
-            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Either all three (ra, dec, radius) must be present or none of them.</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Values provided: ra = </span><span class="si">{</span><span class="n">ra</span><span class="si">}</span><span class="s2">, dec = </span><span class="si">{</span><span class="n">dec</span><span class="si">}</span><span class="s2">, radius = </span><span class="si">{</span><span class="n">radius</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">are_coords_valid</span><span class="p">(</span><span class="n">cone_ra</span><span class="p">,</span> <span class="n">cone_dec</span><span class="p">,</span> <span class="n">cone_radius</span><span class="p">):</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;Either all three (cone_ra, cone_dec, cone_radius) &quot;</span>
+                       <span class="s2">&quot;must be present or none of them.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                       <span class="s2">&quot;Values provided: &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;cone_ra = </span><span class="si">{</span><span class="n">cone_ra</span><span class="si">}</span><span class="s2">, cone_dec = </span><span class="si">{</span><span class="n">cone_dec</span><span class="si">}</span><span class="s2">, cone_radius = </span><span class="si">{</span><span class="n">cone_radius</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
         <span class="n">where_allowed_vals_strlist</span> <span class="o">=</span> <span class="p">[]</span>
@@ -492,7 +495,7 @@
         <span class="n">where_constraints_strlist</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">adql_sanitize_val</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">filters</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
         <span class="n">where_constraints</span> <span class="o">=</span> <span class="n">where_allowed_vals_strlist</span> <span class="o">+</span> <span class="n">where_constraints_strlist</span>
         <span class="n">query</span> <span class="o">=</span> <span class="n">py2adql</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
-                        <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span>
+                        <span class="n">cone_ra</span><span class="o">=</span><span class="n">cone_ra</span><span class="p">,</span> <span class="n">cone_dec</span><span class="o">=</span><span class="n">cone_dec</span><span class="p">,</span> <span class="n">cone_radius</span><span class="o">=</span><span class="n">cone_radius</span><span class="p">,</span>
                         <span class="n">where_constraints</span><span class="o">=</span><span class="n">where_constraints</span><span class="p">,</span>
                         <span class="n">count_only</span><span class="o">=</span><span class="n">count_only</span><span class="p">,</span>
                         <span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">)</span>
@@ -514,7 +517,7 @@
     <span class="k">def</span> <span class="nf">query_surveys</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">surveys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-            <span class="n">ra</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">cone_ra</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cone_dec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cone_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">top</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">count_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -533,13 +536,13 @@
 <span class="sd">            If not specified, returns records relative to all surveys. Default is `None`.</span>
 <span class="sd">        :type surveys: str or list</span>
 
-<span class="sd">        :param ra: Cone Search Center - Right Ascension in degrees.</span>
+<span class="sd">        :param cone_ra: Cone Search Center - Right Ascension in degrees.</span>
 <span class="sd">        :type ra: float</span>
 
-<span class="sd">        :param dec: Cone Search Center - Declination in degrees.</span>
+<span class="sd">        :param cone_dec: Cone Search Center - Declination in degrees.</span>
 <span class="sd">        :type dec: float</span>
 
-<span class="sd">        :param radius: Cone Search Radius in degrees.</span>
+<span class="sd">        :param cone_radius: Cone Search Radius in degrees.</span>
 <span class="sd">        :type radius: float</span>
 
 <span class="sd">        :param columns: Name of the columns the query should return. If specified as a string,</span>
@@ -591,7 +594,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_on_allowed_values</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="n">EsoNames</span><span class="o">.</span><span class="n">phase3_table</span><span class="p">,</span>
                                              <span class="n">column_name</span><span class="o">=</span><span class="n">EsoNames</span><span class="o">.</span><span class="n">phase3_surveys_column</span><span class="p">,</span>
                                              <span class="n">allowed_values</span><span class="o">=</span><span class="n">surveys</span><span class="p">,</span>
-                                             <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span>
+                                             <span class="n">cone_ra</span><span class="o">=</span><span class="n">cone_ra</span><span class="p">,</span>
+                                             <span class="n">cone_dec</span><span class="o">=</span><span class="n">cone_dec</span><span class="p">,</span>
+                                             <span class="n">cone_radius</span><span class="o">=</span><span class="n">cone_radius</span><span class="p">,</span>
                                              <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
                                              <span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">,</span>
                                              <span class="n">count_only</span><span class="o">=</span><span class="n">count_only</span><span class="p">,</span>
@@ -608,7 +613,7 @@
     <span class="k">def</span> <span class="nf">query_main</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">instruments</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-            <span class="n">ra</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">cone_ra</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cone_dec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cone_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">top</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">count_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -627,13 +632,13 @@
 <span class="sd">            If not specified, returns records relative to all instruments. Default is `None`.</span>
 <span class="sd">        :type instruments: str or list</span>
 
-<span class="sd">        :param ra: Cone Search Center - Right Ascension in degrees.</span>
+<span class="sd">        :param cone_ra: Cone Search Center - Right Ascension in degrees.</span>
 <span class="sd">        :type ra: float</span>
 
-<span class="sd">        :param dec: Cone Search Center - Declination in degrees.</span>
+<span class="sd">        :param cone_dec: Cone Search Center - Declination in degrees.</span>
 <span class="sd">        :type dec: float</span>
 
-<span class="sd">        :param radius: Cone Search Radius in degrees.</span>
+<span class="sd">        :param cone_radius: Cone Search Radius in degrees.</span>
 <span class="sd">        :type radius: float</span>
 
 <span class="sd">        :param columns: Name of the columns the query should return. If specified as a string,</span>
@@ -685,7 +690,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_on_allowed_values</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="n">EsoNames</span><span class="o">.</span><span class="n">raw_table</span><span class="p">,</span>
                                              <span class="n">column_name</span><span class="o">=</span><span class="n">EsoNames</span><span class="o">.</span><span class="n">raw_instruments_column</span><span class="p">,</span>
                                              <span class="n">allowed_values</span><span class="o">=</span><span class="n">instruments</span><span class="p">,</span>
-                                             <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span>
+                                             <span class="n">cone_ra</span><span class="o">=</span><span class="n">cone_ra</span><span class="p">,</span>
+                                             <span class="n">cone_dec</span><span class="o">=</span><span class="n">cone_dec</span><span class="p">,</span>
+                                             <span class="n">cone_radius</span><span class="o">=</span><span class="n">cone_radius</span><span class="p">,</span>
                                              <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
                                              <span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">,</span>
                                              <span class="n">count_only</span><span class="o">=</span><span class="n">count_only</span><span class="p">,</span>
@@ -702,7 +709,7 @@
     <span class="k">def</span> <span class="nf">query_instrument</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">instrument</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-            <span class="n">ra</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">cone_ra</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cone_dec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cone_radius</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">columns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">top</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">count_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -720,13 +727,13 @@
 <span class="sd">            :meth:`~astroquery.eso.EsoClass.list_instruments`.</span>
 <span class="sd">        :type instruments: str</span>
 
-<span class="sd">        :param ra: Cone Search Center - Right Ascension in degrees.</span>
+<span class="sd">        :param cone_ra: Cone Search Center - Right Ascension in degrees.</span>
 <span class="sd">        :type ra: float</span>
 
-<span class="sd">        :param dec: Cone Search Center - Declination in degrees.</span>
+<span class="sd">        :param cone_dec: Cone Search Center - Declination in degrees.</span>
 <span class="sd">        :type dec: float</span>
 
-<span class="sd">        :param radius: Cone Search Radius in degrees.</span>
+<span class="sd">        :param cone_radius: Cone Search Radius in degrees.</span>
 <span class="sd">        :type radius: float</span>
 
 <span class="sd">        :param columns: Name of the columns the query should return. If specified as a string,</span>
@@ -778,7 +785,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_on_allowed_values</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="n">EsoNames</span><span class="o">.</span><span class="n">ist_table</span><span class="p">(</span><span class="n">instrument</span><span class="p">),</span>
                                              <span class="n">column_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                                              <span class="n">allowed_values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                                             <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span>
+                                             <span class="n">cone_ra</span><span class="o">=</span><span class="n">cone_ra</span><span class="p">,</span>
+                                             <span class="n">cone_dec</span><span class="o">=</span><span class="n">cone_dec</span><span class="p">,</span>
+                                             <span class="n">cone_radius</span><span class="o">=</span><span class="n">cone_radius</span><span class="p">,</span>
                                              <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
                                              <span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">,</span>
                                              <span class="n">count_only</span><span class="o">=</span><span class="n">count_only</span><span class="p">,</span>
@@ -1174,7 +1183,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_on_allowed_values</span><span class="p">(</span><span class="n">table_name</span><span class="o">=</span><span class="n">EsoNames</span><span class="o">.</span><span class="n">apex_quicklooks_table</span><span class="p">,</span>
                                              <span class="n">column_name</span><span class="o">=</span><span class="n">EsoNames</span><span class="o">.</span><span class="n">apex_quicklooks_pid_column</span><span class="p">,</span>
                                              <span class="n">allowed_values</span><span class="o">=</span><span class="n">project_id</span><span class="p">,</span>
-                                             <span class="n">ra</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                             <span class="n">cone_ra</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cone_dec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cone_radius</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                                              <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
                                              <span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">,</span>
                                              <span class="n">count_only</span><span class="o">=</span><span class="n">count_only</span><span class="p">,</span>
@@ -1207,7 +1216,7 @@
   <p>
     &copy; Copyright 2025, The Astroquery Developers.<br/>
     Created using <a href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> 7.4.7. &nbsp;
-    Last built 07 Apr 2025. <br/>
+    Last built 08 Apr 2025. <br/>
   </p>
 </footer>
   </body>
