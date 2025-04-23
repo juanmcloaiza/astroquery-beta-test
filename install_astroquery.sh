@@ -6,7 +6,7 @@ cd TEST_ESO_ASTROQUERY/
 
 git clone https://github.com/juanmcloaiza/astroquery.git
 cd astroquery
-git checkout colname-op-val
+git checkout TAP
 python -m pip install .
 cd ..
 
