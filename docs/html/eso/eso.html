@@ -82,10 +82,10 @@
 <p><strong>The WDB (Web DataBase) API is being deprecated and replaced by TAP (Table Access Protocol)</strong>,
 a standardized interface for querying astronomical datasets using ADQL (Astronomical Data Query Language).
 While the Python interface remains the same, the values accepted by the <code class="docutils literal notranslate"><span class="pre">columns</span></code> and <code class="docutils literal notranslate"><span class="pre">column_filters</span></code>
-parameters must reflect TAP’s field names and ADQL syntax. This means that
+parameters must reflect TAP field names and ADQL syntax. This means that,
 although the structure of your code won’t need to change, <strong>the values you pass to the arguments</strong>
 <code class="docutils literal notranslate"><span class="pre">columns</span></code> <strong>and</strong> <code class="docutils literal notranslate"><span class="pre">column_filters</span></code> <strong>must be revised</strong> to comply with the new format.</p>
-<p>In TAP, column_filters accepts SQL-like ADQL expressions. For example:</p>
+<p>In TAP, <code class="docutils literal notranslate"><span class="pre">column_filters</span></code> accepts ADQL expressions. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">column_filters</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;some_int_column&#39;</span><span class="p">:</span> <span class="s2">&quot;&lt; 5&quot;</span><span class="p">,</span>
     <span class="s1">&#39;some_float_column_2&#39;</span><span class="p">:</span> <span class="s2">&quot;&gt;= 1.23&quot;</span><span class="p">,</span>
@@ -95,7 +95,8 @@ although the structure of your code won’t need to change, <strong>the values y
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Please review your queries carefully and update them accordingly to ensure compatibility with the new astroquery versions.</p>
+<p>Please review your queries carefully and update them accordingly to ensure compatibility with the new astroquery versions.
+See section <a class="reference internal" href="#column-filters-fix"><span class="std std-ref">Using the correct column_filters</span></a></p>
 </div>
 <section id="getting-started">
 <h2>Getting started<a class="headerlink" href="#getting-started" title="Link to this heading">¶</a></h2>
@@ -263,12 +264,13 @@ on the ESO <strong>Programmatic Access</strong> website (<a class="reference ext
 target <code class="docutils literal notranslate"><span class="pre">NGC</span> <span class="pre">4151</span></code> between <code class="docutils literal notranslate"><span class="pre">2008-01-01</span></code> and <code class="docutils literal notranslate"><span class="pre">2009-05-12</span></code> are searched, and the query is configured to
 return two columns: the date of observation and the name of the object.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">eso</span><span class="o">.</span><span class="n">query_instrument</span><span class="p">(</span>
-<span class="go">    &#39;midi&#39;,</span>
-<span class="go">    column_filters={</span>
-<span class="go">        &#39;object&#39;:&#39;NGC4151&#39;,</span>
-<span class="go">        &#39;exp_start&#39;: &quot;between &#39;2008-01-01&#39; and &#39;2009-05-12&#39;&quot;</span>
-<span class="go">    },</span>
-<span class="go">    columns=[&#39;object&#39;, &#39;date_obs&#39;])</span>
+<span class="gp">... </span>            <span class="s1">&#39;midi&#39;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="n">column_filters</span><span class="o">=</span><span class="p">{</span>
+<span class="gp">... </span>                <span class="s1">&#39;object&#39;</span><span class="p">:</span><span class="s1">&#39;NGC4151&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="s1">&#39;exp_start&#39;</span><span class="p">:</span> <span class="s2">&quot;between &#39;2008-01-01&#39; and &#39;2009-05-12&#39;&quot;</span>
+<span class="gp">... </span>            <span class="p">},</span>
+<span class="gp">... </span>            <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">,</span> <span class="s1">&#39;date_obs&#39;</span><span class="p">]</span>
+<span class="gp">... </span>        <span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span>
 <span class="go">&lt;Table length=196&gt;</span>
 <span class="go">object         date_obs</span>
@@ -299,16 +301,13 @@ This is the case of e.g. <code class="docutils literal notranslate"><span class=
 query all-sky images from APICAM with <code class="docutils literal notranslate"><span class="pre">luminance</span></code> filter.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">eso</span><span class="o">.</span><span class="n">maxrec</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>   <span class="c1"># Return all results</span>
 <span class="go">                      # (i.e. do not truncate the query even if it is slow)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">eso</span><span class="o">.</span><span class="n">query_main</span><span class="p">(</span><span class="n">column_filters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;instrument&#39;</span><span class="p">:</span> <span class="s1">&#39;APICAM&#39;</span><span class="p">,</span>
-<span class="go">                                           &#39;filter_path&#39;: &#39;LUMINANCE&#39;})</span>
-
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">eso</span><span class="o">.</span><span class="n">query_main</span><span class="p">(</span>
-<span class="go">                column_filters={</span>
-<span class="go">                    &#39;instrument&#39;: &#39;APICAM&#39;,</span>
-<span class="go">                    &#39;filter_path&#39;: &#39;LUMINANCE&#39;,</span>
-<span class="go">                    &#39;exp_start&#39;: &quot;between &#39;2019-04-26&#39; and &#39;2019-04-27&#39;&quot;</span>
-<span class="go">                }</span>
-<span class="go">            )</span>
+<span class="gp">... </span>                    <span class="n">column_filters</span><span class="o">=</span><span class="p">{</span>
+<span class="gp">... </span>                        <span class="s1">&#39;instrument&#39;</span><span class="p">:</span> <span class="s1">&#39;APICAM&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                        <span class="s1">&#39;filter_path&#39;</span><span class="p">:</span> <span class="s1">&#39;LUMINANCE&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                        <span class="s1">&#39;exp_start&#39;</span><span class="p">:</span> <span class="s2">&quot;between &#39;2019-04-26&#39; and &#39;2019-04-27&#39;&quot;</span>
+<span class="gp">... </span>                    <span class="p">}</span>
+<span class="gp">... </span>                <span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">table</span><span class="p">))</span>
 <span class="go">215</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
@@ -387,12 +386,11 @@ There is however a way to get the full primary header of the FITS data products,
 using <a class="reference internal" href="../api/astroquery.eso.EsoClass.html#astroquery.eso.EsoClass.get_headers" title="astroquery.eso.EsoClass.get_headers"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_headers()</span></code></a>.
 This method is detailed in the example below.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="n">eso</span><span class="o">.</span><span class="n">query_instrument</span><span class="p">(</span><span class="s1">&#39;midi&#39;</span><span class="p">,</span>
-<span class="go">                         column_filters={</span>
-<span class="go">                             &#39;object&#39;: &#39;NGC4151&#39;,</span>
-<span class="go">                             &#39;date_obs&#39;: &quot;&lt;=&#39;2008-01-01&#39;&quot;</span>
-<span class="go">                        },</span>
-<span class="go">                         columns=[&#39;object&#39;, &#39;date_obs&#39;, &#39;dp_id&#39;])</span>
-
+<span class="gp">... </span>                    <span class="n">column_filters</span><span class="o">=</span><span class="p">{</span>
+<span class="gp">... </span>                        <span class="s1">&#39;object&#39;</span><span class="p">:</span> <span class="s1">&#39;NGC4151&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                        <span class="s1">&#39;date_obs&#39;</span><span class="p">:</span> <span class="s2">&quot;&lt;=&#39;2008-01-01&#39;&quot;</span>
+<span class="gp">... </span>                    <span class="p">},</span>
+<span class="gp">... </span>                    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">,</span> <span class="s1">&#39;date_obs&#39;</span><span class="p">,</span> <span class="s1">&#39;dp_id&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">table_headers</span> <span class="o">=</span> <span class="n">eso</span><span class="o">.</span><span class="n">get_headers</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;dp_id&quot;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">table_headers</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 <span class="go">336</span>
@@ -449,6 +447,8 @@ in the call to <a class="reference internal" href="../api/astroquery.eso.EsoClas
 </section>
 <section id="troubleshooting">
 <h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<section id="clearing-the-cache">
+<h3>Clearing the cache<a class="headerlink" href="#clearing-the-cache" title="Link to this heading">¶</a></h3>
 <p>If you are repeatedly getting failed queries, or bad/out-of-date results, try clearing your cache:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">astroquery.eso</span><span class="w"> </span><span class="kn">import</span> <span class="n">Eso</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Eso</span><span class="o">.</span><span class="n">clear_cache</span><span class="p">()</span>
@@ -456,6 +456,49 @@ in the call to <a class="reference internal" href="../api/astroquery.eso.EsoClas
 </div>
 <p>If this function is unavailable, upgrade your version of astroquery.
 The <code class="docutils literal notranslate"><span class="pre">clear_cache</span></code> function was introduced in version 0.4.7.dev8479.</p>
+</section>
+<section id="using-the-correct-column-filters">
+<span id="column-filters-fix"></span><h3>Using the correct <code class="docutils literal notranslate"><span class="pre">column_filters</span></code><a class="headerlink" href="#using-the-correct-column-filters" title="Link to this heading">¶</a></h3>
+<p>Two concrete and relevant examples of fields present in WDB but not present in TAP/ADQL
+are <code class="docutils literal notranslate"><span class="pre">stime</span></code> and <code class="docutils literal notranslate"><span class="pre">etime</span></code>. The following snippet shows how to adapt the filters to
+the TAP / ADQL syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># The following filters won&#39;t work:</span>
+<span class="n">column_filters</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;stime&#39;</span><span class="p">:</span> <span class="s1">&#39;2024-01-01&#39;</span>
+    <span class="s1">&#39;etime&#39;</span><span class="p">:</span> <span class="s1">&#39;2024-12-31&#39;</span>
+<span class="p">}</span>
+
+<span class="c1"># Replace by:</span>
+<span class="n">column_filters</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;exp_start&#39;</span><span class="p">:</span> <span class="s2">&quot;between &#39;2024-01-01&#39; and &#39;2024-12-31&#39;&quot;</span>
+<span class="p">}</span>
+
+<span class="c1"># --- #</span>
+
+<span class="c1"># The following filters won&#39;t work:</span>
+<span class="n">column_filters</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;stime&#39;</span><span class="p">:</span> <span class="s1">&#39;2024-01-01&#39;</span>
+<span class="p">}</span>
+
+<span class="c1"># Replace by:</span>
+<span class="n">column_filters</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;exp_start&#39;</span><span class="p">:</span> <span class="s2">&quot;&gt; &#39;2024-01-01&#39;&quot;</span>
+<span class="p">}</span>
+
+<span class="c1"># --- #</span>
+
+<span class="c1"># The following filters won&#39;t work:</span>
+<span class="n">column_filters</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;etime&#39;</span><span class="p">:</span> <span class="s1">&#39;2024-12-31&#39;</span>
+<span class="p">}</span>
+
+<span class="c1"># Replace by:</span>
+<span class="n">column_filters</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;exp_start&#39;</span><span class="p">:</span> <span class="s2">&quot;&lt; &#39;2024-12-31&#39;&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="reference-api">
 <h2>Reference/API<a class="headerlink" href="#reference-api" title="Link to this heading">¶</a></h2>
@@ -509,7 +552,11 @@ The <code class="docutils literal notranslate"><span class="pre">clear_cache</sp
 </li>
 <li><a class="reference internal" href="#obtaining-extended-information-on-data-products">Obtaining extended information on data products</a></li>
 <li><a class="reference internal" href="#downloading-datasets-from-the-archive">Downloading datasets from the archive</a></li>
-<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a><ul>
+<li><a class="reference internal" href="#clearing-the-cache">Clearing the cache</a></li>
+<li><a class="reference internal" href="#using-the-correct-column-filters">Using the correct <code class="docutils literal notranslate"><span class="pre">column_filters</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#reference-api">Reference/API</a><ul>
 <li><a class="reference internal" href="#module-astroquery.eso">astroquery.eso Package</a><ul>
 <li><a class="reference internal" href="#classes">Classes</a></li>
